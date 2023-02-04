@@ -62,8 +62,8 @@ class PredatorController:
         self.load_weights = True
         self.save_weights = False
 
-        self.weights_file_actor = './predatormodel/%s/actormodel'.format(self.predator.id)
-        self.weights_file_critic = './predatormodel/%s/criticmodel'.format(self.predator.id)
+        self.weights_file_actor = './predatormodel/{agent_id}/actormodel'.format(agent_id=self.predator.id)
+        self.weights_file_critic = './predatormodel/{agent_id}/criticmodel'.format(agent_id=self.predator.id)
 
         # Define the optimizer
         critic_optimizer = tf.keras.optimizers.Adam(self.critic_lr)
