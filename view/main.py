@@ -20,14 +20,22 @@ if total_iterations > 0:
 """
 
 if __name__ == '__main__':
-    n_agents = 3
+    n_agents = 1
     save_weights = True
     env = Environment()
     agents_controller = [PredatorController(env=env, predator=Predator(i)) for i in range(n_agents)]
 
-    for i in range(1, 1500):
-        for ac in agents_controller:
-            ac.iterate(i)
+    # train
+    total_iterations = 10_000
+    #while i < total_iterations:
+    #    for ac in agents_controller:
+    #        i = ac.iterate(i)
+
+    ac_it = [0 for k in range(n_agents)]
+    while any(it < total_iterations for it in ac_it):
+        for k in range(n_agents):
+            if ac_it[k] < total_iterations:
+                ac_it[k] = agents_controller[k].iterate(ac_it[k])
 
     if save_weights:
         for ac in agents_controller:

@@ -172,11 +172,12 @@ class PredatorController:
         return [np.squeeze(legal_action)]
 
     def iterate(self, i):
-        done = False
         prev_state = self.env.racer.reset()
         episodic_reward = 0
         self.mean_speed += prev_state[self.env.num_states - 1]
+        done = False
         while not done:
+            i = i + 1
             tf_prev_state = tf.expand_dims(tf.convert_to_tensor(prev_state), 0)
             # our policy is always noisy
             action = self.policy(tf_prev_state)[0]
@@ -203,6 +204,9 @@ class PredatorController:
                 self.update_target(self.target_critic.variables, self.critic_model.variables, self.tau)
             prev_state = state
 
+            if i % 100 == 0:
+                self.avg_reward_list.append(self.avg_reward)
+
         self.ep_reward_list.append(episodic_reward)
 
         # Mean of last 40 episodes
@@ -215,6 +219,8 @@ class PredatorController:
             print("## Evaluating policy ##")
             tracks.metrics_run(self.actor_model, 10)
         self.ep += 1
+
+        return i
 
     def save(self):
         self.critic_model.save(self.weights_file_critic)
