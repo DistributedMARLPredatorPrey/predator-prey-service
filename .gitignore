@@ -1,5 +1,5 @@
 .idea/
 src.egg-info/
-src/model.egg-info/
-src/view.egg-info/
-src/controllers.egg-info/
+src/mvc.egg-info/
+__pycache__/
+src/__pycache__/
