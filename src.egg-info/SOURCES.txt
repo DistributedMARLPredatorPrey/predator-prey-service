@@ -1,0 +1,15 @@
+README.md
+setup.py
+src/__init__.py
+src/lumache.py
+src.egg-info/PKG-INFO
+src.egg-info/SOURCES.txt
+src.egg-info/dependency_links.txt
+src.egg-info/not-zip-safe
+src.egg-info/top_level.txt
+src/model/__init__.py
+src/model/agent.py
+src/model/agent_type.py
+src/model/environment.py
+src/model/predator.py
+src/model/prey.py

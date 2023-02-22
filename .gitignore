@@ -1,1 +1,5 @@
 ./.idea/
+./src.egg-info/
+./src/model.egg-info/
+./src/view.egg-info/
+./src/controllers.egg-info/
