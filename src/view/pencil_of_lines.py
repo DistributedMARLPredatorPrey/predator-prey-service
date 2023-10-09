@@ -93,7 +93,7 @@ def observe(agent: Agent, env: Environment):
                       )
                    )
             )
-            distances.append(extract_model(o, x, y, x_0, y_0))
+            distances.extend(extract_model(o, x, y, x_0, y_0))
 
     print(distances)
     return distances

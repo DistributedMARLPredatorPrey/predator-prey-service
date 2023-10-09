@@ -1,8 +1,9 @@
 import keras
 
-from controllers.predator_controller import PredatorController
-from controllers.environment_controller import Environment
-from model.predator import Predator
+from src.controllers.environment_controller import EnvironmentController
+from src.controllers.predator_controller import PredatorController
+from src.model.environment import Environment
+from src.model.agents.predator import Predator
 from datetime import datetime
 
 
@@ -14,8 +15,9 @@ def train():
     save_weights = True
     load_weights = False
 
+    predators = [Predator(i) for i in range(n_agents)]
     # environment
-    env = Environment()
+    env = Environment(x_dim=500, y_dim=500, agents=predators)
     # controllers
     if load_weights:
         agents_controller = []
@@ -25,19 +27,19 @@ def train():
             critic_model = keras.models \
                 .load_model('./predatormodel/{agent_id}/criticmodel'.format(agent_id=i))
             agents_controller.append(PredatorController(env=env,
-                                                        predator=Predator(i),
+                                                        predator=predators[i],
                                                         actor_model=actor_model,
                                                         critic_model=critic_model))
     else:
-        agents_controller = [PredatorController(env=env, predator=Predator(i)) for i in range(n_agents)]
+        agents_controller = [PredatorController(env=env, predator=predators[i]) for i in range(n_agents)]
 
     # train
     # TODO
-    # ac_it = [0 for _ in range(n_agents)]
-    # while any(it < total_iterations for it in ac_it):
-    #    for k in range(n_agents):
-    #        if ac_it[k] < total_iterations:
-    #           ac_it[k] = agents_controller[k].iterate(ac_it[k])
+    #it = 0
+    #while it < total_iterations:
+    #    for i in range(n_agents):
+    #        agents_controller[i].iterate()
+
 
     # if save_weights:
     #    for ac in agents_controller:
