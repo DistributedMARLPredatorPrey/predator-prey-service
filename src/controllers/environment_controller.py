@@ -1,9 +1,9 @@
 from random import randint, uniform
 from typing import Dict, Tuple
 
-from src.model.agent_type import AgentType
+from src.model.agents.agent_type import AgentType
 from src.model.environment import Environment
-from src.model.predator import Predator
+from src.model.agents.predator import Predator
 
 
 class EnvironmentController:
@@ -47,6 +47,7 @@ class EnvironmentController:
                     for k in range(n, n + v[0]):
                         agents.append(Predator(id=k, x=v[1][0], y=v[1][1]))
                         i = i + 1
+
         else:
             n_predators, n_preys = randint(1, 5), randint(1, 5)
             for i in range(n_predators):

@@ -109,7 +109,6 @@ class PredatorController:
     def get_actor(self, train_acceleration=True, train_direction=True):
         # the actor has separate towers for action and speed
         # in this way we can train them separately
-
         inputs = layers.Input(shape=(self.env.num_states,))
         out1 = layers.Dense(32, activation="relu", trainable=train_acceleration)(inputs)
         out1 = layers.Dense(32, activation="relu", trainable=train_acceleration)(out1)
@@ -170,57 +169,6 @@ class PredatorController:
         legal_action = np.clip(sampled_action, self.env.lower_bound, self.env.upper_bound)
 
         return [np.squeeze(legal_action)]
-
-    def iterate(self, i):
-        prev_state = self.env.racer.reset()
-        episodic_reward = 0
-        self.mean_speed += prev_state[self.env.num_states - 1]
-        done = False
-        while not done:
-            i = i + 1
-            tf_prev_state = tf.expand_dims(tf.convert_to_tensor(prev_state), 0)
-            # our policy is always noisy
-            action = self.policy(tf_prev_state)[0]
-            # Get state and reward from the environment
-            state, reward, done = self.env.step(action)
-
-            # we distinguish between termination with failure (state = None) and succesfull termination on track completion
-            # succesfull termination is stored as a normal tuple
-            fail = done and len(state) < self.env.num_states
-            self.buffer.record((prev_state, action, reward, fail, state))
-
-            if not (done):
-                self.mean_speed += state[self.env.num_states - 1]
-            episodic_reward += reward
-
-            if self.buffer.buffer_counter > self.batch_size:
-                states, actions, rewards, dones, newstates = self.buffer.sample_batch()
-                targetQ = rewards + (1 - dones) * self.gamma * \
-                          (self.target_critic([newstates, self.target_actor(newstates)]))
-                loss1 = self.critic_model.train_on_batch([states, actions], targetQ)
-                loss2 = self.aux_model.train_on_batch(states)
-
-                self.update_target(self.target_actor.variables, self.actor_model.variables, self.tau)
-                self.update_target(self.target_critic.variables, self.critic_model.variables, self.tau)
-            prev_state = state
-
-            if i % 100 == 0:
-                self.avg_reward_list.append(self.avg_reward)
-
-        self.ep_reward_list.append(episodic_reward)
-
-        # Mean of last 40 episodes
-        avg_reward = np.mean(self.ep_reward_list[-40:])
-        print("Episode {}: Iterations {}, Avg. Reward = {}, Last reward = {}. Avg. speed = {}"
-              .format(self.ep, i, avg_reward, episodic_reward, self.mean_speed / i))
-        print("\n")
-
-        if self.ep > 0 and self.ep % 40 == 0:
-            print("## Evaluating policy ##")
-            tracks.metrics_run(self.actor_model, 10)
-        self.ep += 1
-
-        return i
 
     def save(self):
         self.critic_model.save(self.weights_file_critic)
