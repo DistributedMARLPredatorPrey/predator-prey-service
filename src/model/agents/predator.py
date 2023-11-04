@@ -1,10 +1,7 @@
-from model.agent import Agent
-from model.agent_type import AgentType
+from src.model.agents.agent import Agent
+from src.model.agents.agent_type import AgentType
 
 
 class Predator(Agent):
-    def __init__(self, id=None, x=None, y=None):
-        self.id = id
-        self.x = x
-        self.y = y
-        self.agent_type = AgentType.PREDATOR
+    def __init__(self, id=None, x=None, y=None, v=0, acc=0):
+        super().__init__(id, x, y, v, acc, AgentType.PREDATOR)
