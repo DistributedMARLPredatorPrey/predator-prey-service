@@ -9,6 +9,7 @@ import tensorflow as tf
 from tensorflow.keras import layers
 from src.view.pencil_of_lines import *
 
+
 class PredatorController:
     rnd_state = 42
 

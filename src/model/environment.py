@@ -4,7 +4,9 @@ from model.agent import Agent
 
 
 class Environment:
-    def __init__(self, x_dim=None, y_dim=None, agents: List[Agent] = None):
+    def __init__(self, x_dim=None, y_dim=None, agents=None):
+        if agents is None:
+            agents = []
         self.x_dim = x_dim
         self.y_dim = y_dim
         self.agents = agents
