@@ -1,15 +1,16 @@
-from datetime import datetime
-from typing import List, Tuple
+from typing import List
 
-from z3 import *
 import numpy as np
-from model.agent import Agent
-from model.environment import Environment
+from z3 import Real, Or, And, If, Solver, Optimize, AlgebraicNumRef, sat
+
+from main.model.agents.agent import Agent
+from main.model.agents.agent_type import AgentType
+from main.model.environment import Environment
 
 np.random.seed(42)
 
 
-def box_constraints(x: Real, y: Real, r: float, cds: List[(float, float)]):
+def box_constraints(x: Real, y: Real, r: float, cds: List):
     return Or([
         Or(
             And(x <= cx + r, x >= cx - r, y == cy - r),
@@ -70,10 +71,11 @@ def observe(agent: Agent, env: Environment):
     for lconstr in [y < y_0, y >= y_0]:
         for a in np.linspace(0, np.pi, 7):
             o = Optimize()
+
             o.add(
                 And(
                     # pencil of lines (set of lines passing through a common point):
-                    #   (x - x_0) * sin(a) = (y - y_0) * cos(a) forall a in [0, pi]
+                    # (x - x_0) * sin(a) = (y - y_0) * cos(a) forall a in [0, pi]
                     (x - x_0) * np.sin(a) - (y - y_0) * np.cos(a) == 0,
                     # visual depth
                     And(range_constraint),
@@ -96,4 +98,24 @@ def observe(agent: Agent, env: Environment):
             distances.extend(extract_model(o, x, y, x_0, y_0))
 
     print(distances)
-    return distances
+    return distances, reward(agent, env)
+
+
+def reward(agent: Agent, env: Environment):
+    for a in env.agents:
+        if a != agent:
+            if a.agent_type != agent.agent_type:
+                if is_eating(agent, a):
+                    return [2 if agent.agent_type == AgentType.PREDATOR else -2]
+    return 1
+
+
+def is_eating(agent1: Agent, agent2: Agent, r=0.3):
+    x, y = Real('x'), Real('y')
+    s = Solver()
+    s.add(x < agent1.x + r, x >= agent1.x - r,
+          x < agent2.x + r, x >= agent2.x - r,
+          y < agent1.y + r, y >= agent1.y - r,
+          y < agent2.y + r, y >= agent2.y - r
+          )
+    return s.check() == sat

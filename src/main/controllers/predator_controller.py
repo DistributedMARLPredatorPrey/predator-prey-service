@@ -1,13 +1,9 @@
 from random import randint
 
-import numpy as np
-
-from src.controllers.buffer import Buffer
-from src.controllers.environment_controller import Environment
-from src.model.agents.predator import Predator
+from main.controllers.buffer import Buffer
+from main.model.agents.predator import Predator
 import tensorflow as tf
 from tensorflow.keras import layers
-from src.view.pencil_of_lines import *
 
 
 class PredatorController:

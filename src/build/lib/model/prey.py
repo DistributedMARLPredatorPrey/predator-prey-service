@@ -1,5 +1,5 @@
-from model.agent import Agent
-from model.agent_type import AgentType
+from main.model import Agent
+from main.model import AgentType
 
 
 class Prey(Agent):

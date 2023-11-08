@@ -1,4 +1,4 @@
-from model.agent_type import AgentType
+from main.model import AgentType
 
 
 class Agent:

@@ -1,9 +1,8 @@
 import keras
 
-from src.controllers.environment_controller import EnvironmentController
-from src.controllers.predator_controller import PredatorController
-from src.model.environment import Environment
-from src.model.agents.predator import Predator
+from main.controllers.predator_controller import PredatorController
+from main.model.environment import Environment
+from main.model.agents.predator import Predator
 from datetime import datetime
 
 

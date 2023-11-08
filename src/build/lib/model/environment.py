@@ -1,6 +1,6 @@
 from typing import List
 
-from model.agent import Agent
+from main.model import Agent
 
 
 class Environment:
