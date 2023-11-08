@@ -1,13 +1,10 @@
-from random import randint, uniform
-from typing import Dict, Tuple
-
-from main.model.agents.agent import Agent
-from main.model.agents.agent_type import AgentType
-from main.model.environment import Environment
-from main.model.agents.predator import Predator
-from main.controllers.environment.observation import observe
+from typing import Tuple, List
 
 import numpy as np
+
+from main.controllers.environment.observation_utils import observe, ObservationUtils
+from main.model.agents.agent import Agent
+from main.model.environment import Environment
 
 
 class EnvironmentController:
@@ -24,7 +21,6 @@ class EnvironmentController:
     # agent action
     def step(self, agent: Agent, action: Tuple[float, float]):
         acc, turn = action
-
         max_incr = self.max_acc * self.t_step
         v = np.sqrt(np.power(agent.vx, 2) + np.power(agent.vy, 2))
         # Compute the new velocity magnitude from the decided acceleration
@@ -43,3 +39,6 @@ class EnvironmentController:
         if next_y >= 0 or next_y < self.environment.y_dim:
             agent.y = next_y
         return observe(agent, self.environment)
+
+    def observe(self, agent: Agent) -> (List[float], float):
+        ObservationUtils().observe(agent, self.environment)

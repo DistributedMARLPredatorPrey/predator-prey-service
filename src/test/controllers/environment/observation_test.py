@@ -1,6 +1,6 @@
 import unittest
 
-from main.controllers.environment.observation import observe
+from main.controllers.environment.observation_utils import observe
 from main.model.agents.predator import Predator
 from main.model.environment import Environment
 

@@ -45,4 +45,4 @@ class Buffer:
         r = self.reward_buffer[batch_indices]
         T = self.done_buffer[batch_indices]
         sn = self.next_state_buffer[batch_indices]
-        return ((s, a, r, T, sn))
+        return s, a, r, T, sn

@@ -10,7 +10,7 @@ class PredatorController:
     rnd_state = 42
 
     def __init__(self, env=None, predator=None, actor_model=None, critic_model=None):
-        self.env = env if env is not None else Environment()
+        self.env = env
         self.predator = predator if predator is not None \
             else Predator(x=randint(0, self.env.x_dim), y=randint(0, self.env.y_dim))
 

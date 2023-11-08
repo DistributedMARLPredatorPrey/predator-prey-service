@@ -1,6 +1,6 @@
 import unittest
 
-from main.controllers.environment.observation import is_eating
+from main.controllers.environment.observation_utils import is_eating
 from main.model.agents.predator import Predator
 from main.model.agents.prey import Prey
 
