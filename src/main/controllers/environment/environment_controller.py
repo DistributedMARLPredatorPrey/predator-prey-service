@@ -2,7 +2,7 @@ from typing import Tuple, List
 
 import numpy as np
 
-from main.controllers.environment.observation_utils import observe, ObservationUtils
+from main.controllers.environment.environment_observer import observe, EnvironmentObserver
 from main.model.agents.agent import Agent
 from main.model.environment import Environment
 
@@ -41,4 +41,4 @@ class EnvironmentController:
         return observe(agent, self.environment)
 
     def observe(self, agent: Agent) -> (List[float], float):
-        ObservationUtils().observe(agent, self.environment)
+        EnvironmentObserver().observe(agent, self.environment)

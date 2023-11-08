@@ -10,7 +10,7 @@ from main.model.environment import Environment
 np.random.seed(42)
 
 
-class ObservationUtils:
+class EnvironmentObserver:
 
     def observe(self, agent: Agent, env: Environment):
         cds = [(a.x, a.y) for a in env.agents if a != agent]
