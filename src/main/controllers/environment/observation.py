@@ -35,17 +35,17 @@ def extract_model(o: Optimize, x: Real, y: Real, x_0: float, y_0: float):
 
         x_p, y_p = float(mx.numerator_as_long()) / float(mx.denominator_as_long()), \
                    float(my.numerator_as_long()) / float(my.denominator_as_long())
-        print((x_p, y_p))
+        # print((x_p, y_p))
         # Compute the distance between the agent center (x_0, y_0)
         # and the intersection point which is closer to it
-        d.append(np.sqrt(np.power(x_0 - x_p, 2) + np.power(y_0 - y_p, 2)))
+        d.append(round(np.sqrt(np.power(x_0 - x_p, 2) + np.power(y_0 - y_p, 2)), 2))
     else:
         d.append(-1)
     return d
 
 
 def observe(agent: Agent, env: Environment):
-    cds = [(a.x, agent.y) for a in env.agents if a != agent]
+    cds = [(a.x, a.y) for a in env.agents if a != agent]
     (x_0, y_0) = (agent.x, agent.y)
 
     r = 0.3
@@ -68,10 +68,9 @@ def observe(agent: Agent, env: Environment):
     agent_boxes_constraint = box_constraints(x, y, r, cds)
 
     distances = []
-    for lconstr in [y < y_0, y >= y_0]:
+    for lconstr in [y >= y_0, y < y_0]:
         for a in np.linspace(0, np.pi, 7):
             o = Optimize()
-
             o.add(
                 And(
                     # pencil of lines (set of lines passing through a common point):
@@ -85,7 +84,6 @@ def observe(agent: Agent, env: Environment):
                     lconstr
                 )
             )
-
             o.minimize(
                 If(y > y_0,
                    y,
@@ -96,8 +94,6 @@ def observe(agent: Agent, env: Environment):
                    )
             )
             distances.extend(extract_model(o, x, y, x_0, y_0))
-
-    print(distances)
     return distances, reward(agent, env)
 
 
