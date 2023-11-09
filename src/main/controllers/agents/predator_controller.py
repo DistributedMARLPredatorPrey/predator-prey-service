@@ -1,18 +1,19 @@
 from random import randint
 
-from main.controllers.buffer import Buffer
+from main.controllers.agents.buffer import Buffer
 from main.model.agents.predator import Predator
 import tensorflow as tf
 from tensorflow.keras import layers
+
+import numpy as np
 
 
 class PredatorController:
     rnd_state = 42
 
-    def __init__(self, env=None, predator=None, actor_model=None, critic_model=None):
+    def __init__(self, env, predator, actor_model=None, critic_model=None):
         self.env = env
-        self.predator = predator if predator is not None \
-            else Predator(x=randint(0, self.env.x_dim), y=randint(0, self.env.y_dim))
+        self.predator = predator
 
         # creating models
         self.actor_model = self.get_actor() if actor_model is None else actor_model
@@ -86,61 +87,7 @@ class PredatorController:
     def update_weights(self, target_weights, weights, tau):
         return target_weights * (1 - tau) + weights * tau
 
-    # We compose actor and critic in a single model.
-    # The actor is trained by maximizing the future expected reward, estimated
-    # by the critic. The critic should be freezed while training the actor.
-    # For simplicitly, we just use the target critic, that is not trainable.
-    def compose(self, actor, critic):
-        state_input = layers.Input(shape=self.env.num_states)
-        a = actor(state_input)
-        q = critic([state_input, a])
 
-        m = tf.keras.Model(state_input, q)
-        # the loss function of the compound model is just the opposite of the critic output
-        m.add_loss(-q)
-        return m
-
-    # The actor choose the move, given the state
-    def get_actor(self, train_acceleration=True, train_direction=True):
-        # the actor has separate towers for action and speed
-        # in this way we can train them separately
-        inputs = layers.Input(shape=(self.env.num_states,))
-        out1 = layers.Dense(32, activation="relu", trainable=train_acceleration)(inputs)
-        out1 = layers.Dense(32, activation="relu", trainable=train_acceleration)(out1)
-        # acceleration
-        out1 = layers.Dense(1, activation='tanh', trainable=train_acceleration)(out1)
-
-        out2 = layers.Dense(32, activation="relu", trainable=train_direction)(inputs)
-        out2 = layers.Dense(32, activation="relu", trainable=train_direction)(out2)
-        # angular acceleration
-        out2 = layers.Dense(1, activation='tanh', trainable=train_direction)(out2)
-
-        outputs = layers.concatenate([out1, out2])
-
-        # outputs = outputs * upper_bound #resize the range, if required
-        model = tf.keras.Model(inputs, outputs, name="actor")
-        return model
-
-    # The critic compute the q-value, given the state and the action
-    def get_critic(self):
-        # State as input
-        state_input = layers.Input(shape=self.env.num_states)
-        state_out = layers.Dense(16, activation="relu")(state_input)
-        state_out = layers.Dense(32, activation="relu")(state_out)
-
-        # Action as input
-        action_input = layers.Input(shape=self.env.num_actions)
-        action_out = layers.Dense(32, activation="relu")(action_input)
-
-        concat = layers.Concatenate()([state_out, action_out])
-
-        out = layers.Dense(64, activation="relu")(concat)
-        out = layers.Dense(64, activation="relu")(out)
-        outputs = layers.Dense(1)(out)  # Outputs single value
-
-        model = tf.keras.Model([state_input, action_input], outputs, name="critic")
-
-        return model
 
     def policy(self, state, verbose=False):
         # the policy used for training just add noise to the action

@@ -1,6 +1,6 @@
 import keras
 
-from main.controllers.predator_controller import PredatorController
+from main.controllers.agents.predator_controller import PredatorController
 from main.model.environment import Environment
 from main.model.agents.predator import Predator
 from datetime import datetime
