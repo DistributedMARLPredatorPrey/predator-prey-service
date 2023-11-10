@@ -11,18 +11,17 @@ class ActorCritic:
         self.num_actions = num_actions
         self.model = self._compose(
             Actor(num_states, train_acceleration, train_direction).model,
-            Critic(num_states, num_actions)
+            Critic(num_states, num_actions).model
         )
 
     # We compose actor and critic in a single model.
     # The actor is trained by maximizing the future expected reward, estimated
     # by the critic. The critic should be frozen while training the actor.
     # For simplicity, we just use the target critic, that is not trainable.
-    def _compose(self, actor, critic):
+    def _compose(self, actor: Model, critic: Model) -> Model:
         state_input = layers.Input(shape=self.num_states)
         a = actor(state_input)
         q = critic([state_input, a])
-
         model = Model(state_input, q)
         # the loss function of the compound model is just the opposite of the critic output
         model.add_loss(-q)

@@ -46,3 +46,21 @@ class Buffer:
         T = self.done_buffer[batch_indices]
         sn = self.next_state_buffer[batch_indices]
         return s, a, r, T, sn
+
+
+
+    # We compute the loss and update parameters
+    def learn(self):
+        # Get sampling range
+        record_range = min(self.buffer_counter, self.buffer_capacity)
+        # Randomly sample indices
+        batch_indices = np.random.choice(record_range, self.batch_size)
+
+        # Convert to tensors
+        state_batch = tf.convert_to_tensor(self.state_buffer[batch_indices])
+        action_batch = tf.convert_to_tensor(self.action_buffer[batch_indices])
+        reward_batch = tf.convert_to_tensor(self.reward_buffer[batch_indices])
+        reward_batch = tf.cast(reward_batch, dtype=tf.float32)
+        next_state_batch = tf.convert_to_tensor(self.next_state_buffer[batch_indices])
+
+        self.update(state_batch, action_batch, reward_batch, next_state_batch)

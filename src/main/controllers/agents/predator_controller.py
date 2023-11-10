@@ -1,19 +1,23 @@
-from random import randint
+import numpy as np
+import tensorflow as tf
+from keras import Model
 
 from main.controllers.agents.buffer import Buffer
+from main.controllers.environment.environment_controller import EnvironmentController
 from main.model.agents.predator import Predator
-import tensorflow as tf
-from tensorflow.keras import layers
-
-import numpy as np
 
 
 class PredatorController:
     rnd_state = 42
 
-    def __init__(self, env, predator, actor_model=None, critic_model=None):
-        self.env = env
+    def __init__(self, env_controller: EnvironmentController, predator: Predator,
+                 actor_model: Model = None, critic_model: Model = None):
+        self.env_controller = env_controller
         self.predator = predator
+
+        # initial state
+        self.prev_state = env_controller.observe(self.predator)
+        self.episodic_reward = 0
 
         # creating models
         self.actor_model = self.get_actor() if actor_model is None else actor_model
@@ -87,8 +91,6 @@ class PredatorController:
     def update_weights(self, target_weights, weights, tau):
         return target_weights * (1 - tau) + weights * tau
 
-
-
     def policy(self, state, verbose=False):
         # the policy used for training just add noise to the action
         # the amount of noise is kept constant during training
@@ -108,10 +110,33 @@ class PredatorController:
             print("decelerating")
 
         # Finally, we ensure actions are within bounds
-        legal_action = np.clip(sampled_action, self.env.lower_bound, self.env.upper_bound)
+        legal_action = np.clip(sampled_action,
+                               self.env_controller.lower_bound,
+                               self.env_controller.upper_bound)
 
         return [np.squeeze(legal_action)]
 
     def save(self):
         self.critic_model.save(self.weights_file_critic)
         self.actor_model.save(self.weights_file_actor)
+
+    def iterate(self):
+
+        tf_prev_state = tf.expand_dims(tf.convert_to_tensor(self.prev_state), 0)
+        action = self.policy(tf_prev_state)
+
+        # Receive state and reward from environment
+        state, reward, done, info = self.env_controller.step(self.predator, action)
+
+        self.buffer.record((self.prev_state, action, reward, state))
+        self.episodic_reward += reward
+
+        self.buffer.learn()
+        self.update_target(self.target_actor.variables, self.actor_model.variables, self.tau)
+        self.update_target(self.target_critic.variables, self.critic_model.variables, self.tau)
+
+        # End this episode when `done` is True
+        if done:
+            break
+
+        prev_state = state

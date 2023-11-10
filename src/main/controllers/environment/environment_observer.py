@@ -12,7 +12,7 @@ np.random.seed(42)
 
 class EnvironmentObserver:
 
-    def observe(self, agent: Agent, env: Environment):
+    def observe(self, agent: Agent, env: Environment) -> (List[float], float):
         cds = [(a.x, a.y) for a in env.agents if a != agent]
         (x_0, y_0) = (agent.x, agent.y)
 
