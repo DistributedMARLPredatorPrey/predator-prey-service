@@ -155,6 +155,7 @@ class PredatorController:
         action = self.policy(tf_prev_state)
         # Receive state and reward from environment
         state, done, reward = self.env_controller.step(self.predator, action)
+
         print("pos: ({}, {}) a: {}, state: {}, reward: {}"
               .format(self.predator.x, self.predator.y, action, state, reward))
 

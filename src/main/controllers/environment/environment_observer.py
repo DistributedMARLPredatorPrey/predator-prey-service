@@ -2,25 +2,24 @@ from typing import List
 
 import numpy as np
 from z3 import Or, And, If, Solver, Optimize, AlgebraicNumRef, sat, Real
-
-# from z3 import Or, And, If, Solver, Optimize, AlgebraicNumRef, sat, Real
-
 from src.main.model.agents.agent import Agent
 from src.main.model.agents.agent_type import AgentType
 from src.main.model.environment import Environment
 
 np.random.seed(42)
 
-
 class EnvironmentObserver:
 
     # return the list of distances and the reward
     def observe(self, agent: Agent, env: Environment) -> (List[float], float):
+
+        #print([("({}, {})".format(agent.x, agent.y)) for agent in env.agents])
+
         cds = [(a.x, a.y) for a in env.agents if a != agent]
         (x_0, y_0) = (agent.x, agent.y)
 
-        r = 0.3
-        vd = 3
+        r = 10
+        vd = 20
 
         x, y = Real('x'), Real('y')
         y_rng = y - y_0
@@ -65,22 +64,24 @@ class EnvironmentObserver:
                        )
                 )
                 distances.extend(self._extract_model(o, x, y, x_0, y_0))
-        return distances, self._done(agent, env), self._reward(agent, env)
+        return distances, self._done(agent, env, r), self._reward(agent, env, r)
 
-    def _done(self, agent: Agent, env: Environment) -> bool:
+    def _done(self, agent: Agent, env: Environment, r) -> bool:
         for a in env.agents:
             if a != agent:
                 if a.agent_type != agent.agent_type:
-                    if self.is_eating(agent, a):
+                    if self.is_eating(agent, a, r):
                         return True
         return False
 
-    def _reward(self, agent: Agent, env: Environment) -> int:
+    def _reward(self, agent: Agent, env: Environment, r) -> int:
         for a in env.agents:
             if a != agent:
-                if a.agent_type != agent.agent_type:
-                    if self.is_eating(agent, a):
-                        return 2 if agent.agent_type == AgentType.PREDATOR else -2
+                if self.is_eating(agent, a, r):
+                    return -2
+                # if a.agent_type != agent.agent_type:
+                #    if self.is_eating(agent, a, r):
+                #        return 2 if agent.agent_type == AgentType.PREDATOR else -2
         return 1
 
     @staticmethod
@@ -118,7 +119,7 @@ class EnvironmentObserver:
         return d
 
     @staticmethod
-    def is_eating(agent1: Agent, agent2: Agent, r=0.3):
+    def is_eating(agent1: Agent, agent2: Agent, r):
         x, y = Real('x'), Real('y')
         s = Solver()
         s.add(x < agent1.x + r, x >= agent1.x - r,
