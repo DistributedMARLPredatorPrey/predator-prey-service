@@ -2,25 +2,23 @@ from typing import Tuple, List
 
 import numpy as np
 
-from main.controllers.environment.environment_observer import observe, EnvironmentObserver
-from main.model.agents.agent import Agent
-from main.model.environment import Environment
+from src.main.controllers.environment.environment_observer import EnvironmentObserver
+from src.main.model.agents.agent import Agent
+from src.main.model.environment import Environment
 
 
 class EnvironmentController:
 
     def __init__(self, environment: Environment):
         self.environment = environment
-        self.num_states = 7
-        self.num_actions = 2
         self.upper_bound = 1
         self.lower_bound = -1
         self.max_acc = 0.1
         self.t_step = 0.4
 
     # agent action
-    def step(self, agent: Agent, action: Tuple[float, float]) -> (List[float], bool, int):
-        acc, turn = action
+    def step(self, agent: Agent, action: List[float]) -> (List[float], bool, int):
+        acc, turn = action[0], action[1]
         max_incr = self.max_acc * self.t_step
         v = np.sqrt(np.power(agent.vx, 2) + np.power(agent.vy, 2))
         # Compute the new velocity magnitude from the decided acceleration
@@ -41,4 +39,4 @@ class EnvironmentController:
         return self.observe(agent)
 
     def observe(self, agent: Agent) -> (List[float], bool, int):
-        EnvironmentObserver().observe(agent, self.environment)
+        return EnvironmentObserver().observe(agent, self.environment)

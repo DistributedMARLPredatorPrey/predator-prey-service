@@ -1,50 +1,27 @@
-import keras
+import random
 
-from main.controllers.agents.predator_controller import PredatorController
-from main.model.environment import Environment
-from main.model.agents.predator import Predator
+from src.main.controllers.agents.predator_controller import PredatorController
+from src.main.controllers.environment.environment_controller import EnvironmentController
+from src.main.model.environment import Environment
+from src.main.model.agents.predator import Predator
 from datetime import datetime
 
 
 def train():
-    # parameters
-    n_agents = 3
-    total_iterations = 40_000
-
-    save_weights = True
-    load_weights = False
-
-    predators = [Predator(i) for i in range(n_agents)]
-    # environment
-    env = Environment(x_dim=500, y_dim=500, agents=predators)
-    # controllers
-    if load_weights:
-        agents_controller = []
-        for i in range(n_agents):
-            actor_model = keras.models \
-                .load_model('./predatormodel/{agent_id}/actormodel'.format(agent_id=i))
-            critic_model = keras.models \
-                .load_model('./predatormodel/{agent_id}/criticmodel'.format(agent_id=i))
-            agents_controller.append(PredatorController(env=env,
-                                                        predator=predators[i],
-                                                        actor_model=actor_model,
-                                                        critic_model=critic_model))
-    else:
-        agents_controller = [PredatorController(env=env, predator=predators[i]) for i in range(n_agents)]
-
+    x_dim, y_dim = 500, 500
+    predators = [Predator("predator-%d".format(i),
+                          random.randint(0, x_dim),
+                          random.randint(0, y_dim)
+                          )
+                 for i in range(5)]
+    env_controller: EnvironmentController = (
+        EnvironmentController(Environment(x_dim, y_dim, predators)))
+    predator_controllers = [PredatorController(env_controller, predator) for predator in predators]
     # train
-    # TODO
-    #it = 0
-    #while it < total_iterations:
-    #    for i in range(n_agents):
-    #        agents_controller[i].iterate()
-
-
-    # if save_weights:
-    #    for ac in agents_controller:
-    #        ac.save()
-
-    # tracks.newrun([ac.actor_model for ac in agents_controller])
+    total_iterations = 50_000
+    for it in range(total_iterations):
+        for predator_controller in predator_controllers:
+            predator_controller.iterate()
 
 
 if __name__ == '__main__':

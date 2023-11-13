@@ -1,4 +1,4 @@
-from main.model.agents.agent_type import AgentType
+from src.main.model.agents.agent_type import AgentType
 
 
 class Agent:

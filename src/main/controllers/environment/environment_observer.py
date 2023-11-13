@@ -1,11 +1,13 @@
 from typing import List
 
 import numpy as np
-from z3 import Real, Or, And, If, Solver, Optimize, AlgebraicNumRef, sat
+from z3 import Or, And, If, Solver, Optimize, AlgebraicNumRef, sat, Real
 
-from main.model.agents.agent import Agent
-from main.model.agents.agent_type import AgentType
-from main.model.environment import Environment
+# from z3 import Or, And, If, Solver, Optimize, AlgebraicNumRef, sat, Real
+
+from src.main.model.agents.agent import Agent
+from src.main.model.agents.agent_type import AgentType
+from src.main.model.environment import Environment
 
 np.random.seed(42)
 

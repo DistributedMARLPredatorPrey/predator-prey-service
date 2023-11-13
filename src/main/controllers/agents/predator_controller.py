@@ -1,35 +1,34 @@
 import numpy as np
 import tensorflow as tf
-from keras import Model
 
-from main.controllers.agents.buffer import Buffer
-from main.controllers.environment.environment_controller import EnvironmentController
-from main.model.agents.neural_networks.actor import Actor
-from main.model.agents.neural_networks.critic import Critic
-from main.model.agents.predator import Predator
+from src.main.controllers.agents.buffer import Buffer
+from src.main.controllers.environment.environment_controller import EnvironmentController
+from src.main.model.agents.neural_networks.actor import Actor
+from src.main.model.agents.neural_networks.critic import Critic
+from src.main.model.agents.predator import Predator
 
 
 class PredatorController:
     rnd_state = 42
 
     def __init__(self, env_controller: EnvironmentController, predator: Predator,
-                 actor_model: Model = None, critic_model: Model = None):
+                 actor_model=None, critic_model=None):
         self.env_controller = env_controller
         self.predator = predator
 
         # initial state
-        self.prev_state = env_controller.observe(self.predator)
+        self.prev_state, _, _ = env_controller.observe(self.predator)
         self.episodic_reward = 0
 
         # creating models
-        self.actor_model = Actor(env_controller.environment.num_states) if actor_model is None else actor_model
-        self.critic_model = Critic(env_controller.num_states,
-                                   env_controller.num_actions) if critic_model is None else critic_model
+        self.actor_model = Actor(env_controller.environment.num_states).model if actor_model is None else actor_model
+        self.critic_model = Critic(env_controller.environment.num_states,
+                                   env_controller.environment.num_actions).model if critic_model is None else critic_model
 
         # we create the target model for double learning (to prevent a moving target phenomenon)
-        self.target_actor = Actor(env_controller.environment.num_states) if actor_model is None else actor_model
-        self.target_critic = Critic(env_controller.num_states,
-                                    env_controller.num_actions) if critic_model is None else critic_model
+        self.target_actor = Actor(env_controller.environment.num_states).model if actor_model is None else actor_model
+        self.target_critic = Critic(env_controller.environment.num_states,
+                                    env_controller.environment.num_actions).model if critic_model is None else critic_model
 
         # making the weights equal initially
         self.target_actor.set_weights(self.actor_model.get_weights())
@@ -48,7 +47,8 @@ class PredatorController:
         self.batch_size = 64
         # Buffer
         self.buffer = Buffer(self.buffer_dim, self.batch_size,
-                             self.env_controller.num_states, self.env_controller.num_actions)
+                             self.env_controller.environment.num_states,
+                             self.env_controller.environment.num_actions)
 
         # Hyperparameters
         self.total_iterations = 50_000
@@ -114,7 +114,7 @@ class PredatorController:
                                self.env_controller.lower_bound,
                                self.env_controller.upper_bound)
 
-        return [np.squeeze(legal_action)]
+        return np.squeeze(legal_action)
 
     def save(self):
         self.critic_model.save(self.weights_file_critic)
@@ -122,9 +122,7 @@ class PredatorController:
 
     # Update actor, critic and target actor, target critic networks
     @tf.function
-    def update(
-            self, state_batch, action_batch, reward_batch, next_state_batch,
-    ):
+    def update(self, state_batch, action_batch, reward_batch, next_state_batch):
         # Training and updating Actor & Critic networks.
         # See Pseudo Code.
         with tf.GradientTape() as tape:
@@ -153,21 +151,18 @@ class PredatorController:
         )
 
     def iterate(self):
-
         tf_prev_state = tf.expand_dims(tf.convert_to_tensor(self.prev_state), 0)
         action = self.policy(tf_prev_state)
-
         # Receive state and reward from environment
         state, done, reward = self.env_controller.step(self.predator, action)
+        print("pos: ({}, {}) a: {}, state: {}, reward: {}"
+              .format(self.predator.x, self.predator.y, action, state, reward))
 
         self.buffer.record((self.prev_state, action, reward, state))
         self.episodic_reward += reward
-
         # Update
-        self.update(self.buffer.sample_batch())
-
+        state_batch, action_batch, reward_batch, next_state_batch = self.buffer.sample_batch()
+        self.update(state_batch, action_batch, reward_batch, next_state_batch)
         self.update_target(self.target_actor.variables, self.actor_model.variables, self.tau)
         self.update_target(self.target_critic.variables, self.critic_model.variables, self.tau)
-
         self.prev_state = state
-
