@@ -4,7 +4,7 @@ from tensorflow.keras import layers, Model
 class Actor:
 
     # The actor choose the move, given the state
-    def __init__(self, num_states, train_acceleration, train_direction):
+    def __init__(self, num_states: int, train_acceleration: bool = True, train_direction: bool = True):
         # the actor has separate towers for action and speed
         # in this way we can train them separately
         inputs = layers.Input(shape=(num_states,))
@@ -22,4 +22,3 @@ class Actor:
 
         # outputs = outputs * upper_bound #resize the range, if required
         self.model = Model(inputs, outputs, name="actor")
-

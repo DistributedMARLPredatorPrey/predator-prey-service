@@ -4,7 +4,7 @@ from tensorflow.keras import layers, Model
 class Critic:
 
     # The critic compute the q-value, given the state and the action
-    def __init__(self, num_states, num_actions):
+    def __init__(self, num_states: int, num_actions: int):
         # State as input
         state_input = layers.Input(shape=num_states)
         state_out = layers.Dense(16, activation="relu")(state_input)

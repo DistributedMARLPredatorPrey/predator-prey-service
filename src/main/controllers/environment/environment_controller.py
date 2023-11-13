@@ -19,7 +19,7 @@ class EnvironmentController:
         self.t_step = 0.4
 
     # agent action
-    def step(self, agent: Agent, action: Tuple[float, float]):
+    def step(self, agent: Agent, action: Tuple[float, float]) -> (List[float], bool, int):
         acc, turn = action
         max_incr = self.max_acc * self.t_step
         v = np.sqrt(np.power(agent.vx, 2) + np.power(agent.vy, 2))
@@ -38,7 +38,7 @@ class EnvironmentController:
             agent.x = next_x
         if next_y >= 0 or next_y < self.environment.y_dim:
             agent.y = next_y
-        return observe(agent, self.environment)
+        return self.observe(agent)
 
-    def observe(self, agent: Agent) -> (List[float], float):
+    def observe(self, agent: Agent) -> (List[float], bool, int):
         EnvironmentObserver().observe(agent, self.environment)

@@ -17,40 +17,23 @@ class Buffer:
         self.state_buffer = np.zeros((self.buffer_capacity, num_states))
         self.action_buffer = np.zeros((self.buffer_capacity, num_actions))
         self.reward_buffer = np.zeros((self.buffer_capacity, 1))
-        self.done_buffer = np.zeros((self.buffer_capacity, 1))
         self.next_state_buffer = np.zeros((self.buffer_capacity, num_states))
 
-    # Stores a transition (s,a,r,s') in the buffer
+    # Takes (s, a, r, s') observation tuple as input
     def record(self, obs_tuple):
-        s, a, r, T, sn = obs_tuple
-        # restart form zero if buffer_capacity is exceeded, replacing old records
+        # Set index to zero if buffer_capacity is exceeded,
+        # replacing old records
         index = self.buffer_counter % self.buffer_capacity
 
-        self.state_buffer[index] = tf.squeeze(s)
-        self.action_buffer[index] = a
-        self.reward_buffer[index] = r
-        self.done_buffer[index] = T
-        self.next_state_buffer[index] = tf.squeeze(sn)
+        self.state_buffer[index] = obs_tuple[0]
+        self.action_buffer[index] = obs_tuple[1]
+        self.reward_buffer[index] = obs_tuple[2]
+        self.next_state_buffer[index] = obs_tuple[3]
 
         self.buffer_counter += 1
 
+    # Sample a batch of data
     def sample_batch(self):
-        # Get sampling range
-        record_range = min(self.buffer_counter, self.buffer_capacity)
-        # Randomly sample indices
-        batch_indices = np.random.choice(record_range, self.batch_size)
-
-        s = self.state_buffer[batch_indices]
-        a = self.action_buffer[batch_indices]
-        r = self.reward_buffer[batch_indices]
-        T = self.done_buffer[batch_indices]
-        sn = self.next_state_buffer[batch_indices]
-        return s, a, r, T, sn
-
-
-
-    # We compute the loss and update parameters
-    def learn(self):
         # Get sampling range
         record_range = min(self.buffer_counter, self.buffer_capacity)
         # Randomly sample indices
@@ -63,4 +46,4 @@ class Buffer:
         reward_batch = tf.cast(reward_batch, dtype=tf.float32)
         next_state_batch = tf.convert_to_tensor(self.next_state_buffer[batch_indices])
 
-        self.update(state_batch, action_batch, reward_batch, next_state_batch)
+        return state_batch, action_batch, reward_batch, next_state_batch

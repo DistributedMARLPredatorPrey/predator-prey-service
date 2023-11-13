@@ -12,6 +12,7 @@ np.random.seed(42)
 
 class EnvironmentObserver:
 
+    # return the list of distances and the reward
     def observe(self, agent: Agent, env: Environment) -> (List[float], float):
         cds = [(a.x, a.y) for a in env.agents if a != agent]
         (x_0, y_0) = (agent.x, agent.y)
@@ -62,14 +63,22 @@ class EnvironmentObserver:
                        )
                 )
                 distances.extend(self._extract_model(o, x, y, x_0, y_0))
-        return distances, self._reward(agent, env)
+        return distances, self._done(agent, env), self._reward(agent, env)
 
-    def _reward(self, agent: Agent, env: Environment):
+    def _done(self, agent: Agent, env: Environment) -> bool:
         for a in env.agents:
             if a != agent:
                 if a.agent_type != agent.agent_type:
                     if self.is_eating(agent, a):
-                        return [2 if agent.agent_type == AgentType.PREDATOR else -2]
+                        return True
+        return False
+
+    def _reward(self, agent: Agent, env: Environment) -> int:
+        for a in env.agents:
+            if a != agent:
+                if a.agent_type != agent.agent_type:
+                    if self.is_eating(agent, a):
+                        return 2 if agent.agent_type == AgentType.PREDATOR else -2
         return 1
 
     @staticmethod
