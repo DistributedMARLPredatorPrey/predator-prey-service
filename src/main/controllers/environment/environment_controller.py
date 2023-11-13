@@ -32,9 +32,9 @@ class EnvironmentController:
         # Compute the next position of the agent, checking if it is inside the boundaries
         next_x = agent.x + agent.vx * self.t_step
         next_y = agent.y + agent.vy * self.t_step
-        if next_x >= 0 or next_x < self.environment.x_dim:
+        if 0 <= next_x < self.environment.x_dim:
             agent.x = next_x
-        if next_y >= 0 or next_y < self.environment.y_dim:
+        if 0 <= next_y < self.environment.y_dim:
             agent.y = next_y
         return self.observe(agent)
 

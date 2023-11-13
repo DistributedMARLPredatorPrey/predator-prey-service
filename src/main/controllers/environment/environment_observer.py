@@ -15,11 +15,11 @@ class EnvironmentObserver:
 
         #print([("({}, {})".format(agent.x, agent.y)) for agent in env.agents])
 
-        cds = [(a.x, a.y) for a in env.agents if a != agent]
+        cds = np.array([(a.x, a.y) for a in env.agents if a != agent])
         (x_0, y_0) = (agent.x, agent.y)
 
         r = 10
-        vd = 20
+        vd = 30
 
         x, y = Real('x'), Real('y')
         y_rng = y - y_0
@@ -82,7 +82,7 @@ class EnvironmentObserver:
                 # if a.agent_type != agent.agent_type:
                 #    if self.is_eating(agent, a, r):
                 #        return 2 if agent.agent_type == AgentType.PREDATOR else -2
-        return 1
+        return 0
 
     @staticmethod
     def _box_constraints(x: Real, y: Real, r: float, cds: List):
