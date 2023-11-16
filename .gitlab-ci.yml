@@ -22,15 +22,16 @@ before_script:
   - pip install virtualenv
   - virtualenv venv
   - source venv/bin/activate
+  - pip install -r requirements.txt
 
 test:
   script:
     - pytest -v --cov
 
-run:
-  script:
-    - pip install -r requirements.txt
-    # run the command here
-  #artifacts:
-  #  paths:
-  #    - build/*
+#run:
+#  script:
+#    - pip install -r requirements.txt
+#    # run the command here
+#  artifacts:
+#    paths:
+#      - build/*
