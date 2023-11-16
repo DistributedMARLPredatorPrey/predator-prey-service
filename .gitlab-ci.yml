@@ -33,6 +33,6 @@ run:
   script:
     - pip install -r requirements.txt
     # run the command here
-  artifacts:
-    paths:
-      - build/*
+  #artifacts:
+  #  paths:
+  #    - build/*
