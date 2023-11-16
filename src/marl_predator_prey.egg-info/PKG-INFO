@@ -1,0 +1,7 @@
+Metadata-Version: 2.1
+Name: marl-predator-prey
+Version: 0.1
+Summary: Distributed RL training application
+Home-page: #
+Author: Luca Fabri
+Author-email: luca.fabri@studio.unibo.it

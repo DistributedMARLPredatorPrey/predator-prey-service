@@ -26,7 +26,8 @@ before_script:
 
 test:
   script:
-    - pytest -v --cov
+    #- pytest -v --cov
+    - python setup.py test
 
 #run:
 #  script:
