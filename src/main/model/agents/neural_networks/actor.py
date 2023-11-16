@@ -22,3 +22,5 @@ class Actor:
 
         # outputs = outputs * upper_bound #resize the range, if required
         self.model = tf.keras.Model(inputs, outputs, name="actor")
+
+

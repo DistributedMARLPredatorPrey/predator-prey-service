@@ -124,7 +124,6 @@ class PredatorController:
     @tf.function
     def update(self, state_batch, action_batch, reward_batch, next_state_batch):
         # Training and updating Actor & Critic networks.
-        # See Pseudo Code.
         with tf.GradientTape() as tape:
             target_actions = self.target_actor(next_state_batch, training=True)
             y = reward_batch + self.gamma * self.target_critic(
