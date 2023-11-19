@@ -29,11 +29,9 @@ class CriticLearner:
 
         # Learning rate for actor-critic models
         self.critic_lr = 1e-4
-        self.actor_lr = 5e-5
 
-        # Creating Optimizer for actor and critic networks
+        # Creating Optimizer for critic network
         self.critic_optimizer = tf.keras.optimizers.Adam(self.critic_lr)
-        self.actor_optimizer = tf.keras.optimizers.Adam(self.actor_lr)
 
         # Discount factor for future rewards
         self.gamma = 0.95
@@ -44,20 +42,9 @@ class CriticLearner:
     # We compute the loss and update parameters of the critic network
     # It returns the updated critic network and the state batch, to be used by the actor
     def learn(self):
-        # Get sampling range
-        record_range = min(self.buffer.buffer_counter, self.buffer.buffer_capacity)
-
-        # Randomly sample indices
-        batch_indices = np.random.choice(record_range, self.buffer.batch_size)
-
-        # Convert to tensors
-        state_batch = tf.convert_to_tensor(self.buffer.state_buffer[batch_indices])
-        action_batch = tf.convert_to_tensor(self.buffer.action_buffer[batch_indices])
-        reward_batch = tf.convert_to_tensor(self.buffer.reward_buffer[batch_indices])
-        reward_batch = tf.cast(reward_batch, dtype=tf.float32)
-        next_state_batch = tf.convert_to_tensor(self.buffer.next_state_buffer[batch_indices])
-
-        # Training  and Updating ***critic model***
+        # Batch a sample from the buffer
+        state_batch, action_batch, reward_batch, next_state_batch = self.buffer.sample_batch()
+        # Train the Critic network
         with tf.GradientTape() as tape:
             target_actions = self.target_actor(next_state_batch, training=True)
             y = reward_batch + self.gamma * self.target_critic(
@@ -70,10 +57,5 @@ class CriticLearner:
         self.critic_optimizer.apply_gradients(
             zip(critic_grad, self.critic_model.trainable_variables)
         )
-        # Updating and training of ***critic network*** ended
-        return self.critic_model, state_batch
-
-
-
-
-
+        # Return the updated Critic along with the used state batch used to apply a gradient update
+        return self.critic_model.get_weights(), state_batch
