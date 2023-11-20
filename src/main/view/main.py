@@ -24,8 +24,11 @@ def train():
     total_iterations = 50_000
     for it in range(total_iterations):
         for k in range(50):
+            actions = []
             for predator_controller in predator_controllers:
-                predator_controller.iterate()
+                actions.append(predator_controller.next_action())
+
+            env_controller.step(actions)
 
         for predator_controller in predator_controllers:
             predator_controller.ep_reward_list.append(predator_controller.episodic_reward)
