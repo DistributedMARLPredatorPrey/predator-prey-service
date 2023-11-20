@@ -2,6 +2,7 @@ from typing import Tuple, List
 
 import numpy as np
 
+from main.model.observation import Observation
 from src.main.controllers.environment.environment_observer import EnvironmentObserver
 from src.main.model.agents.agent import Agent
 from src.main.model.environment import Environment
@@ -17,10 +18,10 @@ class EnvironmentController:
         self.t_step = 0.4
 
     def step(self, actions: List[Tuple[str, List[float]]]):
-        new_states = []
+        observations = []
         for (agent_id, action) in actions:
-            new_states.append((agent_id, self._step_agent(agent_id, action)))
-        return new_states
+            observations.append((agent_id, self._step_agent(agent_id, action)))
+        return observations
 
     def _get_agent_by_id(self, agent_id: str) -> Agent:
         for agent in self.environment.agents:
@@ -28,7 +29,7 @@ class EnvironmentController:
                 return agent
 
     # agent action
-    def _step_agent(self, agent_id: str, action: List[float]) -> (List[float], bool, int):
+    def _step_agent(self, agent_id: str, action: List[float]) -> Observation:
         agent = self._get_agent_by_id(agent_id)
         acc, turn = action[0], action[1]
         max_incr = self.max_acc * self.t_step
@@ -50,5 +51,5 @@ class EnvironmentController:
             agent.y = next_y
         return self._observe(agent)
 
-    def _observe(self, agent: Agent) -> (List[float], bool, int):
+    def _observe(self, agent: Agent) -> Observation:
         return EnvironmentObserver().observe(agent, self.environment)
