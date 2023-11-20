@@ -72,7 +72,6 @@ class PredatorController:
         tf_prev_state = tf.expand_dims(tf.convert_to_tensor(self.prev_state), 0)
         action = self._policy(tf_prev_state)
 
-
         # Receive state and reward from environment
         state, done, reward = self.env_controller.step(self.predator, action)
         print("pos: ({}, {}) a: {}, state: {}, reward: {}"

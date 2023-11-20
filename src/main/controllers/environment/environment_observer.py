@@ -2,18 +2,21 @@ from typing import List
 
 import numpy as np
 from z3 import Or, And, If, Solver, Optimize, AlgebraicNumRef, sat, Real
+
+from main.model.observation import Observation
 from src.main.model.agents.agent import Agent
 from src.main.model.agents.agent_type import AgentType
 from src.main.model.environment import Environment
 
 np.random.seed(42)
 
+
 class EnvironmentObserver:
 
     # return the list of distances and the reward
-    def observe(self, agent: Agent, env: Environment) -> (List[float], float):
+    def observe(self, agent: Agent, env: Environment) -> Observation:
 
-        #print([("({}, {})".format(agent.x, agent.y)) for agent in env.agents])
+        # print([("({}, {})".format(agent.x, agent.y)) for agent in env.agents])
 
         cds = np.array([(a.x, a.y) for a in env.agents if a != agent])
         (x_0, y_0) = (agent.x, agent.y)
@@ -64,7 +67,7 @@ class EnvironmentObserver:
                        )
                 )
                 distances.extend(self._extract_model(o, x, y, x_0, y_0))
-        return distances, self._done(agent, env, r), self._reward(agent, env, r)
+        return Observation(distances, self._done(agent, env, r), self._reward(agent, env, r))
 
     def _done(self, agent: Agent, env: Environment, r) -> bool:
         for a in env.agents:

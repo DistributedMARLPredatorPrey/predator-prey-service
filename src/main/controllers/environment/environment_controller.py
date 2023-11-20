@@ -19,7 +19,7 @@ class EnvironmentController:
     def step(self, actions: List[Tuple[str, List[float]]]):
         new_states = []
         for (agent_id, action) in actions:
-            new_states.append((agent_id, self._step(agent_id, action)))
+            new_states.append((agent_id, self._step_agent(agent_id, action)))
         return new_states
 
     def _get_agent_by_id(self, agent_id: str) -> Agent:
@@ -28,7 +28,7 @@ class EnvironmentController:
                 return agent
 
     # agent action
-    def _step(self, agent_id: str, action: List[float]) -> (List[float], bool, int):
+    def _step_agent(self, agent_id: str, action: List[float]) -> (List[float], bool, int):
         agent = self._get_agent_by_id(agent_id)
         acc, turn = action[0], action[1]
         max_incr = self.max_acc * self.t_step
