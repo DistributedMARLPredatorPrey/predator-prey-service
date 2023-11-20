@@ -16,8 +16,20 @@ class EnvironmentController:
         self.max_acc = 0.1
         self.t_step = 0.4
 
+    def step(self, actions: List[Tuple[str, List[float]]]):
+        new_states = []
+        for (agent_id, action) in actions:
+            new_states.append((agent_id, self._step(agent_id, action)))
+        return new_states
+
+    def _get_agent_by_id(self, agent_id: str) -> Agent:
+        for agent in self.environment.agents:
+            if agent.id == agent_id:
+                return agent
+
     # agent action
-    def step(self, agent: Agent, action: List[float]) -> (List[float], bool, int):
+    def _step(self, agent_id: str, action: List[float]) -> (List[float], bool, int):
+        agent = self._get_agent_by_id(agent_id)
         acc, turn = action[0], action[1]
         max_incr = self.max_acc * self.t_step
         v = np.sqrt(np.power(agent.vx, 2) + np.power(agent.vy, 2))
@@ -36,7 +48,7 @@ class EnvironmentController:
             agent.x = next_x
         if 0 <= next_y < self.environment.y_dim:
             agent.y = next_y
-        return self.observe(agent)
+        return self._observe(agent)
 
-    def observe(self, agent: Agent) -> (List[float], bool, int):
+    def _observe(self, agent: Agent) -> (List[float], bool, int):
         return EnvironmentObserver().observe(agent, self.environment)
