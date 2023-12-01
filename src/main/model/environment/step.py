@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 
-from main.model.environment.observation import Observation
+from src.main.model.environment.observation import Observation
 
 
 @dataclass(frozen=True)

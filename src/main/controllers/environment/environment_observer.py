@@ -3,26 +3,25 @@ from typing import List
 import numpy as np
 from z3 import Or, And, If, Solver, Optimize, AlgebraicNumRef, sat, Real
 
-from main.model.observation import Observation
+from src.main.model.environment.observation import Observation
+from src.main.model.environment.step import Step
+from src.main.model.environment.environment import Environment
 from src.main.model.agents.agent import Agent
-from src.main.model.agents.agent_type import AgentType
-from src.main.model.environment import Environment
 
 np.random.seed(42)
 
 
 class EnvironmentObserver:
 
-    # return the list of distances and the reward
-    def observe(self, agent: Agent, env: Environment) -> Observation:
+    def __init__(self, r: float = 10, vd: float = 30):
+        self.r = r
+        self.vd = vd
 
+    def observe(self, agent: Agent, env: Environment) -> Observation:
         # print([("({}, {})".format(agent.x, agent.y)) for agent in env.agents])
 
         cds = np.array([(a.x, a.y) for a in env.agents if a != agent])
         (x_0, y_0) = (agent.x, agent.y)
-
-        r = 10
-        vd = 30
 
         x, y = Real('x'), Real('y')
         y_rng = y - y_0
@@ -36,9 +35,9 @@ class EnvironmentObserver:
         # - Box of center (x_c, y_c) and radius r:
         #       x_c - r <= x <= x_c + r, y_c - r <= y <= y_c + r
 
-        range_constraint = [If(y_rng >= 0, y_rng, - y_rng) - vd < 0,
-                            If(x_rng >= 0, x_rng, - x_rng) - vd < 0]
-        agent_boxes_constraint = self._box_constraints(x, y, r, cds)
+        range_constraint = [If(y_rng >= 0, y_rng, - y_rng) - self.vd < 0,
+                            If(x_rng >= 0, x_rng, - x_rng) - self.vd < 0]
+        agent_boxes_constraint = self._box_constraints(x, y, self.r, cds)
 
         distances = []
         for lconstr in [y >= y_0, y < y_0]:
@@ -67,9 +66,16 @@ class EnvironmentObserver:
                        )
                 )
                 distances.extend(self._extract_model(o, x, y, x_0, y_0))
-        return Observation(distances, self._done(agent, env, r), self._reward(agent, env, r))
+        return Observation(distances)
 
-    def _done(self, agent: Agent, env: Environment, r) -> bool:
+    # return the list of distances and the reward
+    #def step(self, agent: Agent, env: Environment) -> Step:
+    #    return Step(self.observe(agent, env),
+    #                self._done(agent, env, self.r),
+    #                self.reward(agent, env, self.r)
+    #                )
+
+    def _done(self, agent: Agent, env: Environment, r=10) -> bool:
         for a in env.agents:
             if a != agent:
                 if a.agent_type != agent.agent_type:
@@ -77,7 +83,7 @@ class EnvironmentObserver:
                         return True
         return False
 
-    def _reward(self, agent: Agent, env: Environment, r) -> int:
+    def reward(self, agent: Agent, env: Environment, r=10) -> int:
         for a in env.agents:
             if a != agent:
                 if self.is_eating(agent, a, r):

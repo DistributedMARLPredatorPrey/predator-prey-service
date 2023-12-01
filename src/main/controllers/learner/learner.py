@@ -1,3 +1,5 @@
+from typing import List
+
 import tensorflow as tf
 import numpy as np
 
@@ -9,26 +11,14 @@ from src.main.controllers.agents.buffer import Buffer
 
 class Learner:
 
-    def __init__(self, buffer: Buffer, par_service: ParameterService, num_states: int, num_actions: int):
+    def __init__(self, buffer: Buffer, par_services: List[ParameterService], num_states: int, num_actions: int,
+                 num_agents: int):
         # Parameters
         self.buffer = buffer
-        self.par_service = par_service
+        self.par_services = par_services
         self.num_states = num_states
         self.num_actions = num_actions
-
-        # Creating critic models
-        self.critic_model = Critic(num_states, num_actions).model
-        self.target_critic = Critic(num_states, num_actions).model
-        self.target_critic.set_weights(self.critic_model.get_weights())
-
-        # creating target actor model
-        self.actor_model = Actor(num_states).model
-        self.target_actor = Actor(num_states).model
-        self.target_actor.set_weights(self.actor_model.get_weights())
-
-        # Make target models non trainable.
-        self.target_actor.trainable = False
-        self.target_critic.trainable = False
+        self.num_agents = num_agents
 
         # Learning rate for actor-critic models
         self.critic_lr = 1e-4
@@ -38,9 +28,30 @@ class Learner:
         self.critic_optimizer = tf.keras.optimizers.Adam(self.critic_lr)
         self.actor_optimizer = tf.keras.optimizers.Adam(self.actor_lr)
 
+        # Creating critic models
+        self.critic_models, self.target_critics = [], []
+        for j in range(num_agents):
+            self.critic_models.append(Critic(num_states, num_actions, num_agents).model)
+            self.target_critics.append(Critic(num_states, num_actions, num_agents).model)
+            self.target_critics[j].set_weights(self.critic_models[j].get_weights())
+
+            self.target_critics[j].trainable = False
+            self.critic_models[j].compile(loss='mse', optimizer=self.critic_optimizer)
+
         # Compile the models
-        self.critic_model.compile(loss='mse', optimizer=self.critic_optimizer)
-        self.actor_model.compile(optimizer=self.actor_optimizer)
+        # self.critic_model.compile(loss='mse', optimizer=self.critic_optimizer)
+
+        # creating target actor model
+        self.actor_models, self.target_actors = [], []
+        for j in range(num_agents):
+            self.actor_models.append(Actor(num_states).model)
+            self.target_actors.append(Actor(num_states).model)
+            self.target_actors[j].set_weights(self.actor_models[j].get_weights())
+            self.par_services[j].set_model(self.actor_models[j])
+
+            # Make target models non trainable
+            self.target_actors[j].trainable = False
+            self.actor_models[j].compile(loss='mse', optimizer=self.actor_optimizer)
 
         # Discount factor for future rewards
         self.gamma = 0.95
@@ -49,10 +60,11 @@ class Learner:
         self.tau = 0.005
 
     def update(self):
-        self._update_actor(self._update_critic())
-        self._update_target(self.target_actor.variables, self.actor_model.variables, self.tau)
-        self._update_target(self.target_critic.variables, self.critic_model.variables, self.tau)
-        self.par_service.set_model(self.actor_model)
+        self._update_actors(self._update_critic())
+        for j in range(self.num_agents):
+            self._update_target(self.target_actors[j].variables, self.actor_models[j].variables, self.tau)
+            self._update_target(self.target_critics[j].variables, self.critic_models[j].variables, self.tau)
+            self.par_services[j].set_model(self.actor_models[j])
 
     # Slowly updating target parameters according to the tau rate <<1
     @tf.function
@@ -65,32 +77,55 @@ class Learner:
     def _update_critic(self):
         # Batch a sample from the buffer
         state_batch, action_batch, reward_batch, next_state_batch = self.buffer.sample_batch()
-        # Train the Critic network
-        with tf.GradientTape() as tape:
-            target_actions = self.target_actor(next_state_batch, training=True)
-            y = reward_batch + self.gamma * self.target_critic(
-                [next_state_batch, target_actions], training=True
+
+        # (:, [s_0_0, ..., s_0_13], [s_1_0, ..., s_1_13], ..., [s_9_0, ..., s_9_13])
+        print(state_batch.shape)
+        # (:, [a_0_0, a_0_1], ..., [a_9_0, a_9_1])
+        print(action_batch.shape)
+        print(reward_batch.shape)
+        print(next_state_batch.shape)
+
+        target_actions = np.zeros((self.buffer.batch_size, self.num_agents * self.num_actions))
+        for j in range(self.num_agents):
+            target_actions[:, j * self.num_actions: (j + 1) * self.num_actions] = (
+                self.target_actors[j](
+                    # get the next state of the j-agent
+                    next_state_batch[:, j * self.num_states: (j + 1) * self.num_states], training=True
+                )
             )
-            critic_value = self.critic_model([state_batch, action_batch], training=True)
-            critic_loss = tf.math.reduce_mean(tf.math.square(y - critic_value))
 
-        critic_grad = tape.gradient(critic_loss, self.critic_model.trainable_variables)
-        self.critic_optimizer.apply_gradients(
-            zip(critic_grad, self.critic_model.trainable_variables)
-        )
-        # Return the updated Critic along with the used state batch used to apply a gradient update
-        return state_batch
+        for i in range(self.num_agents):
+            # Train the Critic network
+            with tf.GradientTape() as tape:
+                y = reward_batch[:, i] + self.gamma * self.target_critics[i](
+                    [next_state_batch, target_actions], training=True
+                )
+                critic_value = self.critic_models[i]([state_batch, action_batch], training=True)
+                critic_loss = tf.math.reduce_mean(tf.math.square(y - critic_value))
 
-    def _update_actor(self, state_batch):
-        with tf.GradientTape() as tape:
-            actions = self.actor_model(state_batch, training=True)
-            critic_value = self.critic_model([state_batch, actions], training=True)
-            # Used `-value` as we want to maximize the value given
-            # by the critic for our actions
-            actor_loss = -tf.math.reduce_mean(critic_value)
+            critic_grad = tape.gradient(critic_loss, self.critic_models[i].trainable_variables)
+            self.critic_optimizer.apply_gradients(
+                zip(critic_grad, self.critic_models[i].trainable_variables)
+            )
+            # Return the updated Critic along with the used state batch used to apply a gradient update
+            return state_batch
 
-        actor_grad = tape.gradient(actor_loss, self.actor_model.trainable_variables)
-        self.actor_optimizer.apply_gradients(
-            zip(actor_grad, self.actor_model.trainable_variables)
-        )
+    def _update_actors(self, state_batch):
 
+        actions = np.zeros((self.buffer.batch_size, self.num_agents * self.num_actions))
+        for j in range(self.num_agents):
+            actions[:, j * self.num_actions: (j + 1) * self.num_actions] = self.actor_models[j](
+                state_batch[:, j * self.num_states: (j + 1) * self.num_states])
+
+        for i in range(self.num_agents):
+            with (tf.GradientTape() as tape):
+                critic_value = self.critic_models[i]([state_batch, actions])
+                # Used `-value` as we want to maximize the value given
+                # by the critic for our actions
+                actor_loss = -tf.math.reduce_mean(critic_value)
+
+            actor_grad = tape.gradient(actor_loss, self.actor_models[i].trainable_variables)
+            self.actor_optimizer.apply_gradients(
+                zip(actor_grad, self.actor_models[i].trainable_variables)
+            )
+            print("learning ")
