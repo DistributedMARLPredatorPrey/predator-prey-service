@@ -87,11 +87,11 @@ class EnvironmentObserver:
         for a in env.agents:
             if a != agent:
                 if self.is_eating(agent, a, r):
-                    return -2
+                    return -3
                 # if a.agent_type != agent.agent_type:
                 #    if self.is_eating(agent, a, r):
                 #        return 2 if agent.agent_type == AgentType.PREDATOR else -2
-        return 0
+        return -1
 
     @staticmethod
     def _box_constraints(x: Real, y: Real, r: float, cds: List):
