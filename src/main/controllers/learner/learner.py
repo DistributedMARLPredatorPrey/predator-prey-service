@@ -79,21 +79,6 @@ class Learner:
         # Batch a sample from the buffer
         state_batch, action_batch, reward_batch, next_state_batch = self.buffer.sample_batch()
 
-        # (:, [s_0_0, ..., s_0_13], [s_1_0, ..., s_1_13], ..., [s_9_0, ..., s_9_13])
-        # print(state_batch.shape)
-        # (:, [a_0_0, a_0_1], ..., [a_9_0, a_9_1])
-        # print(action_batch.shape)
-        # print(reward_batch.shape)
-        # print(next_state_batch.shape)
-
-        # target_actions = np.zeros([self.buffer.batch_size, self.num_actions * self.num_agents])
-        #
-        # for j in range(self.num_agents):
-        #     target_actions[:, j * self.num_actions: (j + 1) * self.num_actions] = self.target_actors[j](
-        #         # get the next state of the j-agent
-        #         next_state_batch[:, j * self.num_states: (j + 1) * self.num_states], training=True
-        #     )
-
         target_actions = []
         for j in range(self.num_agents):
             target_actions.append(self.target_actors[j](
@@ -104,10 +89,6 @@ class Learner:
         action_batch_reshape = []
         for j in range(self.num_agents):
             action_batch_reshape.append(action_batch[:, j * self.num_actions: (j + 1) * self.num_actions])
-
-        # print(len(action_batch_reshape))
-        # print(len(action_batch_reshape[0]))
-        # print(len(action_batch_reshape[0][0]))
 
         for i in range(self.num_agents):
             # Train the Critic network
@@ -126,41 +107,6 @@ class Learner:
             return state_batch
 
     def _update_actors(self, state_batch):
-
-        # with tf.GradientTape() as tape:
-        # actions = tf.zeros((self.buffer.batch_size, self.num_agents * self.num_actions))
-        # for j in range(self.num_agents):
-        #
-        #     start_col = j * self.num_states
-        #     end_col = (j + 1) * self.num_states
-        #
-        #     actor_output = self.actor_models[j](state_batch[:, start_col: end_col])
-        #
-        #     batch_indices = tf.range(self.buffer.batch_size)
-        #     col_indices = tf.range(start_col, end_col)
-        #
-        #     indices_to_update = tf.stack([batch_indices, col_indices], axis=1)
-        #     actions = tf.tensor_scatter_nd_update(actions, indices_to_update, actor_output)
-
-        # indices_to_update = tf.meshgrid(
-        #    tf.range(0, self.buffer.batch_size),
-        #    tf.range(j * self.num_actions, (j + 1) * self.num_actions)
-        # )
-        # indices_to_update = tf.stack([indices_to_update[0], indices_to_update[1]], axis=-1)
-        # print(indices_to_update)#
-
-        # actions = tf.tensor_scatter_nd_update(actions, indices_to_update, [self.actor_models[j](
-        #    state_batch[:, j * self.num_states: (j + 1) * self.num_states]
-        # )])
-        # action_tensor = tf.convert_to_tensor(actions)
-
-        # actions = np.zeros((self.buffer.batch_size, self.num_agents * self.num_actions))
-        # for j in range(self.num_agents):
-        #     single_action = self.actor_models[j](
-        #         state_batch[:, j * self.num_states: (j + 1) * self.num_states],
-        #         training=True
-        #     )
-        #     actions[:, j * self.num_actions: (j + 1) * self.num_actions] = single_action
         actions = []
         for j in range(self.num_agents):
             actions.append(self.actor_models[j](
@@ -169,26 +115,13 @@ class Learner:
             ))
 
         for i in range(self.num_agents):
-
             for j in range(self.buffer.batch_size):
-
                 with GradientTape(persistent=True) as tape:
-
-                    # joint_action = actions[j]
 
                     local_action = self.actor_models[i](
                         np.array([state_batch[j][i * self.num_states: (i + 1) * self.num_states]]),
                         training=True
                     )
-
-                    # joint_actions = np.array([
-                    #     np.array([joint_action[k: k + self.num_actions]
-                    #               if k != i * self.num_actions
-                    #               else local_action
-                    #               for k in range(0, len(joint_action), self.num_actions)
-                    #               ]).flatten()
-                    # ])
-
                     critic_value = self.critic_models[i](
                         [
                             np.array([state_batch[j]]),
@@ -201,22 +134,5 @@ class Learner:
                     )
                     actor_loss = -tf.math.reduce_mean(critic_value)
 
-                # critic_grad = tape.gradient(critic_value, local_action)
                 actor_grad = tape.gradient(actor_loss, self.actor_models[i].trainable_variables)
-                # print(f"critic grad {critic_grad}")
-                print(actor_grad)
-                #if j == 0:
-                #    new_actor_grad = [critic_grad[0][0] * element for element in actor_grad]
-                #else:
-                #    # Updating gradient network if it is 1st agent
-                #    new_actor_grad = [-1 * element / self.buffer.batch_size for element in new_actor_grad]
-
-                # Updating gradient network if it is 1st agent
                 self.actor_optimizer.apply_gradients(zip(actor_grad, self.actor_models[i].trainable_variables))
-
-            # print([var.name for var in tape.watched_variables()])
-            # actor_grad = tape.gradient(actor_loss, self.actor_models[i].trainable_variables)
-            # print(actor_grad)
-            # self.actor_optimizer.apply_gradients(
-            #    zip(actor_grad, self.actor_models[i].trainable_variables)
-            # )
