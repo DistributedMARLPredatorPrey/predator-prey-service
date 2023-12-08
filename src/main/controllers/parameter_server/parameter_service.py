@@ -1,4 +1,4 @@
-from keras import Model
+from tensorflow.keras import Model
 
 
 class ParameterService:

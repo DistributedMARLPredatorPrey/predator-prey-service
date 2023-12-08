@@ -12,8 +12,9 @@ class Critic:
         state_out = layers.Dense(256, activation="relu", name=f"p{id}_2")(state_out)
 
         # Action as input
-        action_input = layers.Input(shape=(num_actions * num_agents,))
-        action_out = layers.Dense(256, activation="relu", name=f"p{id}_3")(action_input)
+        action_input = [layers.Input(shape=num_actions, name=f"{id}_i{k}") for k in range(num_agents)]
+        action_input_concat = layers.Concatenate(name=f"{id}_c")(action_input)
+        action_out = layers.Dense(256, activation="relu", name=f"p{id}_3")(action_input_concat)
 
         concat = layers.Concatenate(name=f"{id}_4")([state_out, action_out])
 
@@ -21,3 +22,5 @@ class Critic:
         out = layers.Dense(128, activation="relu", name=f"p{id}_6")(out)
         outputs = layers.Dense(1)(out)  # Outputs single value
         self.model = tf.keras.Model([state_input, action_input], outputs, name="critic")
+
+        #print(self.model.summary())
