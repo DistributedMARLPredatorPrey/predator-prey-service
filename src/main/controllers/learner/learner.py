@@ -2,6 +2,7 @@ from typing import List
 
 import tensorflow as tf
 import numpy as np
+from tensorflow import GradientTape
 
 from src.main.controllers.parameter_server.parameter_service import ParameterService
 from src.main.model.agents.neural_networks.actor import Actor
@@ -31,12 +32,12 @@ class Learner:
         # Creating critic models
         self.critic_models, self.target_critics = [], []
         for j in range(num_agents):
-            self.critic_models.append(Critic(num_states, num_actions, num_agents).model)
-            self.target_critics.append(Critic(num_states, num_actions, num_agents).model)
+            self.critic_models.append(Critic(j, num_states, num_actions, num_agents).model)
+            self.target_critics.append(Critic(j, num_states, num_actions, num_agents).model)
             self.target_critics[j].set_weights(self.critic_models[j].get_weights())
 
             self.target_critics[j].trainable = False
-            # self.critic_models[j].compile(loss='mse', optimizer=self.critic_optimizer)
+            self.critic_models[j].compile(loss='mse', optimizer=self.critic_optimizer)
 
         # Compile the models
         # self.critic_model.compile(loss='mse', optimizer=self.critic_optimizer)
@@ -44,15 +45,15 @@ class Learner:
         # creating target actor model
         self.actor_models, self.target_actors = [], []
         for j in range(num_agents):
-            self.actor_models.append(Actor(num_states).model)
-            self.target_actors.append(Actor(num_states).model)
+            self.actor_models.append(Actor(j, num_states).model)
+            self.target_actors.append(Actor(j, num_states).model)
             self.target_actors[j].set_weights(self.actor_models[j].get_weights())
 
             self.par_services[j].set_model(self.actor_models[j])
 
             # Make target models non trainable
             self.target_actors[j].trainable = False
-            # self.actor_models[j].compile(loss='mse', optimizer=self.actor_optimizer)
+            self.actor_models[j].compile(loss='mse', optimizer=self.actor_optimizer)
 
         # Discount factor for future rewards
         self.gamma = 0.95
@@ -62,10 +63,9 @@ class Learner:
 
     def update(self):
         self._update_actors(self._update_critic())
-        # for j in range(self.num_agents):
-        #    self._update_target(self.target_actors[j].variables, self.actor_models[j].variables, self.tau)
-        #    self._update_target(self.target_critics[j].variables, self.critic_models[j].variables, self.tau)
-        #    self.par_services[j].set_model(self.actor_models[j])
+        for j in range(self.num_agents):
+            self._update_target(self.target_actors[j].variables, self.actor_models[j].variables, self.tau)
+            self._update_target(self.target_critics[j].variables, self.critic_models[j].variables, self.tau)
 
     # Slowly updating target parameters according to the tau rate <<1
     @tf.function
@@ -86,18 +86,17 @@ class Learner:
         # print(reward_batch.shape)
         # print(next_state_batch.shape)
 
-        target_actions = np.zeros((self.buffer.batch_size, self.num_agents * self.num_actions))
+        target_actions = np.zeros([self.buffer.batch_size, self.num_actions * self.num_agents])
+
         for j in range(self.num_agents):
-            target_actions[:, j * self.num_actions: (j + 1) * self.num_actions] = (
-                self.target_actors[j](
-                    # get the next state of the j-agent
-                    next_state_batch[:, j * self.num_states: (j + 1) * self.num_states], training=True
-                )
+            target_actions[:, j * self.num_actions: (j + 1) * self.num_actions] = self.target_actors[j](
+                # get the next state of the j-agent
+                next_state_batch[:, j * self.num_states: (j + 1) * self.num_states], training=True
             )
 
         for i in range(self.num_agents):
             # Train the Critic network
-            with tf.GradientTape(persistent=True) as tape:
+            with tf.GradientTape() as tape:
                 y = reward_batch[:, i] + self.gamma * self.target_critics[i](
                     [next_state_batch, target_actions], training=True
                 )
@@ -113,33 +112,64 @@ class Learner:
 
     def _update_actors(self, state_batch):
 
+        # with tf.GradientTape() as tape:
+        # actions = tf.zeros((self.buffer.batch_size, self.num_agents * self.num_actions))
+        # for j in range(self.num_agents):
+        #
+        #     start_col = j * self.num_states
+        #     end_col = (j + 1) * self.num_states
+        #
+        #     actor_output = self.actor_models[j](state_batch[:, start_col: end_col])
+        #
+        #     batch_indices = tf.range(self.buffer.batch_size)
+        #     col_indices = tf.range(start_col, end_col)
+        #
+        #     indices_to_update = tf.stack([batch_indices, col_indices], axis=1)
+        #     actions = tf.tensor_scatter_nd_update(actions, indices_to_update, actor_output)
+
+        # indices_to_update = tf.meshgrid(
+        #    tf.range(0, self.buffer.batch_size),
+        #    tf.range(j * self.num_actions, (j + 1) * self.num_actions)
+        # )
+        # indices_to_update = tf.stack([indices_to_update[0], indices_to_update[1]], axis=-1)
+        # print(indices_to_update)#
+
+        # actions = tf.tensor_scatter_nd_update(actions, indices_to_update, [self.actor_models[j](
+        #    state_batch[:, j * self.num_states: (j + 1) * self.num_states]
+        # )])
+        # action_tensor = tf.convert_to_tensor(actions)
+
         actions = np.zeros((self.buffer.batch_size, self.num_agents * self.num_actions))
         for j in range(self.num_agents):
-            with tf.GradientTape():
-                actions[:, j * self.num_actions: (j + 1) * self.num_actions] = self.actor_models[j](
-                    state_batch[:, j * self.num_states: (j + 1) * self.num_states]
-                )
+            single_action = self.actor_models[j](
+                state_batch[:, j * self.num_states: (j + 1) * self.num_states],
+                training=True
+            )
+            actions[:, j * self.num_actions: (j + 1) * self.num_actions] = single_action
 
-        for i in range(self.num_agents):
+            for i in range(self.num_agents):
 
-            for k in range(self.buffer.batch_size):
-                with tf.GradientTape(persistent=True) as tape:
+                with GradientTape() as tape:
 
-                    self.actor_models[i](np.array(
-                        [state_batch[:, self.num_states * i: (i + 1) * self.num_states][k]]),
-                        training=True
-                    )
+                    joint_actions = np.array([
+                        np.array([joint_action[k: k + self.num_actions]
+                                  if k != i * self.num_actions
+                                  else
+                                  self.actor_models[i](
+                                      np.array([state_batch[idx][i * self.num_states: (i + 1) * self.num_states]]),
+                                      training=True
+                                  )[0]
+                                  for k in range(0, len(joint_action), self.num_actions)]).flatten()
+                        for idx, joint_action in enumerate(actions)
+                    ])
 
-                    critic_value = self.critic_models[i](
-                        [
-                            np.array([state_batch[k]]),
-                            np.array([actions[k]])
-                        ],
-                        training=True
-                    )
-                    actor_loss = -tf.math.reduce_mean(critic_value)
+                    critic_values = self.critic_models[i]([state_batch, joint_actions], training=True)
+                    actor_loss = -tf.math.reduce_mean(critic_values)
 
+                # print([var.name for var in tape.watched_variables()])
                 actor_grad = tape.gradient(actor_loss, self.actor_models[i].trainable_variables)
+                print(actor_grad)
                 self.actor_optimizer.apply_gradients(
                     zip(actor_grad, self.actor_models[i].trainable_variables)
                 )
+

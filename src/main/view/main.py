@@ -14,7 +14,7 @@ from datetime import datetime
 
 
 def train():
-    x_dim, y_dim = 500, 500
+    x_dim, y_dim = 250, 250
     predators = [Predator(i, random.randint(0, x_dim), random.randint(0, y_dim)) for i in range(10)]
 
     # ParameterService & Learner
