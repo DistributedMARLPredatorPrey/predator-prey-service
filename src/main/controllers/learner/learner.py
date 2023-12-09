@@ -24,23 +24,25 @@ class Learner:
         self.critic_lr = 1e-4
         self.actor_lr = 5e-5
 
-        # Creating Optimizer for Actor and Critic networks
-        self.critic_optimizer = tf.keras.optimizers.Adam(self.critic_lr)
-        self.actor_optimizer = tf.keras.optimizers.Adam(self.actor_lr)
-
         # Creating critic models
         self.critic_models, self.target_critics = [], []
+        # creating target actor model
+        self.actor_models, self.target_actors = [], []
+        # Creating Optimizer for Actor and Critic networks
+        self.critic_optimizers = []
+        self.actor_optimizers = []
+
         for j in range(num_agents):
+            self.critic_optimizers.append(tf.keras.optimizers.Adam(self.critic_lr))
+            self.actor_optimizers.append(tf.keras.optimizers.Adam(self.actor_lr))
+
             self.critic_models.append(Critic(j, num_states, num_actions, num_agents).model)
             self.target_critics.append(Critic(j, num_states, num_actions, num_agents).model)
             self.target_critics[j].set_weights(self.critic_models[j].get_weights())
 
             self.target_critics[j].trainable = False
-            self.critic_models[j].compile(loss='mse', optimizer=self.critic_optimizer)
+            self.critic_models[j].compile(loss='mse', optimizer=self.critic_optimizers[j])
 
-        # creating target actor model
-        self.actor_models, self.target_actors = [], []
-        for j in range(num_agents):
             self.actor_models.append(Actor(j, num_states).model)
             self.target_actors.append(Actor(j, num_states).model)
             self.target_actors[j].set_weights(self.actor_models[j].get_weights())
@@ -49,7 +51,7 @@ class Learner:
 
             # Make target models non trainable
             self.target_actors[j].trainable = False
-            self.actor_models[j].compile(loss='mse', optimizer=self.actor_optimizer)
+            self.actor_models[j].compile(loss='mse', optimizer=self.actor_optimizers[j])
 
         # Discount factor for future rewards
         self.gamma = 0.95
@@ -60,9 +62,6 @@ class Learner:
     def update(self):
         self._update_actors(self._update_critic())
         self._update_targets()
-        # for j in range(self.num_agents):
-        #     self._update_target(self.target_actors[j].variables, self.actor_models[j].variables, self.tau)
-        #     self._update_target(self.target_critics[j].variables, self.critic_models[j].variables, self.tau)
 
     # Slowly updating target parameters according to the tau rate <<1
     @tf.function
@@ -104,7 +103,7 @@ class Learner:
                 critic_loss = tf.math.reduce_mean(tf.math.square(y - critic_value))
 
             critic_grad = tape.gradient(critic_loss, self.critic_models[i].trainable_variables)
-            self.critic_optimizer.apply_gradients(
+            self.critic_optimizers[i].apply_gradients(
                 zip(critic_grad, self.critic_models[i].trainable_variables)
             )
         return state_batch
@@ -139,4 +138,4 @@ class Learner:
                     actor_loss = -tf.math.reduce_mean(critic_value)
 
                 actor_grad = tape.gradient(actor_loss, self.actor_models[i].trainable_variables)
-                self.actor_optimizer.apply_gradients(zip(actor_grad, self.actor_models[i].trainable_variables))
+                self.actor_optimizers[i].apply_gradients(zip(actor_grad, self.actor_models[i].trainable_variables))
