@@ -4,26 +4,30 @@ import tensorflow as tf
 
 
 class Buffer:
-    def __init__(self, buffer_capacity=100000, batch_size=64, num_states=None, num_actions=None):
+    def __init__(self, buffer_capacity=100_000, batch_size=64, num_states=None, num_actions=None, num_agents=None):
         # Max Number of tuples that can be stored
         self.buffer_capacity = buffer_capacity
         # Num of tuples used for training
         self.batch_size = batch_size
 
+        self.num_states = num_states
+        self.num_actions = num_actions
+
         # Current number of tuples in buffer
         self.buffer_counter = 0
 
         # We have a different array for each tuple element
-        self.state_buffer = np.zeros((self.buffer_capacity, num_states))
-        self.action_buffer = np.zeros((self.buffer_capacity, num_actions))
-        self.reward_buffer = np.zeros((self.buffer_capacity, 1))
-        self.next_state_buffer = np.zeros((self.buffer_capacity, num_states))
+        self.state_buffer = np.zeros((self.buffer_capacity, num_agents * num_states))
+        self.action_buffer = np.zeros((self.buffer_capacity, num_agents * num_actions))
+        self.reward_buffer = np.zeros((self.buffer_capacity, num_agents))
+        self.next_state_buffer = np.zeros((self.buffer_capacity, num_agents * num_states))
 
     # Takes (s, a, r, s') observation tuple as input
     def record(self, obs_tuple):
         # Set index to zero if buffer_capacity is exceeded,
         # replacing old records
         index = self.buffer_counter % self.buffer_capacity
+        print(obs_tuple)
         self.state_buffer[index] = obs_tuple[0]
         self.action_buffer[index] = obs_tuple[1]
         self.reward_buffer[index] = obs_tuple[2]
