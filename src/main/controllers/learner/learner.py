@@ -36,15 +36,15 @@ class Learner:
             self.critic_optimizers.append(tf.keras.optimizers.Adam(self.critic_lr))
             self.actor_optimizers.append(tf.keras.optimizers.Adam(self.actor_lr))
 
-            self.critic_models.append(Critic(j, num_states, num_actions, num_agents).model)
-            self.target_critics.append(Critic(j, num_states, num_actions, num_agents).model)
+            self.critic_models.append(Critic(num_states, num_actions, num_agents).model)
+            self.target_critics.append(Critic(num_states, num_actions, num_agents).model)
             self.target_critics[j].set_weights(self.critic_models[j].get_weights())
 
             self.target_critics[j].trainable = False
             self.critic_models[j].compile(loss='mse', optimizer=self.critic_optimizers[j])
 
-            self.actor_models.append(Actor(j, num_states).model)
-            self.target_actors.append(Actor(j, num_states).model)
+            self.actor_models.append(Actor(num_states).model)
+            self.target_actors.append(Actor(num_states).model)
             self.target_actors[j].set_weights(self.actor_models[j].get_weights())
 
             self.par_services[j].set_model(self.actor_models[j])
@@ -116,6 +116,7 @@ class Learner:
                 training=True
             ))
         self._update_actors_network(state_batch, actions)
+
 
     def _update_actors_network(self, state_batch, actions):
         for i in range(self.num_agents):
