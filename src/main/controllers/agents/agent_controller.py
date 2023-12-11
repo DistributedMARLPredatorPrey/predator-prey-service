@@ -1,3 +1,5 @@
+from z3 import Solver, Real, sat
+
 from src.main.controllers.parameter_server.parameter_service import ParameterService
 from src.main.model.agents.agent import Agent
 
@@ -7,11 +9,12 @@ import numpy as np
 
 class AgentController:
 
-    def __init__(self, lower_bound: float, upper_bound: float,
+    def __init__(self, lower_bound: float, upper_bound: float, r: float,
                  agent: Agent,
                  par_service: ParameterService):
         self.lower_bound = lower_bound
         self.upper_bound = upper_bound
+        self.r = r
         self.agent = agent
         self.par_service = par_service
 
@@ -37,6 +40,21 @@ class AgentController:
         legal_action = np.clip(sampled_action, self.lower_bound, self.upper_bound)
         return np.squeeze(legal_action)
 
+    def eat(self, target: Agent):
+        x, y = Real('x'), Real('y')
+        s = Solver()
+        s.add(x < self.agent.x + self.r, x >= self.agent.x - self.r,
+              x < target.x + self.r, x >= target.x - self.r,
+              y < self.agent.y + self.r, y >= self.agent.y - self.r,
+              y < target.y + self.r, y >= target.y - self.r
+              )
+        return s.check() == sat
+
     # Base reward method, to be overridden by subclasses
-    def reward(self, observation):
+    def reward(self, agents):
         raise NotImplementedError("Subclasses must implement this method")
+
+    # Base done method, to be overridden by subclasses
+    def done(self):
+        raise NotImplementedError("Subclasses must implement this method")
+

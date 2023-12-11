@@ -33,12 +33,13 @@ class EnvironmentController:
             PredatorController(
                 lower_bound=self.lower_bound,
                 upper_bound=self.upper_bound,
+                r=10,
+                life=100,
                 predator=agent,
                 par_service=self.par_services[self.environment.agents.index(agent)]
             )
             for agent in self.environment.agents if agent.agent_type == AgentType.PREDATOR
         ]
-
         # Buffer
         self.buffer = Buffer(50_000, 64,
                              environment.num_states,
@@ -58,7 +59,7 @@ class EnvironmentController:
         # Initial observation
         prev_obs_dict = {}
         for agent in self.environment.agents:
-            prev_obs_dict.update({agent.id:  self.env_obs.observe(agent, self.environment)})
+            prev_obs_dict.update({agent.id: self.env_obs.observe(agent, self.environment)})
 
         # Train
         total_iterations = 50_000
@@ -72,7 +73,7 @@ class EnvironmentController:
                 # Get the actions from the agents
                 actions_dict = {}
                 for predator_controller in self.agent_controllers:
-                    p_id = predator_controller.predator.id
+                    p_id = predator_controller.agent.id
                     tf_prev_state = tf.expand_dims(
                         tf.convert_to_tensor(prev_obs_dict[p_id].observation), 0
                     )
@@ -93,6 +94,8 @@ class EnvironmentController:
 
                     avg_rewards.update({p_id: avg_rewards[p_id] + rewards_dict[p_id]})
 
+                print([reward for reward in rewards])
+                #print([(a.agent.x, a.agent.y) for a in self.agent_controllers])
                 # Store on the buffer the joint data
                 self.buffer.record((prev_obs, actions, rewards, next_obs))
 
@@ -113,7 +116,7 @@ class EnvironmentController:
     def _rewards(self) -> Dict[str, int]:
         rewards = {}
         for agent_controller in self.agent_controllers:
-            rewards.update({agent_controller.agent.id: self.env_obs.reward(self.environment.agents)})
+            rewards.update({agent_controller.agent.id: agent_controller.reward(self.environment.agents)})
         return rewards
 
     def _get_agent_by_id(self, agent_id: str) -> Agent:

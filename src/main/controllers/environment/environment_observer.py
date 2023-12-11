@@ -12,7 +12,7 @@ np.random.seed(42)
 
 class EnvironmentObserver:
 
-    def __init__(self, r: float = 10, vd: float = 30):
+    def __init__(self, r: float = 5, vd: float = 30):
         self.r = r
         self.vd = vd
 
