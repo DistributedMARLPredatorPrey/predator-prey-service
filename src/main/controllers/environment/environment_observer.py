@@ -3,10 +3,9 @@ from typing import List
 import numpy as np
 from z3 import Or, And, If, Solver, Optimize, AlgebraicNumRef, sat, Real
 
-from src.main.model.environment.observation import Observation
-from src.main.model.environment.step import Step
-from src.main.model.environment.environment import Environment
 from src.main.model.agents.agent import Agent
+from src.main.model.environment.environment import Environment
+from src.main.model.environment.observation import Observation
 
 np.random.seed(42)
 
@@ -68,13 +67,6 @@ class EnvironmentObserver:
                 distances.extend(self._extract_model(o, x, y, x_0, y_0))
         return Observation(distances)
 
-    # return the list of distances and the reward
-    #def step(self, agent: Agent, env: Environment) -> Step:
-    #    return Step(self.observe(agent, env),
-    #                self._done(agent, env, self.r),
-    #                self.reward(agent, env, self.r)
-    #                )
-
     def _done(self, agent: Agent, env: Environment, r=10) -> bool:
         for a in env.agents:
             if a != agent:
@@ -82,16 +74,6 @@ class EnvironmentObserver:
                     if self.is_eating(agent, a, r):
                         return True
         return False
-
-    def reward(self, agent: Agent, env: Environment, r=10) -> int:
-        for a in env.agents:
-            if a != agent:
-                if self.is_eating(agent, a, r):
-                    return -3
-                # if a.agent_type != agent.agent_type:
-                #    if self.is_eating(agent, a, r):
-                #        return 2 if agent.agent_type == AgentType.PREDATOR else -2
-        return -1
 
     @staticmethod
     def _box_constraints(x: Real, y: Real, r: float, cds: List):

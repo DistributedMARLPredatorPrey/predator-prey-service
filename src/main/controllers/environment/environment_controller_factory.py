@@ -1,8 +1,8 @@
 from random import uniform, randint
 
-from main.controllers.environment.environment_controller import EnvironmentController
-from main.model.agents.predator import Predator
-from main.model.environment import Environment
+from src.main.controllers.environment.environment_controller import EnvironmentController
+from src.main.model.agents.predator import Predator
+from src.main.model.environment.environment import Environment
 
 
 class EnvironmentControllerFactory:
@@ -18,7 +18,7 @@ class EnvironmentControllerFactory:
         for i in range(n_predators):
             agents.append(Predator(id="predator_${id}".format(id=i),
                                    x=uniform(0, env_x_dim), y=uniform(0, env_y_dim),
-                                   vx=0.2, vy=0.2, theta=0, acc=0))
+                                   vx=0.2, vy=0.2, acc=0))
 
         return EnvironmentController(Environment(x_dim=env_x_dim, y_dim=env_y_dim, agents=agents))
 

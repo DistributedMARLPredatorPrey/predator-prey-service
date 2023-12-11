@@ -1,8 +1,14 @@
 from typing import List, Dict
 
 import numpy as np
+import tensorflow as tf
 
+from src.main.model.agents.agent_type import AgentType
+from src.main.controllers.agents.buffer import Buffer
+from src.main.controllers.agents.predator_controller import PredatorController
 from src.main.controllers.environment.environment_observer import EnvironmentObserver
+from src.main.controllers.learner.learner import Learner
+from src.main.controllers.parameter_server.parameter_service import ParameterService
 from src.main.model.agents.agent import Agent
 from src.main.model.environment.environment import Environment
 from src.main.model.environment.observation import Observation
@@ -11,28 +17,107 @@ from src.main.model.environment.observation import Observation
 class EnvironmentController:
 
     def __init__(self, environment: Environment):
+
+        # Parameters
         self.environment = environment
         self.upper_bound = 1
         self.lower_bound = -1
-        self.max_acc = 0.1
-        self.t_step = 0.4
+        self.max_acc = 0.2
+        self.t_step = 1
         self.environment_observer = EnvironmentObserver()
 
-    def step(self, actions: Dict[str, List[float]]) -> Dict[str, Observation]:
+        # ParameterService & Learner
+        self.par_services = [ParameterService() for _ in range(len(environment.agents))]
+
+        # Predator Controllers
+        self.predator_controllers = [
+            PredatorController(
+                lower_bound=self.lower_bound,
+                upper_bound=self.upper_bound,
+                predator=agent,
+                par_service=self.par_services[self.environment.agents.index(agent)]
+            )
+            for agent in self.environment.agents if agent.agent_type == AgentType.PREDATOR
+        ]
+
+        # Buffer
+        self.buffer = Buffer(50_000, 64,
+                             environment.num_states,
+                             environment.num_actions,
+                             len(self.predator_controllers)
+                             )
+
+        # Learners
+        self.learners = [Learner(self.buffer,
+                                 self.par_services,
+                                 environment.num_states,
+                                 environment.num_actions,
+                                 len(self.predator_controllers)
+                                 )
+                         ]
+
+    def train(self):
+
+        # Initial observation
+        prev_obs_dict = {}
+        for agent in self.environment.agents:
+            prev_obs_dict.update({agent.id: self._observe(agent)})
+
+        # Train
+        total_iterations = 50_000
+        for it in range(total_iterations):
+
+            avg_rewards = {}
+            for agent in self.environment.agents:
+                avg_rewards.update({agent.id: 0})
+
+            for k in range(25):
+                # Get the actions from the agents
+                actions_dict = {}
+                for predator_controller in self.predator_controllers:
+                    p_id = predator_controller.predator.id
+                    tf_prev_state = tf.expand_dims(
+                        tf.convert_to_tensor(prev_obs_dict[p_id].observation), 0
+                    )
+                    action = predator_controller.policy(tf_prev_state)
+                    actions_dict.update({p_id: list(action)})
+
+                # Move all the agents at once and get their rewards only after
+                next_obs_dict = self._step(actions_dict)
+                rewards_dict = self._rewards()
+
+                prev_obs, actions, rewards, next_obs = [], [], [], []
+                for agent in self.environment.agents:
+                    p_id = agent.id
+                    prev_obs += prev_obs_dict[p_id].observation
+                    actions += actions_dict[p_id]
+                    rewards.append(rewards_dict[p_id])
+                    next_obs += next_obs_dict[p_id].observation
+
+                    avg_rewards.update({p_id: avg_rewards[p_id] + rewards_dict[p_id]})
+
+                # Store on the buffer the joint data
+                self.buffer.record((prev_obs, actions, rewards, next_obs))
+
+            for learner in self.learners:
+                print([(p_id, r / 25) for p_id, r in avg_rewards.items()])
+                learner.update()
+
+    def _step(self, actions: Dict[str, List[float]]) -> Dict[str, Observation]:
         for (agent_id, action) in actions.items():
             self._step_agent(agent_id, action)
         observations = {}
         for agent_id in actions:
-            observations.update({agent_id: self.observe(self._get_agent_by_id(agent_id))})
+            observations.update({agent_id: self._observe(self._get_agent_by_id(agent_id))})
         return observations
 
-    def rewards(self) -> Dict[str, int]:
+    def _rewards(self) -> Dict[str, int]:
         rewards = {}
         for agent in self.environment.agents:
             rewards.update({agent.id: self.environment_observer.reward(agent, self.environment)})
         return rewards
 
-    def observe(self, agent: Agent) -> Observation:
+    def _observe(self, agent: Agent) -> Observation:
         return self.environment_observer.observe(agent, self.environment)
 
     def _get_agent_by_id(self, agent_id: str) -> Agent:

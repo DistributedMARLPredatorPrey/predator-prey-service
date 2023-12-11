@@ -2,19 +2,18 @@ import numpy as np
 import tensorflow as tf
 
 from src.main.controllers.parameter_server.parameter_service import ParameterService
-from src.main.controllers.environment.environment_controller import EnvironmentController
 from src.main.model.agents.predator import Predator
 
 
 class PredatorController:
-    rnd_state = 42
 
-    def __init__(self, env_controller: EnvironmentController, predator: Predator, par_service: ParameterService):
-        self.env_controller = env_controller
+    def __init__(self, lower_bound: float, upper_bound: float, predator: Predator,
+                 par_service: ParameterService):
+        self.lower_bound = lower_bound
+        self.upper_bound = upper_bound
         self.predator = predator
 
-        # initial state
-        # self.prev_state, _, _ = env_controller.observe(self.predator)
+        # Initial state
         self.episodic_reward = 0
         self.par_service = par_service
 
@@ -49,25 +48,6 @@ class PredatorController:
             print("decelerating")
 
         # Finally, we ensure actions are within bounds
-        legal_action = np.clip(sampled_action,
-                               self.env_controller.lower_bound,
-                               self.env_controller.upper_bound)
+        legal_action = np.clip(sampled_action, self.lower_bound, self.upper_bound)
 
         return np.squeeze(legal_action)
-
-    #def next_action(self):
-    #    tf_prev_state = tf.expand_dims(tf.convert_to_tensor(self.prev_state), 0)
-    #    action = self.policy(tf_prev_state)
-
-        # Receive state and reward from environment
-        # state, done, reward = self.env_controller.step(self.predator, action)
-        # print("pos: ({}, {}) a: {}, state: {}, reward: {}"
-        #      .format(self.predator.x, self.predator.y, action, state, reward))
-
-        #self.buffer.record((self.prev_state, action, reward, state))
-        #self.episodic_reward += reward
-        # Update
-        #state_batch, action_batch, reward_batch, next_state_batch = self.buffer.sample_batch()
-        #self.update(state_batch, action_batch, reward_batch, next_state_batch)
-
-        #self.prev_state = state

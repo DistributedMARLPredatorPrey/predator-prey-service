@@ -11,8 +11,9 @@ from src.main.controllers.agents.buffer import Buffer
 
 class Learner:
 
-    def __init__(self, buffer: Buffer, par_services: List[ParameterService], num_states: int, num_actions: int,
-                 num_agents: int):
+    def __init__(self, buffer: Buffer,
+                 par_services: List[ParameterService],
+                 num_states: int, num_actions: int, num_agents: int):
         # Parameters
         self.buffer = buffer
         self.par_services = par_services
@@ -117,26 +118,25 @@ class Learner:
             ))
         self._update_actors_network(state_batch, actions)
 
+    @tf.function
     def _update_actors_network(self, state_batch, actions):
         for i in range(self.num_agents):
-            for j in range(self.buffer.batch_size):
-                with tf.GradientTape(persistent=True) as tape:
-
-                    action = self.actor_models[i](
-                        np.array([state_batch[j][i * self.num_states: (i + 1) * self.num_states]]),
-                        training=True
-                    )
-                    critic_value = self.critic_models[i](
+            with tf.GradientTape(persistent=True) as tape:
+                action = self.actor_models[i](
+                    [state_batch[:, i * self.num_states: (i + 1) * self.num_states]],
+                    training=True
+                )
+                critic_value = self.critic_models[i](
+                    [
+                        state_batch,
                         [
-                            np.array([state_batch[j]]),
-                            [
-                                np.array([actions[k][j]]) if k != i else action
-                                for k in range(self.num_agents)
-                            ]
-                        ],
-                        training=True
-                    )
-                    actor_loss = -tf.math.reduce_mean(critic_value)
+                            [actions[k][:]] if k != i else action
+                            for k in range(self.num_agents)
+                        ]
+                    ],
+                    training=True
+                )
+                actor_loss = -tf.math.reduce_mean(critic_value)
 
-                actor_grad = tape.gradient(actor_loss, self.actor_models[i].trainable_variables)
-                self.actor_optimizers[i].apply_gradients(zip(actor_grad, self.actor_models[i].trainable_variables))
+            actor_grad = tape.gradient(actor_loss, self.actor_models[i].trainable_variables)
+            self.actor_optimizers[i].apply_gradients(zip(actor_grad, self.actor_models[i].trainable_variables))
