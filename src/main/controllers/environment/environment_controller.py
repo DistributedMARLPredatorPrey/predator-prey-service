@@ -17,20 +17,19 @@ from src.main.model.environment.observation import Observation
 class EnvironmentController:
 
     def __init__(self, environment: Environment):
-
         # Parameters
         self.environment = environment
         self.upper_bound = 1
         self.lower_bound = -1
         self.max_acc = 0.2
         self.t_step = 1
-        self.environment_observer = EnvironmentObserver()
+        self.env_obs = EnvironmentObserver()
 
         # ParameterService & Learner
         self.par_services = [ParameterService() for _ in range(len(environment.agents))]
 
         # Predator Controllers
-        self.predator_controllers = [
+        self.agent_controllers = [
             PredatorController(
                 lower_bound=self.lower_bound,
                 upper_bound=self.upper_bound,
@@ -44,24 +43,22 @@ class EnvironmentController:
         self.buffer = Buffer(50_000, 64,
                              environment.num_states,
                              environment.num_actions,
-                             len(self.predator_controllers)
+                             len(self.agent_controllers)
                              )
-
         # Learners
         self.learners = [Learner(self.buffer,
                                  self.par_services,
                                  environment.num_states,
                                  environment.num_actions,
-                                 len(self.predator_controllers)
+                                 len(self.agent_controllers)
                                  )
                          ]
 
     def train(self):
-
         # Initial observation
         prev_obs_dict = {}
         for agent in self.environment.agents:
-            prev_obs_dict.update({agent.id: self._observe(agent)})
+            prev_obs_dict.update({agent.id:  self.env_obs.observe(agent, self.environment)})
 
         # Train
         total_iterations = 50_000
@@ -74,7 +71,7 @@ class EnvironmentController:
             for k in range(25):
                 # Get the actions from the agents
                 actions_dict = {}
-                for predator_controller in self.predator_controllers:
+                for predator_controller in self.agent_controllers:
                     p_id = predator_controller.predator.id
                     tf_prev_state = tf.expand_dims(
                         tf.convert_to_tensor(prev_obs_dict[p_id].observation), 0
@@ -108,24 +105,23 @@ class EnvironmentController:
             self._step_agent(agent_id, action)
         observations = {}
         for agent_id in actions:
-            observations.update({agent_id: self._observe(self._get_agent_by_id(agent_id))})
+            observations.update(
+                {agent_id: self.env_obs.observe(self._get_agent_by_id(agent_id), self.environment)}
+            )
         return observations
 
     def _rewards(self) -> Dict[str, int]:
         rewards = {}
-        for agent in self.environment.agents:
-            rewards.update({agent.id: self.environment_observer.reward(agent, self.environment)})
+        for agent_controller in self.agent_controllers:
+            rewards.update({agent_controller.agent.id: self.env_obs.reward(self.environment.agents)})
         return rewards
-
-    def _observe(self, agent: Agent) -> Observation:
-        return self.environment_observer.observe(agent, self.environment)
 
     def _get_agent_by_id(self, agent_id: str) -> Agent:
         for agent in self.environment.agents:
             if agent.id == agent_id:
                 return agent
 
-    # agent action
+    # Step an Agent in the Environment given an action
     def _step_agent(self, agent_id: str, action: List[float]):
         agent = self._get_agent_by_id(agent_id)
         acc, turn = action[0], action[1]
