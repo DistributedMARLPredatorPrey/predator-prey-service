@@ -5,7 +5,7 @@ from typing import Tuple, List
 from src.main.controllers.learner.learner import Learner
 from src.main.controllers.agents.agent_controller import AgentController
 from src.main.model.agents.agent import Agent
-from src.main.controllers.agents.PreyController import PreyController
+from src.main.controllers.agents.prey_controller import PreyController
 from src.main.model.agents.prey import Prey
 from src.main.controllers.agents.buffer import Buffer
 from src.main.controllers.parameter_server.parameter_service import ParameterService

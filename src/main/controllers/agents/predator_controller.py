@@ -19,7 +19,7 @@ class PredatorController(AgentController):
     def reward(self, agents: List[Agent]):
         num_preys_eaten = len([target for target in agents
                                if target != self.agent and
-                               # target.agent_type == AgentType.PREY and
+                               target.agent_type == AgentType.PREY and
                                self.eat(target)
                                ])
         if num_preys_eaten == 0:
