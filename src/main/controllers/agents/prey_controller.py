@@ -1,6 +1,6 @@
 from typing import List
 
-from main.model.agents.agent_type import AgentType
+from src.main.model.agents.agent_type import AgentType
 from src.main.controllers.agents.agent_controller import AgentController
 from src.main.controllers.parameter_server.parameter_service import ParameterService
 from src.main.model.agents.agent import Agent
@@ -13,7 +13,7 @@ class PreyController(AgentController):
                  prey: Prey,
                  par_service: ParameterService
                  ):
-        self.done = False
+        self.is_done = False
         super().__init__(lower_bound, upper_bound, r, prey, par_service)
 
     def reward(self, agents: List[Agent]):
@@ -22,9 +22,9 @@ class PreyController(AgentController):
                    target.agent_type == AgentType.PREDATOR and
                    self.eat(target)
                 ]):
-            self.done = True
+            self.is_done = True
             return -3
         return 1
 
     def done(self):
-        return self.done
+        return self.is_done
