@@ -27,7 +27,12 @@ class EnvironmentControllerFactory:
 
     @staticmethod
     def create_random(x_dim=None, y_dim=None) -> EnvironmentController:
-
+        """
+        Creates a random EnvironmentController, where the position of each agent inside the Environment is random.
+        :param x_dim: x dimension of the Environment
+        :param y_dim: y dimension of the Environment
+        :return: random EnvironmentController
+        """
         env_x_dim, env_y_dim = (250, 250) \
             if (x_dim is None or y_dim is None) else (x_dim, y_dim)
 
@@ -36,8 +41,8 @@ class EnvironmentControllerFactory:
         )
 
         # (List[Predator], List[PredatorController], List[ParameterService])
-        predator_parameters = EnvironmentControllerFactory._get_predator_parameters(params)
-        prey_parameters = EnvironmentControllerFactory._get_prey_parameters(params)
+        predator_parameters = EnvironmentControllerFactory._get_predator_data(params)
+        prey_parameters = EnvironmentControllerFactory._get_preys_data(params)
         environment = Environment(x_dim=env_x_dim, y_dim=env_y_dim,
                                   agents=predator_parameters[0] + prey_parameters[0])
         # Create two buffers, one for the predators and the other for the preys
@@ -61,26 +66,28 @@ class EnvironmentControllerFactory:
 
     @staticmethod
     def from_existing(environment: Environment) -> EnvironmentController:
+        """
+        TODO: it should create an EnvironmentController based on previous computation, i.e. where the neural networks
+        are partially trained
+        :param environment: existing Environment
+        :return:
+        """
         return EnvironmentController(environment)
 
     @staticmethod
-    def _get_predator_parameters(params: Parameters) -> (
-            Tuple)[List[Predator], List[PredatorController], List[ParameterService]]:
-        predators, predator_controllers = [], []
-        par_services = []
+    def _get_predator_data(params: Parameters):
+        """
+        Creates Predators, with their respective PredatorControllers and ParameterServices
+        :param params: Parameters
+        :return: tuple of (List[Predator], List[PredatorController], List[ParameterService])
+        """
+        predators, predator_controllers, par_services = [], [], []
         for i in range(params.n_predators):
-            predator = Predator(id=f"predator_{i}",
-                                x=uniform(0, params.env_x_dim),
-                                y=uniform(0, params.env_y_dim)
-                                )
+            predator = Predator(id=f"predator_{i}", x=uniform(0, params.env_x_dim), y=uniform(0, params.env_y_dim))
             par_service = ParameterService()
             predator_controllers.append(
                 PredatorController(
-                    lower_bound=params.lower_bound,
-                    upper_bound=params.upper_bound,
-                    r=10,
-                    life=100,
-                    predator=predator,
+                    lower_bound=params.lower_bound, upper_bound=params.upper_bound, r=10, life=100, predator=predator,
                     par_service=par_service
                 )
             )
@@ -89,19 +96,19 @@ class EnvironmentControllerFactory:
         return predators, predator_controllers, par_services
 
     @staticmethod
-    def _get_prey_parameters(params: Parameters) -> (
-            Tuple)[List[Prey], List[PreyController], List[ParameterService]]:
+    def _get_preys_data(params: Parameters):
+        """
+            Creates Preys, with their respective PreyControllers
+            :param params: Parameters
+            :return: tuple of (List[Predator], List[PredatorController], List[ParameterService])
+        """
         preys, prey_controllers, par_services = [], [], []
         for i in range(params.n_predators):
             prey = Prey(id=f"prey_{i}", x=uniform(0, params.env_x_dim), y=uniform(0, params.env_y_dim))
             par_service = ParameterService()
             prey_controllers.append(
                 PreyController(
-                    lower_bound=params.lower_bound,
-                    upper_bound=params.upper_bound,
-                    r=10,
-                    life=100,
-                    prey=prey,
+                    lower_bound=params.lower_bound, upper_bound=params.upper_bound, r=10, life=100, prey=prey,
                     par_service=par_service
                 )
             )
@@ -111,9 +118,24 @@ class EnvironmentControllerFactory:
 
     @staticmethod
     def _get_buffers(num_states, num_actions, sizes):
+        """
+        Creates n buffers where n = |sizes|
+        :param num_states: number of observations
+        :param num_actions: number of actions
+        :param sizes: array where each element is the number of agents per type
+        :return:
+        """
         return [Buffer(50_000, 64, num_states, num_actions, size) for size in sizes]
 
     @staticmethod
     def _get_learners(buffers, par_services, num_states, num_actions):
+        """
+        Create a new Learner for each buffer passed as parameter
+        :param buffers: Buffers
+        :param par_services: ParameterServices
+        :param num_states: number of observations
+        :param num_actions: number of actions
+        :return:
+        """
         return [Learner(buffers[i], par_services[i], num_states, num_actions, len(par_services[i]))
                 for i in range(len(buffers))]
