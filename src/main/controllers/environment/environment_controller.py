@@ -51,7 +51,7 @@ class EnvironmentController:
             for agent in self.environment.agents:
                 avg_rewards.update({agent.id: 0})
 
-            for k in range(20):
+            for k in range(5):
 
                 # Get the actions from the agents
                 actions_dict = {}
@@ -93,7 +93,7 @@ class EnvironmentController:
                 # Filter dead agents
                 # self._filter_done()
 
-            print([(p_id, r / 20) for p_id, r in avg_rewards.items()])
+            # print([(p_id, r / 10) for p_id, r in avg_rewards.items()])
             for learner in self.learners:
                 learner.update()
 
