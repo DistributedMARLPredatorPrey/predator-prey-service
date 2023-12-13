@@ -40,8 +40,8 @@ class EnvironmentController:
     def train(self):
         # Initial observation
         prev_obs_dict = {}
-        for agent in self.environment.agents:
-            prev_obs_dict.update({agent.id: self.env_obs.observe(agent, self.environment)})
+        for agent_controller in self.agent_controllers:
+            prev_obs_dict.update({agent_controller.agent.id: agent_controller.observe(self.environment.agents)})
 
         # Train
         total_iterations = 50_000
@@ -51,7 +51,7 @@ class EnvironmentController:
             for agent in self.environment.agents:
                 avg_rewards.update({agent.id: 0})
 
-            for k in range(25):
+            for k in range(20):
 
                 # Get the actions from the agents
                 actions_dict = {}
@@ -91,32 +91,33 @@ class EnvironmentController:
                     self.buffers[i].record((prev_obs, actions, rewards, next_obs))
 
                 # Filter dead agents
-                self._filter_done()
+                # self._filter_done()
 
+            print([(p_id, r / 20) for p_id, r in avg_rewards.items()])
             for learner in self.learners:
-                print([(p_id, r / 25) for p_id, r in avg_rewards.items()])
                 learner.update()
 
-    def _filter_done(self):
-        self.agent_controllers = [agent_controller
-                                  for agent_controller in self.agent_controllers
-                                  if not agent_controller.done()
-                                  ]
+    # def _filter_done(self):
+    #     self.agent_controllers = [agent_controller
+    #                               for agent_controller in self.agent_controllers
+    #                               if not agent_controller.done()
+    #                               ]
+    #     self.environment.agents = [
+    #         agent_controller.agent for agent_controller in self.agent_controllers
+    #     ]
 
     def _step(self, actions: Dict[str, List[float]]) -> Dict[str, Observation]:
         for (agent_id, action) in actions.items():
             self._step_agent(agent_id, action)
         observations = {}
-        for agent_id in actions:
-            observations.update(
-                {agent_id: self.env_obs.observe(self._get_agent_by_id(agent_id), self.environment)}
-            )
+        for agent_controller in self.agent_controllers:
+            observations.update({agent_controller.agent.id: agent_controller.observe(self.environment.agents)})
         return observations
 
     def _rewards(self) -> Dict[str, int]:
         rewards = {}
         for agent_controller in self.agent_controllers:
-            rewards.update({agent_controller.agent.id: agent_controller.reward(self.environment.agents)})
+            rewards.update({agent_controller.agent.id: agent_controller.reward()})
         return rewards
 
     def _get_agent_by_id(self, agent_id: str) -> Agent:
