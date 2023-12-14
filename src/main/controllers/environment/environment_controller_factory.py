@@ -10,6 +10,7 @@ from src.main.model.environment.params.environment_params import EnvironmentPara
 class EnvironmentControllerFactory:
 
     def __init__(self):
+
         self._default_env_params: EnvironmentParams = EnvironmentParams(
             x_dim=250,
             y_dim=250,
@@ -31,21 +32,17 @@ class EnvironmentControllerFactory:
         :return: random EnvironmentController
         """
         params = env_params if env_params is not None else self._default_env_params
-
         predator_controllers = PredatorControllerFactory.create_from_params(params)
         prey_controllers = PreyControllerFactory.create_from_params(params)
-
         environment = Environment(x_dim=params.x_dim, y_dim=params.y_dim,
                                   agents=[
                                       agent_controller.agent for agent_controller in
                                       predator_controllers + prey_controllers
                                   ])
-
         # Create two buffers, one for the predators and the other for the preys
         buffers = BufferFactory.create_buffers(num_states=params.num_states,
                                                num_actions=params.num_actions,
                                                sizes=[len(predator_controllers), len(prey_controllers)])
-
         # Create two learners, one for the predators and the other for the preys
         learners = LearnerFactory.create_learners(buffers,
                                                   [[predator_controller.par_service
@@ -55,7 +52,6 @@ class EnvironmentControllerFactory:
                                                   params.num_states,
                                                   params.num_actions
                                                   )
-
         return EnvironmentController(environment=environment,
                                      agent_controllers=predator_controllers + prey_controllers,
                                      buffers=buffers,

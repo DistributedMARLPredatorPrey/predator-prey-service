@@ -22,9 +22,5 @@ class PreyControllerFactory:
             prey = Prey(id=f"prey_{i}", x=uniform(0, env_params.x_dim),
                         y=uniform(0, env_params.y_dim))
             par_service = ParameterService()
-            prey_controllers.append(
-                PreyController(lower_bound=env_params.lower_bound, upper_bound=env_params.upper_bound,
-                               r=env_params.r, life=env_params.life, prey=prey, par_service=par_service
-                               )
-            )
+            prey_controllers.append(PreyController(env_params=env_params, prey=prey, par_service=par_service))
         return prey_controllers

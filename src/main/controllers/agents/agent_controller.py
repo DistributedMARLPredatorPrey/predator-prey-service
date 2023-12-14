@@ -4,6 +4,7 @@ import numpy as np
 import tensorflow as tf
 from z3 import Or, And, If, Solver, Optimize, AlgebraicNumRef, sat, Real
 
+from src.main.model.environment.params.environment_params import EnvironmentParams
 from src.main.controllers.parameter_server.parameter_service import ParameterService
 from src.main.model.agents.agent import Agent
 from src.main.model.environment.observation import Observation
@@ -11,14 +12,14 @@ from src.main.model.environment.observation import Observation
 
 class AgentController:
 
-    def __init__(self, lower_bound: float, upper_bound: float, r: float,
+    def __init__(self, env_params: EnvironmentParams,
                  agent: Agent,
                  par_service: ParameterService):
         self.last_obs = None
-        self.lower_bound = lower_bound
-        self.upper_bound = upper_bound
-        self.r = r
-        self.vd = 30
+        self.lower_bound = env_params.lower_bound
+        self.upper_bound = env_params.upper_bound
+        self.r = env_params.r
+        self.vd = env_params.vd
         self.agent = agent
         self.par_service = par_service
 
