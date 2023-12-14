@@ -1,12 +1,11 @@
 from typing import List
 
 import tensorflow as tf
-import numpy as np
 
 from src.main.controllers.parameter_server.parameter_service import ParameterService
 from src.main.model.agents.neural_networks.actor import Actor
 from src.main.model.agents.neural_networks.critic import Critic
-from src.main.controllers.agents.buffer import Buffer
+from src.main.model.environment.buffer.buffer import Buffer
 
 
 class Learner:

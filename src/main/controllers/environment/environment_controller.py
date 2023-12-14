@@ -4,13 +4,10 @@ import numpy as np
 import tensorflow as tf
 
 from src.main.controllers.agents.agent_controller import AgentController
-from src.main.model.agents.agent_type import AgentType
-from src.main.controllers.agents.buffer import Buffer
-from src.main.controllers.agents.predator_controller import PredatorController
-from src.main.controllers.environment.environment_observer import EnvironmentObserver
 from src.main.controllers.learner.learner import Learner
-from src.main.controllers.parameter_server.parameter_service import ParameterService
 from src.main.model.agents.agent import Agent
+from src.main.model.agents.agent_type import AgentType
+from src.main.model.environment.buffer.buffer import Buffer
 from src.main.model.environment.environment import Environment
 from src.main.model.environment.observation import Observation
 
@@ -19,22 +16,15 @@ class EnvironmentController:
 
     def __init__(self,
                  environment: Environment,
-                 par_services: List[ParameterService],
                  agent_controllers: List[AgentController],
                  buffers: List[Buffer],
                  learners: List[Learner]
                  ):
-        # Parameters
         self.environment = environment
         self.max_acc = 0.2
         self.t_step = 1
-        self.env_obs = EnvironmentObserver()
-
         self.agent_controllers = agent_controllers
         self.buffers = buffers
-
-        # ParameterService & Learner
-        self.par_services = par_services
         self.learners = learners
 
     def train(self):
