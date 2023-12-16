@@ -14,12 +14,8 @@ from src.main.model.environment.observation import Observation
 
 class EnvironmentController:
 
-    def __init__(self,
-                 environment: Environment,
-                 agent_controllers: List[AgentController],
-                 buffers: List[Buffer],
-                 learners: List[Learner]
-                 ):
+    def __init__(self, environment: Environment, agent_controllers: List[AgentController],
+                 buffers: List[Buffer], learners: List[Learner]):
         self.environment = environment
         self.max_acc = 0.2
         self.t_step = 1
@@ -28,6 +24,10 @@ class EnvironmentController:
         self.learners = learners
 
     def train(self):
+        """
+        Starts the training
+        :return:
+        """
         # Initial observation
         prev_obs_dict = {}
         for agent_controller in self.agent_controllers:

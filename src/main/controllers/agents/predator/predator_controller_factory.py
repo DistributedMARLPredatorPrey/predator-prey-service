@@ -22,7 +22,5 @@ class PredatorControllerFactory:
             predator = Predator(id=f"predator_{i}", x=uniform(0, env_params.x_dim),
                                 y=uniform(0, env_params.y_dim))
             par_service = ParameterService()
-            predator_controllers.append(
-                PredatorController(env_params, predator=predator, par_service=par_service)
-            )
+            predator_controllers.append(PredatorController(env_params, predator=predator, par_service=par_service))
         return predator_controllers

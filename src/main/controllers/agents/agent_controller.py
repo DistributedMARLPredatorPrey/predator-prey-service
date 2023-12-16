@@ -12,18 +12,25 @@ from src.main.model.environment.observation import Observation
 
 class AgentController:
 
-    def __init__(self, env_params: EnvironmentParams,
-                 agent: Agent,
+    def __init__(self, env_params: EnvironmentParams, agent: Agent,
                  par_service: ParameterService):
         self.last_obs = None
         self.lower_bound = env_params.lower_bound
         self.upper_bound = env_params.upper_bound
+        self.life = env_params.life
         self.r = env_params.r
         self.vd = env_params.vd
         self.agent = agent
         self.par_service = par_service
 
     def policy(self, state, verbose=False):
+        """
+        Computes the next action based on the current observation, by getting the current actor model
+        from the parameter server.
+        :param state: current observation
+        :param verbose: default set to False
+        :return: the next action to be taken
+        """
         # the policy used for training just add noise to the action
         # the amount of noise is kept constant during training
         sampled_action = tf.squeeze(self.par_service.actor_model(state))
@@ -45,7 +52,12 @@ class AgentController:
         legal_action = np.clip(sampled_action, self.lower_bound, self.upper_bound)
         return np.squeeze(legal_action)
 
-    def eat(self, target: Agent):
+    def eat(self, target: Agent) -> bool:
+        """
+        Checks if this agent is eaten by the target agent given as parameter
+        :param target: target agent
+        :return: True if the current agent is being eated, False otherwise
+        """
         x, y = Real('x'), Real('y')
         s = Solver()
         s.add(x < self.agent.x + self.r, x >= self.agent.x - self.r,
@@ -56,7 +68,14 @@ class AgentController:
         return s.check() == sat
 
     def observe(self, agents: List[Agent]) -> Observation:
-        cds = np.array([(a.x, a.y) for a in agents if a != self.agent and a.agent_type != self.agent])
+        """
+        Captures an observation given the other agents inside the environment.
+        An observation is view of the surrounding area, with a given visual depth.
+        :param agents: other agents inside the environment
+        :return: a new observation
+        """
+        cds = np.array([(agent.x, agent.y) for agent in agents
+                        if agent != self.agent and agent.agent_type != self.agent])
         (x_0, y_0) = (self.agent.x, self.agent.y)
 
         x, y = Real('x'), Real('y')
@@ -64,7 +83,7 @@ class AgentController:
         x_rng = x - x_0
 
         # Find intersection points given these equations and constraints:
-        # - Equally spaced concurrent lines with center (x_0, y_0):
+        # - Pencil of lines (set of lines passing through a common point):
         #       (x - x_0) * sin(a) = (y - y_0) * cos(a) for a in [0, pi]
         # - Constraint x and y to the maximum visual depth:
         #       |y - y_0| < vd, |x - x_0| < vd
@@ -73,23 +92,18 @@ class AgentController:
 
         range_constraint = [If(y_rng >= 0, y_rng, - y_rng) - self.vd < 0,
                             If(x_rng >= 0, x_rng, - x_rng) - self.vd < 0]
-        agent_boxes_constraint = self._box_constraints(x, y, self.r, cds)
+        agent_boxes_constraint = self._square_constraints(x, y, cds)
 
         distances = []
-        for lconstr in [y >= y_0, y < y_0]:
+        for half_line_constraint in [y >= y_0, y < y_0]:
             for a in np.linspace(0, np.pi, 7):
                 o = Optimize()
                 o.add(
                     And(
-                        # pencil of lines (set of lines passing through a common point):
-                        # (x - x_0) * sin(a) = (y - y_0) * cos(a) forall a in [0, pi]
                         (x - x_0) * np.sin(a) - (y - y_0) * np.cos(a) == 0,
-                        # visual depth
                         And(range_constraint),
-                        # agent' boxes
                         agent_boxes_constraint,
-                        # half line constraint
-                        lconstr
+                        half_line_constraint
                     )
                 )
                 o.minimize(
@@ -101,24 +115,38 @@ class AgentController:
                           )
                        )
                 )
-                distances.extend(self._extract_model(o, x, y, x_0, y_0))
+                distances.append(self._extract_distance(o, x, y, x_0, y_0))
         self.last_obs = Observation(distances)
         return self.last_obs
 
-    @staticmethod
-    def _box_constraints(x: Real, y: Real, r: float, cds: List):
+    def _square_constraints(self, x: Real, y: Real, cds):
+        """
+        Square constraints ensure that the intersection point lies in the side of the square
+        :param x: symbolic target variable of the x-coordinate
+        :param y: symbolic target variable of the y-coordinate
+        :param cds: other agents positions
+        :return: an Or encoding the mentioned constraints
+        """
         return Or([
             Or(
-                And(x <= cx + r, x >= cx - r, y == cy - r),
-                And(x <= cx + r, x >= cx - r, y == cy + r),
-                And(y <= cy + r, y >= cy - r, x == cx - r),
-                And(y <= cy + r, y >= cy - r, x == cx + r)
+                And(x <= cx + self.r, x >= cx - self.r, y == cy - self.r),
+                And(x <= cx + self.r, x >= cx - self.r, y == cy + self.r),
+                And(y <= cy + self.r, y >= cy - self.r, x == cx - self.r),
+                And(y <= cy + self.r, y >= cy - self.r, x == cx + self.r)
             )
             for (cx, cy) in cds
         ])
 
-    def _extract_model(self, o: Optimize, x: Real, y: Real, x_0: float, y_0: float):
-        d = []
+    def _extract_distance(self, o: Optimize, x: Real, y: Real, x_0: float, y_0: float):
+        """
+        Checks if the Optimize object and extract distance, if SAT.
+        :param o: Optimize object to check its satisfiability
+        :param x: x-coordinate variable to evaluate
+        :param y: y-coordinate variable to evaluate
+        :param x_0: x-coordinate of the reference agent
+        :param y_0: y-coordinate of the reference agent
+        :return: distance, if SAT
+        """
         if o.check() == sat:
             model = o.model()
 
@@ -130,18 +158,20 @@ class AgentController:
 
             x_p, y_p = float(mx.numerator_as_long()) / float(mx.denominator_as_long()), \
                        float(my.numerator_as_long()) / float(my.denominator_as_long())
-            # print((x_p, y_p))
             # Compute the distance between the agent center (x_0, y_0)
-            # and the intersection point which is closer to it
-            d.append(round(np.sqrt(np.power(x_0 - x_p, 2) + np.power(y_0 - y_p, 2)), 2))
-        else:
-            d.append(self.vd)
-        return d
+            return round(np.sqrt(np.power(x_0 - x_p, 2) + np.power(y_0 - y_p, 2)), 2)
+        return self.vd
 
-    # Base reward method, to be overridden by subclasses
-    def reward(self):
+    def reward(self) -> float:
+        """
+        Base reward method, to be overridden by subclasses
+        :return: reward as a float number
+        """
         raise NotImplementedError("Subclasses must implement this method")
 
-    # Base done method, to be overridden by subclasses
-    def done(self):
+    def done(self) -> bool:
+        """
+        Base done method, to be overridden by subclasses
+        :return: True if it is done, False otherwise
+        """
         raise NotImplementedError("Subclasses must implement this method")

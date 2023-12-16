@@ -9,11 +9,17 @@ from src.main.model.agents.prey import Prey
 class PreyController(AgentController):
 
     def __init__(self, env_params: EnvironmentParams, prey: Prey, par_service: ParameterService):
-        self.is_done = False
         super().__init__(env_params, prey, par_service)
 
     def reward(self):
+        """
+        The prey reward is proportional to the distance of the closest predator.
+        :return: the reward
+        """
         return np.min(self.last_obs.observation)
 
     def done(self):
-        return self.is_done
+        """
+        :return:
+        """
+        return False

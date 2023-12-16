@@ -1,13 +1,9 @@
-from typing import List
-
 import numpy as np
 
-from src.main.model.environment.params.environment_params import EnvironmentParams
 from src.main.controllers.agents.agent_controller import AgentController
 from src.main.controllers.parameter_server.parameter_service import ParameterService
-from src.main.model.agents.agent import Agent
-from src.main.model.agents.agent_type import AgentType
 from src.main.model.agents.predator import Predator
+from src.main.model.environment.params.environment_params import EnvironmentParams
 
 
 class PredatorController(AgentController):
@@ -16,7 +12,15 @@ class PredatorController(AgentController):
         super().__init__(env_params, predator, par_service)
 
     def reward(self):
+        """
+        The predator reward is inversely proportional to the distance of the closest prey.
+        :return: reward
+        """
         return 1 / (1 + np.min(self.last_obs.observation))
 
     def done(self):
+        """
+        The predator is done when life is equal to zero.
+        :return: true if it is done, false otherwise
+        """
         return self.life == 0
