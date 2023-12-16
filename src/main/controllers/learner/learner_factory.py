@@ -9,7 +9,7 @@ class LearnerFactory:
         Create a new Learner for each buffer passed as parameter
         :param buffers: Buffers
         :param par_services: ParameterServices
-        :param num_states: number of observations
+        :param num_states: number of states
         :param num_actions: number of actions
         :return:
         """

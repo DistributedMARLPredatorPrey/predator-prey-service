@@ -19,10 +19,10 @@ class Learner:
         by batching data from a shared buffer.
         In particular, the learning follows the MADDPG algorithm.
         Moreover, it sets the latest actor network to each agent's ParameterService, through which each
-        agent will take an action given an observation.
+        agent will take an action given a state.
         :param buffer: shared buffer
         :param par_services: agents' ParameterService
-        :param num_states: observation size
+        :param num_states: state size
         :param num_actions: number of actions allowed
         :param num_agents: number of agents of the same type
         """
@@ -110,11 +110,11 @@ class Learner:
         for j in range(self.num_agents):
             action_batch_reshape.append(action_batch[:, j * self.num_actions: (j + 1) * self.num_actions])
 
-        return self._update_critics_network(state_batch, reward_batch, action_batch_reshape, next_state_batch,
+        return self._update_critic_networks(state_batch, reward_batch, action_batch_reshape, next_state_batch,
                                             target_actions)
 
     @tf.function
-    def _update_critics_network(self, state_batch, reward_batch, action_batch, next_state_batch, target_actions):
+    def _update_critic_networks(self, state_batch, reward_batch, action_batch, next_state_batch, target_actions):
         """
         Computes the loss and updates parameters of the Critic networks.
         Makes use of tensorflow graphs to speed up the computation.
@@ -156,10 +156,10 @@ class Learner:
                 state_batch[:, j * self.num_states: (j + 1) * self.num_states],
                 training=True
             ))
-        self._update_actors_network(state_batch, actions)
+        self._update_actor_networks(state_batch, actions)
 
     @tf.function
-    def _update_actors_network(self, state_batch, actions):
+    def _update_actor_networks(self, state_batch, actions):
         """
         Computes the loss and updates parameters of the Actor networks.
         Makes use of tensorflow graphs to speed up the computation.

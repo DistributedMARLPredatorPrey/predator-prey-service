@@ -1,10 +1,19 @@
-# Replay buffer
 import numpy as np
 import tensorflow as tf
 
 
 class Buffer:
-    def __init__(self, buffer_capacity=100_000, batch_size=64, num_states=None, num_actions=None, num_agents=None):
+
+    def __init__(self, buffer_capacity=100_000, batch_size=64, num_states=None,
+                 num_actions=None, num_agents=None):
+        """
+        Replay buffer used for batch learning.
+        :param buffer_capacity: buffer capacity
+        :param batch_size: batch size
+        :param num_states: number of states
+        :param num_actions: number of actions
+        :param num_agents: number of agents
+        """
         # Max Number of tuples that can be stored
         self.buffer_capacity = buffer_capacity
         # Num of tuples used for training
@@ -22,8 +31,12 @@ class Buffer:
         self.reward_buffer = np.zeros((self.buffer_capacity, num_agents))
         self.next_state_buffer = np.zeros((self.buffer_capacity, num_agents * num_states))
 
-    # Takes (s, a, r, s') observation tuple as input
     def record(self, obs_tuple):
+        """
+        Records a tuple (s, a, r, s') inside the buffer
+        :param obs_tuple: observation tuple
+        :return:
+        """
         # Set index to zero if buffer_capacity is exceeded,
         # replacing old records
         index = self.buffer_counter % self.buffer_capacity
@@ -34,8 +47,11 @@ class Buffer:
 
         self.buffer_counter += 1
 
-    # Sample a batch of data
     def sample_batch(self):
+        """
+        Samples a batch of data from the buffer
+        :return: tuple of data
+        """
         # Get sampling range
         record_range = min(self.buffer_counter, self.buffer_capacity)
         # Randomly sample indices

@@ -9,7 +9,7 @@ from src.main.model.agents.agent import Agent
 from src.main.model.agents.agent_type import AgentType
 from src.main.model.environment.buffer.buffer import Buffer
 from src.main.model.environment.environment import Environment
-from src.main.model.environment.observation import Observation
+from src.main.model.environment.state import State
 
 
 class EnvironmentController:
@@ -28,10 +28,10 @@ class EnvironmentController:
         Starts the training
         :return:
         """
-        # Initial observation
+        # Initial states
         prev_obs_dict = {}
         for agent_controller in self.agent_controllers:
-            prev_obs_dict.update({agent_controller.agent.id: agent_controller.observe(self.environment.agents)})
+            prev_obs_dict.update({agent_controller.agent.id: agent_controller.state(self.environment.agents)})
 
         # Train
         total_iterations = 50_000
@@ -48,7 +48,7 @@ class EnvironmentController:
                 for agent_controller in self.agent_controllers:
                     agent_id = agent_controller.agent.id
                     tf_prev_state = tf.expand_dims(
-                        tf.convert_to_tensor(prev_obs_dict[agent_id].observation), 0
+                        tf.convert_to_tensor(prev_obs_dict[agent_id].state), 0
                     )
                     action = agent_controller.policy(tf_prev_state)
                     actions_dict.update({agent_id: list(action)})
@@ -67,10 +67,10 @@ class EnvironmentController:
                     prev_obs, actions, rewards, next_obs = [], [], [], []
                     for agent in agents_by_type[i]:
                         agent_id = agent.id
-                        prev_obs += prev_obs_dict[agent_id].observation
+                        prev_obs += prev_obs_dict[agent_id].state
                         actions += actions_dict[agent_id]
                         rewards.append(rewards_dict[agent_id])
-                        next_obs += next_obs_dict[agent_id].observation
+                        next_obs += next_obs_dict[agent_id].state
 
                         avg_rewards.update({agent_id: avg_rewards[agent_id] + rewards_dict[agent_id]})
 
@@ -96,13 +96,13 @@ class EnvironmentController:
     #         agent_controller.agent for agent_controller in self.agent_controllers
     #     ]
 
-    def _step(self, actions: Dict[str, List[float]]) -> Dict[str, Observation]:
+    def _step(self, actions: Dict[str, List[float]]) -> Dict[str, State]:
         for (agent_id, action) in actions.items():
             self._step_agent(agent_id, action)
-        observations = {}
+        states = {}
         for agent_controller in self.agent_controllers:
-            observations.update({agent_controller.agent.id: agent_controller.observe(self.environment.agents)})
-        return observations
+            states.update({agent_controller.agent.id: agent_controller.state(self.environment.agents)})
+        return states
 
     def _rewards(self) -> Dict[str, int]:
         rewards = {}

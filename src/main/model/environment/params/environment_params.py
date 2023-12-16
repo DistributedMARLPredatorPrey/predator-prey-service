@@ -3,6 +3,9 @@ from dataclasses import dataclass
 
 @dataclass(frozen=True)
 class EnvironmentParams:
+    """
+    Value object representing environment parameters.
+    """
     # Environment parameters
     x_dim: int
     y_dim: int

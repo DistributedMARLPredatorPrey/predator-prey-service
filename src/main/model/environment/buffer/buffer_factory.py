@@ -7,7 +7,7 @@ class BufferFactory:
     def create_buffers(num_states, num_actions, sizes):
         """
         Creates n buffers where n = |sizes|
-        :param num_states: number of observations
+        :param num_states: number of states
         :param num_actions: number of actions
         :param sizes: array where each element is the number of agents per type
         :return:

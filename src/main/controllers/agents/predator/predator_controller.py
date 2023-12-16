@@ -8,17 +8,18 @@ from src.main.model.environment.params.environment_params import EnvironmentPara
 
 class PredatorController(AgentController):
 
-    def __init__(self, env_params: EnvironmentParams, predator: Predator, par_service: ParameterService):
+    def __init__(self, env_params: EnvironmentParams, predator: Predator,
+                 par_service: ParameterService):
         super().__init__(env_params, predator, par_service)
 
-    def reward(self):
+    def reward(self) -> float:
         """
         The predator reward is inversely proportional to the distance of the closest prey.
         :return: reward
         """
-        return 1 / (1 + np.min(self.last_obs.observation))
+        return 1 / (1 + np.min(self.last_obs.state))
 
-    def done(self):
+    def done(self) -> bool:
         """
         The predator is done when life is equal to zero.
         :return: true if it is done, false otherwise

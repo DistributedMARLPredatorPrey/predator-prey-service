@@ -1,8 +1,5 @@
-from src.main.model.agents.agent_type import AgentType
-
-
 class Agent:
-    def __init__(self, id=None, x=None, y=None, vx=1, vy=1, acc=0.5, agent_type: AgentType = None):
+    def __init__(self, id, x, y, vx, vy, acc, agent_type):
         self.id = id
         self.x = x
         self.y = y

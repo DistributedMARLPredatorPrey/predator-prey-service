@@ -7,7 +7,7 @@ from z3 import Or, And, If, Solver, Optimize, AlgebraicNumRef, sat, Real
 from src.main.model.environment.params.environment_params import EnvironmentParams
 from src.main.controllers.parameter_server.parameter_service import ParameterService
 from src.main.model.agents.agent import Agent
-from src.main.model.environment.observation import Observation
+from src.main.model.environment.state import State
 
 
 class AgentController:
@@ -25,9 +25,9 @@ class AgentController:
 
     def policy(self, state, verbose=False):
         """
-        Computes the next action based on the current observation, by getting the current actor model
+        Computes the next action based on the current state, by getting the current actor model
         from the parameter server.
-        :param state: current observation
+        :param state: current state
         :param verbose: default set to False
         :return: the next action to be taken
         """
@@ -52,11 +52,11 @@ class AgentController:
         legal_action = np.clip(sampled_action, self.lower_bound, self.upper_bound)
         return np.squeeze(legal_action)
 
-    def eat(self, target: Agent) -> bool:
+    def is_eaten(self, target: Agent) -> bool:
         """
         Checks if this agent is eaten by the target agent given as parameter
         :param target: target agent
-        :return: True if the current agent is being eated, False otherwise
+        :return: True if the current agent is being eaten, False otherwise
         """
         x, y = Real('x'), Real('y')
         s = Solver()
@@ -67,12 +67,12 @@ class AgentController:
               )
         return s.check() == sat
 
-    def observe(self, agents: List[Agent]) -> Observation:
+    def state(self, agents: List[Agent]) -> State:
         """
-        Captures an observation given the other agents inside the environment.
-        An observation is view of the surrounding area, with a given visual depth.
+        Captures the state given the other agents inside the environment.
+        A state is view of the surrounding area, with a given visual depth.
         :param agents: other agents inside the environment
-        :return: a new observation
+        :return: a new state
         """
         cds = np.array([(agent.x, agent.y) for agent in agents
                         if agent != self.agent and agent.agent_type != self.agent])
@@ -116,8 +116,22 @@ class AgentController:
                        )
                 )
                 distances.append(self._extract_distance(o, x, y, x_0, y_0))
-        self.last_obs = Observation(distances)
+        self.last_obs = State(distances)
         return self.last_obs
+
+    def reward(self) -> float:
+        """
+        Base reward method, to be overridden by subclasses
+        :return: reward as a float number
+        """
+        raise NotImplementedError("Subclasses must implement this method")
+
+    def done(self) -> bool:
+        """
+        Base done method, to be overridden by subclasses
+        :return: True if it is done, False otherwise
+        """
+        raise NotImplementedError("Subclasses must implement this method")
 
     def _square_constraints(self, x: Real, y: Real, cds):
         """
@@ -161,17 +175,3 @@ class AgentController:
             # Compute the distance between the agent center (x_0, y_0)
             return round(np.sqrt(np.power(x_0 - x_p, 2) + np.power(y_0 - y_p, 2)), 2)
         return self.vd
-
-    def reward(self) -> float:
-        """
-        Base reward method, to be overridden by subclasses
-        :return: reward as a float number
-        """
-        raise NotImplementedError("Subclasses must implement this method")
-
-    def done(self) -> bool:
-        """
-        Base done method, to be overridden by subclasses
-        :return: True if it is done, False otherwise
-        """
-        raise NotImplementedError("Subclasses must implement this method")

@@ -11,14 +11,14 @@ class PreyController(AgentController):
     def __init__(self, env_params: EnvironmentParams, prey: Prey, par_service: ParameterService):
         super().__init__(env_params, prey, par_service)
 
-    def reward(self):
+    def reward(self) -> float:
         """
         The prey reward is proportional to the distance of the closest predator.
         :return: the reward
         """
-        return np.min(self.last_obs.observation)
+        return np.min(self.last_obs.state)
 
-    def done(self):
+    def done(self) -> bool:
         """
         :return:
         """
