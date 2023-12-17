@@ -8,7 +8,8 @@ from src.main.model.agents.prey import Prey
 
 class PreyController(AgentController):
 
-    def __init__(self, env_params: EnvironmentParams, prey: Prey, par_service: ParameterService):
+    def __init__(self, env_params: EnvironmentParams, prey: Prey,
+                 par_service: ParameterService):
         super().__init__(env_params, prey, par_service)
 
     def reward(self) -> float:

@@ -1,4 +1,4 @@
-from typing import List, Dict
+from typing import List, Dict, Any
 
 import numpy as np
 import tensorflow as tf
@@ -22,79 +22,70 @@ class EnvironmentController:
         self.agent_controllers = agent_controllers
         self.buffers = buffers
         self.learners = learners
+        self.total_iterations = 50_000
+
+    def _initial_states(self):
+        init_states = {}
+        for agent_controller in self.agent_controllers:
+            init_states.update(
+                {agent_controller.agent.id: agent_controller.state(self.environment.agents)}
+            )
+        return init_states
+
+    def _actions(self, states):
+        # Get the actions from the agents
+        actions = {}
+        for agent_controller in self.agent_controllers:
+            agent = agent_controller.agent
+            tf_prev_state = tf.expand_dims(
+                tf.convert_to_tensor(states[agent.id].state), 0
+            )
+            action = agent_controller.policy(tf_prev_state)
+            actions.update({agent.id: list(action)})
+        return actions
+
+    def _record_by_type(self, agent_type: AgentType,
+                        buffer: Buffer,
+                        prev_states, actions, rewards, next_states
+                        ):
+        prev_states_t, actions_t, rewards_t, next_states_t = [], [], [], []
+        agents = [agent_controller.agent for agent_controller in self.agent_controllers if
+                  agent_controller.agent.agent_type == agent_type]
+        # avg_rewards = {}
+        for agent in agents:
+            prev_states_t += prev_states[agent.id].state
+            actions_t += actions[agent.id]
+            rewards_t.append(rewards[agent.id])
+            next_states_t += next_states[agent.id].state
+            # avg_rewards.update({agent.id: avg_rewards[agent.id] + rewards_t[agent.id]})
+        # print(avg_rewards)
+        buffer.record((prev_states_t, actions_t, rewards_t, next_states_t))
 
     def train(self):
         """
         Starts the training
         :return:
         """
-        # Initial states
-        prev_obs_dict = {}
-        for agent_controller in self.agent_controllers:
-            prev_obs_dict.update({agent_controller.agent.id: agent_controller.state(self.environment.agents)})
-
+        prev_states = self._initial_states()
         # Train
-        total_iterations = 50_000
-        for it in range(total_iterations):
+        for it in range(self.total_iterations):
 
-            avg_rewards = {}
-            for agent in self.environment.agents:
-                avg_rewards.update({agent.id: 0})
+            # avg_rewards = {agent.id: 0 for agent in self.environment.agents}
 
             for k in range(5):
-
-                # Get the actions from the agents
-                actions_dict = {}
-                for agent_controller in self.agent_controllers:
-                    agent_id = agent_controller.agent.id
-                    tf_prev_state = tf.expand_dims(
-                        tf.convert_to_tensor(prev_obs_dict[agent_id].state), 0
-                    )
-                    action = agent_controller.policy(tf_prev_state)
-                    actions_dict.update({agent_id: list(action)})
-
+                # Collect all agents action
+                actions = self._actions(prev_states)
                 # Move all the agents at once and get their rewards only after
-                next_obs_dict = self._step(actions_dict)
-                rewards_dict = self._rewards()
-
-                agents_by_type = [[agent for agent in self.environment.agents
-                                   if agent.agent_type == AgentType.PREDATOR],
-                                  [agent for agent in self.environment.agents
-                                   if agent.agent_type == AgentType.PREY]]
-
-                for i in range(len(agents_by_type)):
-
-                    prev_obs, actions, rewards, next_obs = [], [], [], []
-                    for agent in agents_by_type[i]:
-                        agent_id = agent.id
-                        prev_obs += prev_obs_dict[agent_id].state
-                        actions += actions_dict[agent_id]
-                        rewards.append(rewards_dict[agent_id])
-                        next_obs += next_obs_dict[agent_id].state
-
-                        avg_rewards.update({agent_id: avg_rewards[agent_id] + rewards_dict[agent_id]})
-
-                    print([reward for reward in rewards])
-
-                    # print([(a.agent.x, a.agent.y) for a in self.agent_controllers])
-                    # Store on the buffer the joint data
-                    self.buffers[i].record((prev_obs, actions, rewards, next_obs))
-
-                # Filter dead agents
-                # self._filter_done()
+                next_states = self._step(actions)
+                rewards = self._rewards()
+                print(rewards)
+                # print([reward for reward in rewards])
+                for i, agent_type in enumerate(AgentType):
+                    self._record_by_type(agent_type, self.buffers[i], prev_states, actions, rewards, next_states)
 
             # print([(p_id, r / 10) for p_id, r in avg_rewards.items()])
             for learner in self.learners:
                 learner.update()
-
-    # def _filter_done(self):
-    #     self.agent_controllers = [agent_controller
-    #                               for agent_controller in self.agent_controllers
-    #                               if not agent_controller.done()
-    #                               ]
-    #     self.environment.agents = [
-    #         agent_controller.agent for agent_controller in self.agent_controllers
-    #     ]
 
     def _step(self, actions: Dict[str, List[float]]) -> Dict[str, State]:
         for (agent_id, action) in actions.items():
@@ -104,11 +95,11 @@ class EnvironmentController:
             states.update({agent_controller.agent.id: agent_controller.state(self.environment.agents)})
         return states
 
-    def _rewards(self) -> Dict[str, int]:
-        rewards = {}
-        for agent_controller in self.agent_controllers:
-            rewards.update({agent_controller.agent.id: agent_controller.reward()})
-        return rewards
+    def _rewards(self) -> dict[str, float]:
+        return {
+            agent_controller.agent.id: agent_controller.reward()
+            for agent_controller in self.agent_controllers
+        }
 
     def _get_agent_by_id(self, agent_id: str) -> Agent:
         for agent in self.environment.agents:
