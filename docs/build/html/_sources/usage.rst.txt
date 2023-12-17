@@ -1,4 +1,0 @@
-API:
-----------------
-
-.. autofunction:: src.controllers.environment_controller.EnvironmentController.reset

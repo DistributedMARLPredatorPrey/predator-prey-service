@@ -1,132 +1,139 @@
-from typing import List, Dict
+from typing import List, Dict, Any
 
 import numpy as np
 import tensorflow as tf
 
 from src.main.controllers.agents.agent_controller import AgentController
-from src.main.model.agents.agent_type import AgentType
-from src.main.controllers.agents.buffer import Buffer
-from src.main.controllers.agents.predator_controller import PredatorController
-from src.main.controllers.environment.environment_observer import EnvironmentObserver
 from src.main.controllers.learner.learner import Learner
-from src.main.controllers.parameter_server.parameter_service import ParameterService
 from src.main.model.agents.agent import Agent
+from src.main.model.agents.agent_type import AgentType
+from src.main.model.environment.buffer.buffer import Buffer
 from src.main.model.environment.environment import Environment
-from src.main.model.environment.observation import Observation
+from src.main.model.environment.state import State
 
 
 class EnvironmentController:
 
-    def __init__(self,
-                 environment: Environment,
-                 par_services: List[ParameterService],
-                 agent_controllers: List[AgentController],
-                 buffers: List[Buffer],
-                 learners: List[Learner]
-                 ):
-        # Parameters
+    def __init__(self, environment: Environment, agent_controllers: List[AgentController],
+                 buffers: List[Buffer], learners: List[Learner]):
         self.environment = environment
         self.max_acc = 0.2
         self.t_step = 1
-        self.env_obs = EnvironmentObserver()
-
         self.agent_controllers = agent_controllers
         self.buffers = buffers
-
-        # ParameterService & Learner
-        self.par_services = par_services
         self.learners = learners
+        self.total_iterations = 50_000
 
     def train(self):
-        # Initial observation
-        prev_obs_dict = {}
-        for agent_controller in self.agent_controllers:
-            prev_obs_dict.update({agent_controller.agent.id: agent_controller.observe(self.environment.agents)})
-
-        # Train
-        total_iterations = 50_000
-        for it in range(total_iterations):
-
-            avg_rewards = {}
-            for agent in self.environment.agents:
-                avg_rewards.update({agent.id: 0})
-
+        """
+        Starts the training
+        :return:
+        """
+        prev_states = self._states()
+        for it in range(self.total_iterations):
+            # avg_rewards = {agent.id: 0 for agent in self.environment.agents}
             for k in range(5):
-
-                # Get the actions from the agents
-                actions_dict = {}
-                for agent_controller in self.agent_controllers:
-                    agent_id = agent_controller.agent.id
-                    tf_prev_state = tf.expand_dims(
-                        tf.convert_to_tensor(prev_obs_dict[agent_id].observation), 0
-                    )
-                    action = agent_controller.policy(tf_prev_state)
-                    actions_dict.update({agent_id: list(action)})
-
+                # Collect all agents action
+                actions = self._actions(prev_states)
                 # Move all the agents at once and get their rewards only after
-                next_obs_dict = self._step(actions_dict)
-                rewards_dict = self._rewards()
-
-                agents_by_type = [[agent for agent in self.environment.agents
-                                   if agent.agent_type == AgentType.PREDATOR],
-                                  [agent for agent in self.environment.agents
-                                   if agent.agent_type == AgentType.PREY]]
-
-                for i in range(len(agents_by_type)):
-
-                    prev_obs, actions, rewards, next_obs = [], [], [], []
-                    for agent in agents_by_type[i]:
-                        agent_id = agent.id
-                        prev_obs += prev_obs_dict[agent_id].observation
-                        actions += actions_dict[agent_id]
-                        rewards.append(rewards_dict[agent_id])
-                        next_obs += next_obs_dict[agent_id].observation
-
-                        avg_rewards.update({agent_id: avg_rewards[agent_id] + rewards_dict[agent_id]})
-
-                    print([reward for reward in rewards])
-
-                    # print([(a.agent.x, a.agent.y) for a in self.agent_controllers])
-                    # Store on the buffer the joint data
-                    self.buffers[i].record((prev_obs, actions, rewards, next_obs))
-
-                # Filter dead agents
-                # self._filter_done()
+                next_states = self._step(actions)
+                rewards = self._rewards()
+                print(rewards)
+                # print([reward for reward in rewards])
+                for i, agent_type in enumerate(AgentType):
+                    self._record_by_type(agent_type, self.buffers[i], prev_states, actions, rewards, next_states)
 
             # print([(p_id, r / 10) for p_id, r in avg_rewards.items()])
             for learner in self.learners:
                 learner.update()
 
-    # def _filter_done(self):
-    #     self.agent_controllers = [agent_controller
-    #                               for agent_controller in self.agent_controllers
-    #                               if not agent_controller.done()
-    #                               ]
-    #     self.environment.agents = [
-    #         agent_controller.agent for agent_controller in self.agent_controllers
-    #     ]
+    def _states(self):
+        """
+        Gets each agent current state.
+        :return: the joint state, a dict of key: agent_id, value: state
+        """
+        return {
+            agent_controller.agent.id: agent_controller.state(self.environment.agents)
+            for agent_controller in self.agent_controllers
+        }
 
-    def _step(self, actions: Dict[str, List[float]]) -> Dict[str, Observation]:
+    def _actions(self, states):
+        """
+        Gets each agent action based on its current state.
+        :param states: joint state
+        :return: the joint action, a dict of key: agent_id, value: action
+        """
+        actions = {}
+        for agent_controller in self.agent_controllers:
+            agent = agent_controller.agent
+            tf_prev_state = tf.expand_dims(tf.convert_to_tensor(states[agent.id].state), 0)
+            action = agent_controller.policy(tf_prev_state)
+            actions.update({agent.id: list(action)})
+        return actions
+
+    def _step(self, actions):
+        """
+        Moves each agent of one step, returning the new joint state.
+        :param actions: joint action
+        :return: joint state
+        """
         for (agent_id, action) in actions.items():
             self._step_agent(agent_id, action)
-        observations = {}
-        for agent_controller in self.agent_controllers:
-            observations.update({agent_controller.agent.id: agent_controller.observe(self.environment.agents)})
-        return observations
+        return self._states()
 
-    def _rewards(self) -> Dict[str, int]:
-        rewards = {}
-        for agent_controller in self.agent_controllers:
-            rewards.update({agent_controller.agent.id: agent_controller.reward()})
-        return rewards
+    def _rewards(self):
+        """
+        Gets each agent reward.
+        :return: a dict of key: agent_id, value: reward
+        """
+        return {
+            agent_controller.agent.id: agent_controller.reward()
+            for agent_controller in self.agent_controllers
+        }
 
-    def _get_agent_by_id(self, agent_id: str) -> Agent:
-        for agent in self.environment.agents:
-            if agent.id == agent_id:
-                return agent
+    def _record_by_type(self, agent_type: AgentType,
+                        buffer: Buffer,
+                        prev_states, actions, rewards, next_states
+                        ):
+        """
+        Records inside the buffer given as parameter the observation tuple of the agents,
+        where each agent is of a given type.
+        :param agent_type: agent type
+        :param buffer: buffer
+        :param prev_states: joint state
+        :param actions: joint action
+        :param rewards: joint rewards
+        :param next_states: joint next states
+        :return:
+        """
+        prev_states_t, actions_t, rewards_t, next_states_t = [], [], [], []
+        agents = [agent_controller.agent for agent_controller in self.agent_controllers if
+                  agent_controller.agent.agent_type == agent_type]
+        # avg_rewards = {}
+        for agent in agents:
+            prev_states_t += prev_states[agent.id].state
+            actions_t += actions[agent.id]
+            rewards_t.append(rewards[agent.id])
+            next_states_t += next_states[agent.id].state
+            # avg_rewards.update({agent.id: avg_rewards[agent.id] + rewards_t[agent.id]})
+        # print(avg_rewards)
+        buffer.record((prev_states_t, actions_t, rewards_t, next_states_t))
 
-    # Step an Agent in the Environment given an action
-    def _step_agent(self, agent_id: str, action: List[float]):
+    def _get_agent_by_id(self, agent_id: str):
+        """
+        Get the agent with the specified id.
+        :param agent_id: agent id to search for
+        :return: agent if any, None otherwise
+        """
+        return next((agent for agent in self.environment.agents if agent.id == agent_id), None)
+
+    def _step_agent(self, agent_id, action):
+        """
+        Step an agent inside the environment given its action
+        :param agent_id: id of the agent
+        :param action: respective action
+        :return:
+        """
         agent = self._get_agent_by_id(agent_id)
         acc, turn = action[0], action[1]
         max_incr = self.max_acc * self.t_step
