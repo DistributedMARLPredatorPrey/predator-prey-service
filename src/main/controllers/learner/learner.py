@@ -3,8 +3,8 @@ from typing import List
 import tensorflow as tf
 
 from src.main.controllers.parameter_server.parameter_service import ParameterService
-from src.main.model.agents.neural_networks.actor import Actor
-from src.main.model.agents.neural_networks.critic import Critic
+from src.main.model.agents.actor_critic.actor import Actor
+from src.main.model.agents.actor_critic.critic import Critic
 from src.main.model.environment.buffer.buffer import Buffer
 
 

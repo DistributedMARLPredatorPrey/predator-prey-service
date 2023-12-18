@@ -21,6 +21,6 @@ class PreyControllerTest(unittest.TestCase):
     def test_reward(self):
         self.prey_controller.state([Predator("predator-1", 5, 0)])
         first_reward = self.prey_controller.reward()
-        self.prey_controller.state([Predator("prey-1", 10, 0)])
+        self.prey_controller.state([Predator("predator-1", 10, 0)])
         second_reward = self.prey_controller.reward()
         assert first_reward < second_reward
