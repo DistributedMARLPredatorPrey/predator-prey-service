@@ -10,6 +10,6 @@ setup(name='marl-predator-prey',
       package_dir={'': 'src'},
       setup_requires=['pytest-runner'],
       tests_require=['pytest'],
-      test_suite='src.test',  # path to your test directory
+      test_suite='src.test',
       zip_safe=False
       )
