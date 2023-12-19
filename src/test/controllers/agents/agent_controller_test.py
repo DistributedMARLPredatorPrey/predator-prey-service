@@ -1,7 +1,5 @@
 import unittest
 
-import pytest
-
 from src.main.controllers.agents.agent_controller import AgentController
 from src.main.controllers.parameter_server.parameter_service import ParameterService
 from src.main.model.agents.predator import Predator

@@ -1,12 +1,10 @@
 import unittest
 
-import pytest
-
+from src.main.controllers.agents.prey.prey_controller import PreyController
 from src.main.controllers.parameter_server.parameter_service import ParameterService
 from src.main.model.agents.predator import Predator
 from src.main.model.agents.prey import Prey
 from src.main.model.environment.params.environment_params import EnvironmentParamsFactory
-from src.main.controllers.agents.prey.prey_controller import PreyController
 
 
 class StandardPreyControllerTest(unittest.TestCase):

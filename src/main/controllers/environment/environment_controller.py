@@ -1,15 +1,13 @@
-from typing import List, Dict, Any
+from typing import List
 
 import numpy as np
 import tensorflow as tf
 
 from src.main.controllers.agents.agent_controller import AgentController
 from src.main.controllers.learner.learner import Learner
-from src.main.model.agents.agent import Agent
 from src.main.model.agents.agent_type import AgentType
 from src.main.model.environment.buffer.buffer import Buffer
 from src.main.model.environment.environment import Environment
-from src.main.model.environment.state import State
 
 
 class EnvironmentController:
@@ -32,12 +30,13 @@ class EnvironmentController:
         prev_states = self._states()
         for it in range(self.total_iterations):
             # avg_rewards = {agent.id: 0 for agent in self.environment.agents}
-            for k in range(5):
+            for k in range(20):
                 # Collect all agents action
                 actions = self._actions(prev_states)
                 # Move all the agents at once and get their rewards only after
                 next_states = self._step(actions)
                 rewards = self._rewards()
+                print(next_states)
                 print(rewards)
                 # print([reward for reward in rewards])
                 for i, agent_type in enumerate(AgentType):

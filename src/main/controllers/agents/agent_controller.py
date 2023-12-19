@@ -171,7 +171,6 @@ class AgentController:
 
             x_p, y_p = float(mx.numerator_as_long()) / float(mx.denominator_as_long()), \
                        float(my.numerator_as_long()) / float(my.denominator_as_long())
-            print((x_p, y_p))
             # Compute the distance between the agent center (x_0, y_0)
             return np.sqrt(np.power(x_0 - x_p, 2) + np.power(y_0 - y_p, 2))
         return self.vd

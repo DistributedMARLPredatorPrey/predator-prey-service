@@ -133,7 +133,7 @@ class Learner:
                 )
                 critic_value = self.critic_models[i]([state_batch, action_batch], training=True)
                 critic_loss = tf.math.reduce_mean(tf.math.square(y - critic_value))
-                #tf.print(critic_loss)
+                # tf.print(critic_loss)
                 tf.print(tf.reduce_sum(critic_loss))
 
             critic_grad = tape.gradient(critic_loss, self.critic_models[i].trainable_variables)
