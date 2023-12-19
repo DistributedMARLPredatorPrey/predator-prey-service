@@ -100,7 +100,7 @@ class AgentController:
         agent_boxes_constraint = self._box_constraints(x, y, cds)
         distances = []
         for half_line_constraint in [y >= y_0, y < y_0]:
-            for a in np.linspace(0, np.pi, int(self.num_states / 2)):
+            for a in np.linspace(0, np.pi, int(self.num_states / 2), endpoint=False):
                 o = Optimize()
                 o.add(
                     And(
