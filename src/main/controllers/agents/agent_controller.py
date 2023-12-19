@@ -14,7 +14,7 @@ class AgentController:
 
     def __init__(self, env_params: EnvironmentParams, agent: Agent,
                  par_service: ParameterService):
-        self.last_obs = None
+        self.last_state = None
         self.num_states = env_params.num_states
         self.lower_bound = env_params.lower_bound
         self.upper_bound = env_params.upper_bound
@@ -110,18 +110,10 @@ class AgentController:
                         half_line_constraint
                     )
                 )
-                o.minimize(
-                    If(y > y_0,
-                       y,
-                       If(y < y_0,
-                          -y,
-                          If(x >= x_0, x, -x)
-                          )
-                       )
-                )
+                o.minimize(If(y > y_0, y, If(y < y_0, -y, If(x >= x_0, x, -x))))
                 distances.append(self._extract_distance(o, x, y, x_0, y_0))
-        self.last_obs = State(distances)
-        return self.last_obs
+        self.last_state = State(distances)
+        return self.last_state
 
     def reward(self) -> float:
         """

@@ -17,7 +17,7 @@ class PreyController(AgentController):
         The prey reward is proportional to the distance of the closest predator.
         :return: the reward
         """
-        return np.min(self.last_obs.distances)
+        return np.min(self.last_state.distances)
 
     def done(self) -> bool:
         """
