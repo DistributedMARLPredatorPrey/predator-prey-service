@@ -66,7 +66,7 @@ class EnvironmentController:
         actions = {}
         for agent_controller in self.agent_controllers:
             agent = agent_controller.agent
-            tf_prev_state = tf.expand_dims(tf.convert_to_tensor(states[agent.id].state), 0)
+            tf_prev_state = tf.expand_dims(tf.convert_to_tensor(states[agent.id].distances), 0)
             action = agent_controller.policy(tf_prev_state)
             actions.update({agent.id: list(action)})
         return actions
@@ -111,10 +111,10 @@ class EnvironmentController:
                   agent_controller.agent.agent_type == agent_type]
         # avg_rewards = {}
         for agent in agents:
-            prev_states_t += prev_states[agent.id].state
+            prev_states_t += prev_states[agent.id].distances
             actions_t += actions[agent.id]
             rewards_t.append(rewards[agent.id])
-            next_states_t += next_states[agent.id].state
+            next_states_t += next_states[agent.id].distances
             # avg_rewards.update({agent.id: avg_rewards[agent.id] + rewards_t[agent.id]})
         # print(avg_rewards)
         buffer.record((prev_states_t, actions_t, rewards_t, next_states_t))

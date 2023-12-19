@@ -7,4 +7,4 @@ class State:
     """
     Value object representing a state
     """
-    state: List[float]
+    distances: List[float]

@@ -19,8 +19,8 @@ class PredatorControllerTest(unittest.TestCase):
     @pytest.mark.description(
         "The predator should receive a reward which is inversely proportional to the distance of the closest prey")
     def test_reward(self):
-        self.predator_controller.state([Prey("prey-1", 5, 0)])
+        self.predator_controller.state([Prey("prey-1", 500, 0)])
         first_reward = self.predator_controller.reward()
-        self.predator_controller.state([Prey("prey-1", 10, 0)])
+        self.predator_controller.state([Prey("prey-1", 1000, 0)])
         second_reward = self.predator_controller.reward()
         assert first_reward > second_reward
