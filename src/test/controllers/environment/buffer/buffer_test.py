@@ -16,7 +16,6 @@ class BufferTest(unittest.TestCase):
         num_agents=num_agents
     )
 
-    @pytest.mark.description("The batch of data should be of the specified size")
     def test_batch_size(self):
         self.buffer.record(([0, 0, 0, 0], [0, 0], [0, 0], [0, 0, 0, 0]))
         s, a, r, ns = self.buffer.sample_batch()
