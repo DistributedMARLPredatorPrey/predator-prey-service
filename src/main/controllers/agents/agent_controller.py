@@ -14,7 +14,8 @@ class AgentController:
 
     def __init__(self, env_params: EnvironmentParams, agent: Agent,
                  par_service: ParameterService):
-        self.last_obs = None
+        self.last_state = None
+        self.num_states = env_params.num_states
         self.lower_bound = env_params.lower_bound
         self.upper_bound = env_params.upper_bound
         self.life = env_params.life
@@ -71,6 +72,16 @@ class AgentController:
         """
         Captures the state given the other agents inside the environment.
         A state is view of the surrounding area, with a given visual depth.
+
+        More specifically it finds the intersection points given these equations and constraints:
+
+        - Pencil of lines (set of lines passing through a common point)
+            (x - x_0) * sin(a) = (y - y_0) * cos(a) for a in [0, pi]
+        - Constraint x and y to the maximum visual depth:
+              |y - y_0| < vd, |x - x_0| < vd
+        - Box of center (x_c, y_c) and radius r:
+              x_c - r <= x <= x_c + r, y_c - r <= y <= y_c + r
+
         :param agents: other agents inside the environment
         :return: a new state
         """
@@ -82,21 +93,16 @@ class AgentController:
         y_rng = y - y_0
         x_rng = x - x_0
 
-        # Find intersection points given these equations and constraints:
-        # - Pencil of lines (set of lines passing through a common point):
-        #       (x - x_0) * sin(a) = (y - y_0) * cos(a) for a in [0, pi]
-        # - Constraint x and y to the maximum visual depth:
-        #       |y - y_0| < vd, |x - x_0| < vd
-        # - Box of center (x_c, y_c) and radius r:
-        #       x_c - r <= x <= x_c + r, y_c - r <= y <= y_c + r
-
-        range_constraint = [If(y_rng >= 0, y_rng, - y_rng) - self.vd < 0,
-                            If(x_rng >= 0, x_rng, - x_rng) - self.vd < 0]
-        agent_boxes_constraint = self._square_constraints(x, y, cds)
-
+        range_constraint = [
+            If(y_rng >= 0, y_rng, - y_rng) - self.vd < 0,
+            If(x_rng >= 0, x_rng, - x_rng) - self.vd < 0
+        ]
+        agent_boxes_constraint = self._box_constraints(x, y, cds)
         distances = []
-        for half_line_constraint in [y >= y_0, y < y_0]:
-            for a in np.linspace(0, np.pi, 7):
+        for a in np.linspace(0, np.pi, int(self.num_states / 2),
+                             endpoint=False):
+            half_line_constraints = [y > y_0, y < y_0] if a != 0 else [x >= x_0, x < x_0]
+            for half_line_constraint in half_line_constraints:
                 o = Optimize()
                 o.add(
                     And(
@@ -106,18 +112,11 @@ class AgentController:
                         half_line_constraint
                     )
                 )
-                o.minimize(
-                    If(y > y_0,
-                       y,
-                       If(y < y_0,
-                          - y,
-                          If(x >= x_0, x, -x)
-                          )
-                       )
-                )
+                o.minimize(If(y > y_0, y, If(y < y_0, -y, If(x >= x_0, x, -x))))
                 distances.append(self._extract_distance(o, x, y, x_0, y_0))
-        self.last_obs = State(distances)
-        return self.last_obs
+
+        self.last_state = State(distances)
+        return self.last_state
 
     def reward(self) -> float:
         """
@@ -133,9 +132,9 @@ class AgentController:
         """
         raise NotImplementedError("Subclasses must implement this method")
 
-    def _square_constraints(self, x: Real, y: Real, cds):
+    def _box_constraints(self, x: Real, y: Real, cds):
         """
-        Square constraints ensure that the intersection point lies in the side of the square
+        Box constraints ensure that the intersection point lies in the side of the box
         :param x: symbolic target variable of the x-coordinate
         :param y: symbolic target variable of the y-coordinate
         :param cds: other agents positions

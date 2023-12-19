@@ -1,15 +1,13 @@
-from typing import List, Dict, Any
+from typing import List
 
 import numpy as np
 import tensorflow as tf
 
 from src.main.controllers.agents.agent_controller import AgentController
 from src.main.controllers.learner.learner import Learner
-from src.main.model.agents.agent import Agent
 from src.main.model.agents.agent_type import AgentType
 from src.main.model.environment.buffer.buffer import Buffer
 from src.main.model.environment.environment import Environment
-from src.main.model.environment.state import State
 
 
 class EnvironmentController:
@@ -32,12 +30,13 @@ class EnvironmentController:
         prev_states = self._states()
         for it in range(self.total_iterations):
             # avg_rewards = {agent.id: 0 for agent in self.environment.agents}
-            for k in range(5):
+            for k in range(20):
                 # Collect all agents action
                 actions = self._actions(prev_states)
                 # Move all the agents at once and get their rewards only after
                 next_states = self._step(actions)
                 rewards = self._rewards()
+                print(next_states)
                 print(rewards)
                 # print([reward for reward in rewards])
                 for i, agent_type in enumerate(AgentType):
@@ -66,7 +65,7 @@ class EnvironmentController:
         actions = {}
         for agent_controller in self.agent_controllers:
             agent = agent_controller.agent
-            tf_prev_state = tf.expand_dims(tf.convert_to_tensor(states[agent.id].state), 0)
+            tf_prev_state = tf.expand_dims(tf.convert_to_tensor(states[agent.id].distances), 0)
             action = agent_controller.policy(tf_prev_state)
             actions.update({agent.id: list(action)})
         return actions
@@ -111,10 +110,10 @@ class EnvironmentController:
                   agent_controller.agent.agent_type == agent_type]
         # avg_rewards = {}
         for agent in agents:
-            prev_states_t += prev_states[agent.id].state
+            prev_states_t += prev_states[agent.id].distances
             actions_t += actions[agent.id]
             rewards_t.append(rewards[agent.id])
-            next_states_t += next_states[agent.id].state
+            next_states_t += next_states[agent.id].distances
             # avg_rewards.update({agent.id: avg_rewards[agent.id] + rewards_t[agent.id]})
         # print(avg_rewards)
         buffer.record((prev_states_t, actions_t, rewards_t, next_states_t))

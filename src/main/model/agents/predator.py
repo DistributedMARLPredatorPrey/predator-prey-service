@@ -1,4 +1,3 @@
-from src.main.model.environment.environment import Environment
 from src.main.model.agents.agent import Agent
 from src.main.model.agents.agent_type import AgentType
 

@@ -19,4 +19,22 @@ class EnvironmentParams:
     r: float
     vd: float
     life: int
-    
+
+
+class EnvironmentParamsFactory:
+
+    @staticmethod
+    def standard_parameters() -> EnvironmentParams:
+        return EnvironmentParams(
+            x_dim=250,
+            y_dim=250,
+            num_predators=10,
+            num_preys=10,
+            num_states=14,
+            num_actions=2,
+            lower_bound=-1,
+            upper_bound=1,
+            r=1,
+            vd=30,
+            life=100
+        )

@@ -4,26 +4,13 @@ from src.main.controllers.environment.environment_controller import EnvironmentC
 from src.main.controllers.learner.learner_factory import LearnerFactory
 from src.main.model.environment.buffer.buffer_factory import BufferFactory
 from src.main.model.environment.environment import Environment
-from src.main.model.environment.params.environment_params import EnvironmentParams
+from src.main.model.environment.params.environment_params import EnvironmentParams, EnvironmentParamsFactory
 
 
 class EnvironmentControllerFactory:
 
     def __init__(self):
-
-        self._default_env_params: EnvironmentParams = EnvironmentParams(
-            x_dim=250,
-            y_dim=250,
-            num_predators=10,
-            num_preys=10,
-            num_states=14,
-            num_actions=2,
-            lower_bound=-1,
-            upper_bound=1,
-            r=10,
-            vd=30,
-            life=100
-        )
+        self._default_env_params: EnvironmentParams = EnvironmentParamsFactory.standard_parameters()
 
     def create_random(self, env_params: EnvironmentParams = None) -> EnvironmentController:
         """

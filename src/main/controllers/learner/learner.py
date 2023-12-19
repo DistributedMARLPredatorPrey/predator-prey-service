@@ -3,8 +3,8 @@ from typing import List
 import tensorflow as tf
 
 from src.main.controllers.parameter_server.parameter_service import ParameterService
-from src.main.model.agents.neural_networks.actor import Actor
-from src.main.model.agents.neural_networks.critic import Critic
+from src.main.model.agents.actor_critic.actor import Actor
+from src.main.model.agents.actor_critic.critic import Critic
 from src.main.model.environment.buffer.buffer import Buffer
 
 
@@ -133,7 +133,7 @@ class Learner:
                 )
                 critic_value = self.critic_models[i]([state_batch, action_batch], training=True)
                 critic_loss = tf.math.reduce_mean(tf.math.square(y - critic_value))
-                #tf.print(critic_loss)
+                # tf.print(critic_loss)
                 tf.print(tf.reduce_sum(critic_loss))
 
             critic_grad = tape.gradient(critic_loss, self.critic_models[i].trainable_variables)

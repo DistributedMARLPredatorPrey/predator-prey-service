@@ -5,6 +5,6 @@ from src.main.model.environment.state import State
 
 @dataclass(frozen=True)
 class Step:
-    observation: State
+    state: State
     done: bool
     reward: int
