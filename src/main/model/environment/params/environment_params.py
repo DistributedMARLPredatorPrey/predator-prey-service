@@ -26,8 +26,8 @@ class EnvironmentParamsFactory:
     @staticmethod
     def standard_parameters() -> EnvironmentParams:
         return EnvironmentParams(
-            x_dim=500,
-            y_dim=500,
+            x_dim=250,
+            y_dim=250,
             num_predators=10,
             num_preys=10,
             num_states=14,

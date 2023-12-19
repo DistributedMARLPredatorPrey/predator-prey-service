@@ -9,7 +9,7 @@ from src.main.model.environment.params.environment_params import EnvironmentPara
 from src.main.controllers.agents.predator.predator_controller import PredatorController
 
 
-class PredatorControllerTest(unittest.TestCase):
+class StandardPredatorControllerTest(unittest.TestCase):
     predator_controller = PredatorController(
         EnvironmentParamsFactory.standard_parameters(),
         Predator("predator-1", 0, 0),

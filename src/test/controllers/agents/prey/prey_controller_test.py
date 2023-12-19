@@ -9,7 +9,7 @@ from src.main.model.environment.params.environment_params import EnvironmentPara
 from src.main.controllers.agents.prey.prey_controller import PreyController
 
 
-class PreyControllerTest(unittest.TestCase):
+class StandardPreyControllerTest(unittest.TestCase):
     prey_controller = PreyController(
         EnvironmentParamsFactory.standard_parameters(),
         Prey("prey-1", 0, 0),
