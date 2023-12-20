@@ -94,9 +94,10 @@ class AgentController:
         x_rng = x - x_0
 
         range_constraint = [
-            If(y_rng >= 0, y_rng, - y_rng) - self.vd < 0,
-            If(x_rng >= 0, x_rng, - x_rng) - self.vd < 0
+            If(y_rng > 0, y_rng, If(y_rng < 0, -y_rng, self.vd - 1)) - self.vd < 0,
+            If(x_rng > 0, x_rng, If(x_rng < 0, -x_rng, self.vd - 1)) - self.vd < 0
         ]
+
         agent_boxes_constraint = self._box_constraints(x, y, cds)
         distances = []
         for a in np.linspace(0, np.pi, int(self.num_states / 2),
