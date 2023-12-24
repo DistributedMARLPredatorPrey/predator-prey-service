@@ -1,6 +1,6 @@
 from setuptools import setup, find_packages
 
-with open('requirements.txt') as f:
+with open("requirements.txt") as f:
     requirements = f.read().splitlines()
 
 setup(
@@ -17,5 +17,5 @@ setup(
     test_suite="src.test",
     install_requires=requirements,
     zip_safe=False,
-    python_requires='==3.11',
+    python_requires="==3.11",
 )
