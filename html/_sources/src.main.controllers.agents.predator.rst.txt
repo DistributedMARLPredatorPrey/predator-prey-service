@@ -1,0 +1,29 @@
+src.main.controllers.agents.predator package
+============================================
+
+Submodules
+----------
+
+src.main.controllers.agents.predator.predator\_controller module
+----------------------------------------------------------------
+
+.. automodule:: src.main.controllers.agents.predator.predator_controller
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+src.main.controllers.agents.predator.predator\_controller\_factory module
+-------------------------------------------------------------------------
+
+.. automodule:: src.main.controllers.agents.predator.predator_controller_factory
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Module contents
+---------------
+
+.. automodule:: src.main.controllers.agents.predator
+   :members:
+   :undoc-members:
+   :show-inheritance:

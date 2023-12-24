@@ -1,0 +1,21 @@
+src.test.controllers.agents.predator package
+============================================
+
+Submodules
+----------
+
+src.test.controllers.agents.predator.predator\_controller\_test module
+----------------------------------------------------------------------
+
+.. automodule:: src.test.controllers.agents.predator.predator_controller_test
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Module contents
+---------------
+
+.. automodule:: src.test.controllers.agents.predator
+   :members:
+   :undoc-members:
+   :show-inheritance:
