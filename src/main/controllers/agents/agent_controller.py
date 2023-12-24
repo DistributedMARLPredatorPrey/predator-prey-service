@@ -74,18 +74,23 @@ class AgentController:
         return s.check() == sat
 
     def state(self, agents: List[Agent]) -> State:
-        """
+        r"""
         Captures the state given the other agents inside the environment.
         A state is view of the surrounding area, with a given visual depth.
 
         More specifically it finds the intersection points given these equations and constraints:
 
         - Pencil of lines (set of lines passing through a common point)
-            (x - x_0) * sin(a) = (y - y_0) * cos(a) for a in [0, pi]
+
+            .. math:: (x - x_0) \sin{a} = (y - y_0) * \cos{a} \quad \forall a \in [0, pi]
+
         - Constraint x and y to the maximum visual depth:
-              |y - y_0| < vd, |x - x_0| < vd
+
+            .. math:: |y - y_0| < vd, |x - x_0| < vd
+
         - Box of center (x_c, y_c) and radius r:
-              x_c - r <= x <= x_c + r, y_c - r <= y <= y_c + r
+
+            .. math:: x_c - r \leq x \leq x_c + r, y_c - r \leq y \leq y_c + r
 
         :param agents: other agents inside the environment
         :return: a new state
