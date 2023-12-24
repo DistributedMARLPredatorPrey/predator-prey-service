@@ -3,7 +3,6 @@ name: Predator Prey app build and deploy doc
 on:
   push:
     branches:
-      - feature/*
       - develop
 
 permissions:
