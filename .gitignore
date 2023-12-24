@@ -1,0 +1,5 @@
+.idea/
+src.egg-info/
+main/mvc.egg-info/
+__pycache__/
+src/__pycache__/
