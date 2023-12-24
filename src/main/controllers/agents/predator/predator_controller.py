@@ -24,8 +24,6 @@ class PredatorController(AgentController):
 
         .. math:: f(x, d) = \frac{e^{-x} - e^{-d}}{1 - e^{-d}}
 
-
-        :return: the reward
         """
         return (
             np.power(np.e, -np.min(self.last_state.distances))
