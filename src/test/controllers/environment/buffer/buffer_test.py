@@ -12,7 +12,7 @@ class BufferTest(unittest.TestCase):
         batch_size=batch_size,
         num_states=num_states,
         num_actions=num_actions,
-        num_agents=num_agents
+        num_agents=num_agents,
     )
 
     def test_batch_size(self):
@@ -22,5 +22,5 @@ class BufferTest(unittest.TestCase):
             np.array(s).shape == (self.batch_size, self.num_states * self.num_agents),
             np.array(a).shape == (self.batch_size, self.num_actions * self.num_agents),
             np.array(r).shape == (self.batch_size, self.num_agents),
-            np.array(ns).shape == (self.batch_size, self.num_actions * self.num_agents)
+            np.array(ns).shape == (self.batch_size, self.num_actions * self.num_agents),
         )

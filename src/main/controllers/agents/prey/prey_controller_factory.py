@@ -9,7 +9,6 @@ from src.main.model.environment.params.environment_params import EnvironmentPara
 
 
 class PreyControllerFactory:
-
     @staticmethod
     def create_from_params(env_params: EnvironmentParams) -> List[PreyController]:
         """
@@ -19,8 +18,15 @@ class PreyControllerFactory:
         """
         prey_controllers = []
         for i in range(env_params.num_predators):
-            prey = Prey(id=f"prey_{i}", x=uniform(0, env_params.x_dim),
-                        y=uniform(0, env_params.y_dim))
+            prey = Prey(
+                id=f"prey_{i}",
+                x=uniform(0, env_params.x_dim),
+                y=uniform(0, env_params.y_dim),
+            )
             par_service = ParameterService()
-            prey_controllers.append(PreyController(env_params=env_params, prey=prey, par_service=par_service))
+            prey_controllers.append(
+                PreyController(
+                    env_params=env_params, prey=prey, par_service=par_service
+                )
+            )
         return prey_controllers

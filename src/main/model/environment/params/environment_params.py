@@ -6,6 +6,7 @@ class EnvironmentParams:
     """
     Value object representing environment parameters.
     """
+
     # Environment parameters
     x_dim: int
     y_dim: int
@@ -22,7 +23,6 @@ class EnvironmentParams:
 
 
 class EnvironmentParamsFactory:
-
     @staticmethod
     def standard_parameters() -> EnvironmentParams:
         return EnvironmentParams(
@@ -36,5 +36,5 @@ class EnvironmentParamsFactory:
             upper_bound=1,
             r=1,
             vd=30,
-            life=100
+            life=100,
         )

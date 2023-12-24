@@ -4,7 +4,6 @@ from tensorflow.keras import layers
 
 
 class Actor:
-
     #
     def __init__(self, num_states: int):
         """
@@ -19,12 +18,16 @@ class Actor:
         acc_out = layers.Dense(128, activation="relu")(inputs)
         acc_out = layers.Dense(64, activation="relu")(acc_out)
         # acceleration
-        acc_out = layers.Dense(1, activation='tanh', kernel_initializer=last_init)(acc_out)
+        acc_out = layers.Dense(1, activation="tanh", kernel_initializer=last_init)(
+            acc_out
+        )
 
         ang_acc_out = layers.Dense(128, activation="relu")(inputs)
         ang_acc_out = layers.Dense(64, activation="relu")(ang_acc_out)
         # angular acceleration
-        ang_acc_out = layers.Dense(1, activation='tanh', kernel_initializer=last_init)(ang_acc_out)
+        ang_acc_out = layers.Dense(1, activation="tanh", kernel_initializer=last_init)(
+            ang_acc_out
+        )
 
         outputs = layers.Concatenate()([acc_out, ang_acc_out])
 

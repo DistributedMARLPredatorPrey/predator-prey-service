@@ -11,9 +11,9 @@ from src.main.model.environment.state import State
 
 
 class AgentController:
-
-    def __init__(self, env_params: EnvironmentParams, agent: Agent,
-                 par_service: ParameterService):
+    def __init__(
+        self, env_params: EnvironmentParams, agent: Agent, par_service: ParameterService
+    ):
         self.last_state = None
         self.num_states = env_params.num_states
         self.lower_bound = env_params.lower_bound
@@ -39,7 +39,7 @@ class AgentController:
 
         # we may change the amount of noise for actions during training
         noise[0] *= 2
-        noise[1] *= .5
+        noise[1] *= 0.5
 
         # Adding noise to action
         sampled_action = sampled_action.numpy()
@@ -59,13 +59,18 @@ class AgentController:
         :param target: target agent
         :return: True if the current agent is being eaten, False otherwise
         """
-        x, y = Real('x'), Real('y')
+        x, y = Real("x"), Real("y")
         s = Solver()
-        s.add(x < self.agent.x + self.r, x >= self.agent.x - self.r,
-              x < target.x + self.r, x >= target.x - self.r,
-              y < self.agent.y + self.r, y >= self.agent.y - self.r,
-              y < target.y + self.r, y >= target.y - self.r
-              )
+        s.add(
+            x < self.agent.x + self.r,
+            x >= self.agent.x - self.r,
+            x < target.x + self.r,
+            x >= target.x - self.r,
+            y < self.agent.y + self.r,
+            y >= self.agent.y - self.r,
+            y < target.y + self.r,
+            y >= target.y - self.r,
+        )
         return s.check() == sat
 
     def state(self, agents: List[Agent]) -> State:
@@ -85,24 +90,30 @@ class AgentController:
         :param agents: other agents inside the environment
         :return: a new state
         """
-        cds = np.array([(agent.x, agent.y) for agent in agents
-                        if agent != self.agent and agent.agent_type != self.agent])
+        cds = np.array(
+            [
+                (agent.x, agent.y)
+                for agent in agents
+                if agent != self.agent and agent.agent_type != self.agent
+            ]
+        )
         (x_0, y_0) = (self.agent.x, self.agent.y)
 
-        x, y = Real('x'), Real('y')
+        x, y = Real("x"), Real("y")
         y_rng = y - y_0
         x_rng = x - x_0
 
         range_constraint = [
             If(y_rng > 0, y_rng, If(y_rng < 0, -y_rng, self.vd - 1)) - self.vd < 0,
-            If(x_rng > 0, x_rng, If(x_rng < 0, -x_rng, self.vd - 1)) - self.vd < 0
+            If(x_rng > 0, x_rng, If(x_rng < 0, -x_rng, self.vd - 1)) - self.vd < 0,
         ]
 
         agent_boxes_constraint = self._box_constraints(x, y, cds)
         distances = []
-        for a in np.linspace(0, np.pi, int(self.num_states / 2),
-                             endpoint=False):
-            half_line_constraints = [y > y_0, y < y_0] if a != 0 else [x >= x_0, x < x_0]
+        for a in np.linspace(0, np.pi, int(self.num_states / 2), endpoint=False):
+            half_line_constraints = (
+                [y > y_0, y < y_0] if a != 0 else [x >= x_0, x < x_0]
+            )
             for half_line_constraint in half_line_constraints:
                 o = Optimize()
                 o.add(
@@ -110,7 +121,7 @@ class AgentController:
                         (x - x_0) * np.sin(a) - (y - y_0) * np.cos(a) == 0,
                         And(range_constraint),
                         agent_boxes_constraint,
-                        half_line_constraint
+                        half_line_constraint,
                     )
                 )
                 o.minimize(If(y > y_0, y, If(y < y_0, -y, If(x >= x_0, x, -x))))
@@ -141,15 +152,17 @@ class AgentController:
         :param cds: other agents positions
         :return: an Or encoding the mentioned constraints
         """
-        return Or([
-            Or(
-                And(x <= cx + self.r, x >= cx - self.r, y == cy - self.r),
-                And(x <= cx + self.r, x >= cx - self.r, y == cy + self.r),
-                And(y <= cy + self.r, y >= cy - self.r, x == cx - self.r),
-                And(y <= cy + self.r, y >= cy - self.r, x == cx + self.r)
-            )
-            for (cx, cy) in cds
-        ])
+        return Or(
+            [
+                Or(
+                    And(x <= cx + self.r, x >= cx - self.r, y == cy - self.r),
+                    And(x <= cx + self.r, x >= cx - self.r, y == cy + self.r),
+                    And(y <= cy + self.r, y >= cy - self.r, x == cx - self.r),
+                    And(y <= cy + self.r, y >= cy - self.r, x == cx + self.r),
+                )
+                for (cx, cy) in cds
+            ]
+        )
 
     def _extract_distance(self, o: Optimize, x: Real, y: Real, x_0: float, y_0: float):
         """
@@ -170,8 +183,10 @@ class AgentController:
             if isinstance(my, AlgebraicNumRef):
                 my = my.approx(10)
 
-            x_p, y_p = float(mx.numerator_as_long()) / float(mx.denominator_as_long()), \
-                       float(my.numerator_as_long()) / float(my.denominator_as_long())
+            x_p, y_p = (
+                float(mx.numerator_as_long()) / float(mx.denominator_as_long()),
+                float(my.numerator_as_long()) / float(my.denominator_as_long()),
+            )
             # Compute the distance between the agent center (x_0, y_0)
             return np.sqrt(np.power(x_0 - x_p, 2) + np.power(y_0 - y_p, 2))
         return self.vd
