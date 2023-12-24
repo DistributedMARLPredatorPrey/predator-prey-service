@@ -18,6 +18,7 @@
         <script src="_static/documentation_options.js?v=01f34227"></script>
         <script src="_static/doctools.js?v=888ff710"></script>
         <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+        <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
@@ -113,12 +114,22 @@
 <dl class="py method">
 <dt class="sig sig-object py" id="src.main.controllers.agents.prey.prey_controller.PreyController.reward">
 <span class="sig-name descname"><span class="pre">reward</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="headerlink" href="#src.main.controllers.agents.prey.prey_controller.PreyController.reward" title="Link to this definition"></a></dt>
-<dd><p>The prey reward is an exponential function that gets higher as the distance
+<dd><blockquote>
+<div><p>The prey reward is an exponential function that gets higher as the distance
 of the closest predator increases.
 Furthermore, it’s a min-max normalized function, so that when the distance is 0 the reward is 0,
-and when it’s the maximum visual depth it’s equal to 1:
-f(x, d) = (1 - e^(-x)) / (1 - e^(-d))
-:return: the reward</p>
+and when it’s the maximum visual depth it’s equal to 1:</p>
+<div class="math notranslate nohighlight">
+\[f(x, d) = \]</div>
+</div></blockquote>
+<p>rac{1 - e^{-x}}{1- e^{-d}}</p>
+<blockquote>
+<div><dl class="field-list simple">
+<dt class="field-odd">return<span class="colon">:</span></dt>
+<dd class="field-odd"><p>the reward</p>
+</dd>
+</dl>
+</div></blockquote>
 </dd></dl>
 
 </dd></dl>
