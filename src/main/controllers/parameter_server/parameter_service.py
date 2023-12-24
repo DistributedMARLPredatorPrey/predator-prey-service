@@ -2,7 +2,6 @@ from tensorflow.keras import Model
 
 
 class ParameterService:
-
     def __init__(self):
         self.actor_model = None
 

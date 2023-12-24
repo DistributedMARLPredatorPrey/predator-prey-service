@@ -11,9 +11,13 @@ from src.main.model.environment.environment import Environment
 
 
 class EnvironmentController:
-
-    def __init__(self, environment: Environment, agent_controllers: List[AgentController],
-                 buffers: List[Buffer], learners: List[Learner]):
+    def __init__(
+        self,
+        environment: Environment,
+        agent_controllers: List[AgentController],
+        buffers: List[Buffer],
+        learners: List[Learner],
+    ):
         self.environment = environment
         self.max_acc = 0.2
         self.t_step = 1
@@ -40,7 +44,14 @@ class EnvironmentController:
                 print(rewards)
                 # print([reward for reward in rewards])
                 for i, agent_type in enumerate(AgentType):
-                    self._record_by_type(agent_type, self.buffers[i], prev_states, actions, rewards, next_states)
+                    self._record_by_type(
+                        agent_type,
+                        self.buffers[i],
+                        prev_states,
+                        actions,
+                        rewards,
+                        next_states,
+                    )
 
             # print([(p_id, r / 10) for p_id, r in avg_rewards.items()])
             for learner in self.learners:
@@ -65,7 +76,9 @@ class EnvironmentController:
         actions = {}
         for agent_controller in self.agent_controllers:
             agent = agent_controller.agent
-            tf_prev_state = tf.expand_dims(tf.convert_to_tensor(states[agent.id].distances), 0)
+            tf_prev_state = tf.expand_dims(
+                tf.convert_to_tensor(states[agent.id].distances), 0
+            )
             action = agent_controller.policy(tf_prev_state)
             actions.update({agent.id: list(action)})
         return actions
@@ -76,7 +89,7 @@ class EnvironmentController:
         :param actions: joint action
         :return: joint state
         """
-        for (agent_id, action) in actions.items():
+        for agent_id, action in actions.items():
             self._step_agent(agent_id, action)
         return self._states()
 
@@ -90,10 +103,15 @@ class EnvironmentController:
             for agent_controller in self.agent_controllers
         }
 
-    def _record_by_type(self, agent_type: AgentType,
-                        buffer: Buffer,
-                        prev_states, actions, rewards, next_states
-                        ):
+    def _record_by_type(
+        self,
+        agent_type: AgentType,
+        buffer: Buffer,
+        prev_states,
+        actions,
+        rewards,
+        next_states,
+    ):
         """
         Records inside the buffer given as parameter the observation tuple of the agents,
         where each agent is of a given type.
@@ -106,8 +124,11 @@ class EnvironmentController:
         :return:
         """
         prev_states_t, actions_t, rewards_t, next_states_t = [], [], [], []
-        agents = [agent_controller.agent for agent_controller in self.agent_controllers if
-                  agent_controller.agent.agent_type == agent_type]
+        agents = [
+            agent_controller.agent
+            for agent_controller in self.agent_controllers
+            if agent_controller.agent.agent_type == agent_type
+        ]
         # avg_rewards = {}
         for agent in agents:
             prev_states_t += prev_states[agent.id].distances
@@ -124,7 +145,9 @@ class EnvironmentController:
         :param agent_id: agent id to search for
         :return: agent if any, None otherwise
         """
-        return next((agent for agent in self.environment.agents if agent.id == agent_id), None)
+        return next(
+            (agent for agent in self.environment.agents if agent.id == agent_id), None
+        )
 
     def _step_agent(self, agent_id, action):
         """

@@ -7,9 +7,9 @@ from src.main.model.agents.prey import Prey
 
 
 class PreyController(AgentController):
-
-    def __init__(self, env_params: EnvironmentParams, prey: Prey,
-                 par_service: ParameterService):
+    def __init__(
+        self, env_params: EnvironmentParams, prey: Prey, par_service: ParameterService
+    ):
         super().__init__(env_params, prey, par_service)
 
     def reward(self) -> float:
@@ -21,8 +21,9 @@ class PreyController(AgentController):
         f(x, d) = (1 - e^(-x)) / (1 - e^(-d))
         :return: the reward
         """
-        return ((1 - np.power(np.e, -np.min(self.last_state.distances))) /
-                (1 - np.power(np.e, -self.vd)))
+        return (1 - np.power(np.e, -np.min(self.last_state.distances))) / (
+            1 - np.power(np.e, -self.vd)
+        )
 
     def done(self) -> bool:
         """

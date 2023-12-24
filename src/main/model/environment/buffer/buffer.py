@@ -3,9 +3,14 @@ import tensorflow as tf
 
 
 class Buffer:
-
-    def __init__(self, buffer_capacity=100_000, batch_size=64, num_states=None,
-                 num_actions=None, num_agents=None):
+    def __init__(
+        self,
+        buffer_capacity=100_000,
+        batch_size=64,
+        num_states=None,
+        num_actions=None,
+        num_agents=None,
+    ):
         """
         Replay buffer used for batch learning.
         :param buffer_capacity: buffer capacity
@@ -29,7 +34,9 @@ class Buffer:
         self.state_buffer = np.zeros((self.buffer_capacity, num_agents * num_states))
         self.action_buffer = np.zeros((self.buffer_capacity, num_agents * num_actions))
         self.reward_buffer = np.zeros((self.buffer_capacity, num_agents))
-        self.next_state_buffer = np.zeros((self.buffer_capacity, num_agents * num_states))
+        self.next_state_buffer = np.zeros(
+            (self.buffer_capacity, num_agents * num_states)
+        )
 
     def record(self, obs_tuple):
         """

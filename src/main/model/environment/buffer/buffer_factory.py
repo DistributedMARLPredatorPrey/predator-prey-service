@@ -2,7 +2,6 @@ from src.main.model.environment.buffer.buffer import Buffer
 
 
 class BufferFactory:
-
     @staticmethod
     def create_buffers(num_states, num_actions, sizes):
         """

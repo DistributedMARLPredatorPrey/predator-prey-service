@@ -7,9 +7,12 @@ from src.main.model.environment.params.environment_params import EnvironmentPara
 
 
 class PredatorController(AgentController):
-
-    def __init__(self, env_params: EnvironmentParams, predator: Predator,
-                 par_service: ParameterService):
+    def __init__(
+        self,
+        env_params: EnvironmentParams,
+        predator: Predator,
+        par_service: ParameterService,
+    ):
         super().__init__(env_params, predator, par_service)
 
     def reward(self) -> float:
@@ -21,8 +24,10 @@ class PredatorController(AgentController):
         f(x, d) = (e^(-x) - e^(-d)) / (1 - e^(-d))
         :return: the reward
         """
-        return ((np.power(np.e, -np.min(self.last_state.distances)) - np.power(np.e, -self.vd)) /
-                (1 - np.power(np.e, -self.vd)))
+        return (
+            np.power(np.e, -np.min(self.last_state.distances))
+            - np.power(np.e, -self.vd)
+        ) / (1 - np.power(np.e, -self.vd))
 
     def done(self) -> bool:
         """
