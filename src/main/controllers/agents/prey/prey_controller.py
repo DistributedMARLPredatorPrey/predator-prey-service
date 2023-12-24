@@ -17,7 +17,7 @@ class PreyController(AgentController):
         The prey reward is an exponential function that gets higher as the distance
         of the closest predator increases.
         Furthermore, it's a min-max normalized function, so that when the distance is 0 the reward is 0,
-        and when it's the maximum visual depth it's equal to 1: f(x, d) = \frac{1 - e^{-x}}{1- e^{-d}}
+        and when it's the maximum visual depth it's equal to 1: ``f(x, d) = \frac{1 - e^{-x}}{1- e^{-d}}``
 
         .. math::
             p(x) = \frac{e^{\kappa cos(x-\mu)}}{2\pi I_0(\kappa)}

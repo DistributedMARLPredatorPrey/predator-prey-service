@@ -31,6 +31,7 @@ extensions = [
     "sphinx.ext.duration",
     "sphinx.ext.doctest",
     "sphinx.ext.autodoc",
+    'sphinx.ext.mathjax',
 ]
 
 autodoc_mock_imports = ["numpy", "tensorflow", "matplotlib"]
