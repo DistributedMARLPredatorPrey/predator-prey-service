@@ -74,7 +74,7 @@ class AgentController:
         return s.check() == sat
 
     def state(self, agents: List[Agent]) -> State:
-        """
+        r"""
         Captures the state given the other agents inside the environment.
         A state is view of the surrounding area, with a given visual depth.
 
@@ -82,7 +82,7 @@ class AgentController:
 
         - Pencil of lines (set of lines passing through a common point)
 
-            .. math:: (x - x_0) \sin{a} = (y - y_0) * \cos{a} \forall a \in [0, pi]
+            .. math:: (x - x_0) \sin{a} = (y - y_0) * \cos{a} \quad \forall a \in [0, pi]
 
         - Constraint x and y to the maximum visual depth:
 

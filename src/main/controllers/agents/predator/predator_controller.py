@@ -16,14 +16,16 @@ class PredatorController(AgentController):
         super().__init__(env_params, predator, par_service)
 
     def reward(self) -> float:
-        """
+        r"""
         The predator reward is an exponential function that gets higher as the distance
         of the closest prey decreases.
         Furthermore, it's a min-max normalized function, so that when the distance is 0 the reward is 1,
         and when it's the maximum visual depth it's equal to 0:
 
-        .. math:: f(x, d) = \frac{e^{-x} - e^{-d}}{1 - e^{-d}}
+        .. math::
+            f(x, d) = \frac{e^{-x} - e^{-d}}{1 - e^{-d}}
 
+        :return: the reward
         """
         return (
             np.power(np.e, -np.min(self.last_state.distances))
