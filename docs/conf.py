@@ -33,6 +33,8 @@ extensions = [
     "sphinx.ext.autodoc",
 ]
 
+autodoc_mock_imports = ["numpy", "tensorflow", "matplotlib"]
+
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ["_templates"]
 
