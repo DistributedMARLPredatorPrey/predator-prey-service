@@ -1,0 +1,19 @@
+src.main.model package
+======================
+
+Subpackages
+-----------
+
+.. toctree::
+   :maxdepth: 4
+
+   src.main.model.agents
+   src.main.model.environment
+
+Module contents
+---------------
+
+.. automodule:: src.main.model
+   :members:
+   :undoc-members:
+   :show-inheritance:

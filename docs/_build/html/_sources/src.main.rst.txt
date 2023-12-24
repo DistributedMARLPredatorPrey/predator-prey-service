@@ -1,0 +1,20 @@
+src.main package
+================
+
+Subpackages
+-----------
+
+.. toctree::
+   :maxdepth: 4
+
+   src.main.controllers
+   src.main.model
+   src.main.view
+
+Module contents
+---------------
+
+.. automodule:: src.main
+   :members:
+   :undoc-members:
+   :show-inheritance:

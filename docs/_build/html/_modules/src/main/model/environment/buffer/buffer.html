@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../../../../../../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>src.main.model.environment.buffer.buffer &#8212; Predator Prey App 0.1.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../../../../../_static/pygments.css?v=4f649999" />
+    <link rel="stylesheet" type="text/css" href="../../../../../../_static/alabaster.css?v=039e1c02" />
+    <script src="../../../../../../_static/documentation_options.js?v=01f34227"></script>
+    <script src="../../../../../../_static/doctools.js?v=888ff710"></script>
+    <script src="../../../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <link rel="index" title="Index" href="../../../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../../../search.html" />
+   
+  <link rel="stylesheet" href="../../../../../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for src.main.model.environment.buffer.buffer</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">tensorflow</span> <span class="k">as</span> <span class="nn">tf</span>
+
+
+<div class="viewcode-block" id="Buffer">
+<a class="viewcode-back" href="../../../../../../src.main.model.environment.buffer.html#src.main.model.environment.buffer.buffer.Buffer">[docs]</a>
+<span class="k">class</span> <span class="nc">Buffer</span><span class="p">:</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">buffer_capacity</span><span class="o">=</span><span class="mi">100_000</span><span class="p">,</span>
+        <span class="n">batch_size</span><span class="o">=</span><span class="mi">64</span><span class="p">,</span>
+        <span class="n">num_states</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">num_actions</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">num_agents</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Replay buffer used for batch learning.</span>
+<span class="sd">        :param buffer_capacity: buffer capacity</span>
+<span class="sd">        :param batch_size: batch size</span>
+<span class="sd">        :param num_states: number of states</span>
+<span class="sd">        :param num_actions: number of actions</span>
+<span class="sd">        :param num_agents: number of agents</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Max Number of tuples that can be stored</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">buffer_capacity</span> <span class="o">=</span> <span class="n">buffer_capacity</span>
+        <span class="c1"># Num of tuples used for training</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">batch_size</span> <span class="o">=</span> <span class="n">batch_size</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">num_states</span> <span class="o">=</span> <span class="n">num_states</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">num_actions</span> <span class="o">=</span> <span class="n">num_actions</span>
+
+        <span class="c1"># Current number of tuples in buffer</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">buffer_counter</span> <span class="o">=</span> <span class="mi">0</span>
+
+        <span class="c1"># We have a different array for each tuple element</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">state_buffer</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">buffer_capacity</span><span class="p">,</span> <span class="n">num_agents</span> <span class="o">*</span> <span class="n">num_states</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">action_buffer</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">buffer_capacity</span><span class="p">,</span> <span class="n">num_agents</span> <span class="o">*</span> <span class="n">num_actions</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">reward_buffer</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">buffer_capacity</span><span class="p">,</span> <span class="n">num_agents</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">next_state_buffer</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span>
+            <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">buffer_capacity</span><span class="p">,</span> <span class="n">num_agents</span> <span class="o">*</span> <span class="n">num_states</span><span class="p">)</span>
+        <span class="p">)</span>
+
+<div class="viewcode-block" id="Buffer.record">
+<a class="viewcode-back" href="../../../../../../src.main.model.environment.buffer.html#src.main.model.environment.buffer.buffer.Buffer.record">[docs]</a>
+    <span class="k">def</span> <span class="nf">record</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obs_tuple</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Records a tuple (s, a, r, s&#39;) inside the buffer</span>
+<span class="sd">        :param obs_tuple: observation tuple</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Set index to zero if buffer_capacity is exceeded,</span>
+        <span class="c1"># replacing old records</span>
+        <span class="n">index</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">buffer_counter</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">buffer_capacity</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">state_buffer</span><span class="p">[</span><span class="n">index</span><span class="p">]</span> <span class="o">=</span> <span class="n">obs_tuple</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">action_buffer</span><span class="p">[</span><span class="n">index</span><span class="p">]</span> <span class="o">=</span> <span class="n">obs_tuple</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">reward_buffer</span><span class="p">[</span><span class="n">index</span><span class="p">]</span> <span class="o">=</span> <span class="n">obs_tuple</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">next_state_buffer</span><span class="p">[</span><span class="n">index</span><span class="p">]</span> <span class="o">=</span> <span class="n">obs_tuple</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">buffer_counter</span> <span class="o">+=</span> <span class="mi">1</span></div>
+
+
+<div class="viewcode-block" id="Buffer.sample_batch">
+<a class="viewcode-back" href="../../../../../../src.main.model.environment.buffer.html#src.main.model.environment.buffer.buffer.Buffer.sample_batch">[docs]</a>
+    <span class="k">def</span> <span class="nf">sample_batch</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Samples a batch of data from the buffer</span>
+<span class="sd">        :return: tuple of data</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Get sampling range</span>
+        <span class="n">record_range</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">buffer_counter</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">buffer_capacity</span><span class="p">)</span>
+        <span class="c1"># Randomly sample indices</span>
+        <span class="n">batch_indices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">record_range</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">batch_size</span><span class="p">)</span>
+        <span class="c1"># Convert to tensors</span>
+        <span class="n">state_batch</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">convert_to_tensor</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">state_buffer</span><span class="p">[</span><span class="n">batch_indices</span><span class="p">])</span>
+        <span class="n">action_batch</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">convert_to_tensor</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">action_buffer</span><span class="p">[</span><span class="n">batch_indices</span><span class="p">])</span>
+        <span class="n">reward_batch</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">convert_to_tensor</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">reward_buffer</span><span class="p">[</span><span class="n">batch_indices</span><span class="p">])</span>
+        <span class="n">reward_batch</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">cast</span><span class="p">(</span><span class="n">reward_batch</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">tf</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+        <span class="n">next_state_batch</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">convert_to_tensor</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">next_state_buffer</span><span class="p">[</span><span class="n">batch_indices</span><span class="p">])</span>
+
+        <span class="k">return</span> <span class="n">state_batch</span><span class="p">,</span> <span class="n">action_batch</span><span class="p">,</span> <span class="n">reward_batch</span><span class="p">,</span> <span class="n">next_state_batch</span></div>
+</div>
+
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../../../../../index.html">Predator Prey App</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../modules.html">src</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../../../../../index.html">Documentation overview</a><ul>
+  <li><a href="../../../../../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../../../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2023, Luca Fabri.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 7.2.6</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.13</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>
