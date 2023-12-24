@@ -10,17 +10,6 @@ Subpackages
    src.main
    src.test
 
-Submodules
-----------
-
-src.setup module
-----------------
-
-.. automodule:: src.setup
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
 Module contents
 ---------------
 

@@ -53,8 +53,6 @@
 <li class="toctree-l4"><a class="reference internal" href="src.test.html">src.test package</a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="src.html#submodules">Submodules</a></li>
-<li class="toctree-l3"><a class="reference internal" href="src.html#src-setup-module">src.setup module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="src.html#module-src">Module contents</a></li>
 </ul>
 </li>
@@ -96,11 +94,48 @@
 <section id="submodules">
 <h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading"></a></h2>
 </section>
-<section id="src-main-model-environment-buffer-buffer-module">
-<h2>src.main.model.environment.buffer.buffer module<a class="headerlink" href="#src-main-model-environment-buffer-buffer-module" title="Link to this heading"></a></h2>
+<section id="module-src.main.model.environment.buffer.buffer">
+<span id="src-main-model-environment-buffer-buffer-module"></span><h2>src.main.model.environment.buffer.buffer module<a class="headerlink" href="#module-src.main.model.environment.buffer.buffer" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="src.main.model.environment.buffer.buffer.Buffer">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">src.main.model.environment.buffer.buffer.</span></span><span class="sig-name descname"><span class="pre">Buffer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">buffer_capacity</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batch_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">64</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_states</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_actions</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_agents</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/main/model/environment/buffer/buffer.html#Buffer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.main.model.environment.buffer.buffer.Buffer" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="src.main.model.environment.buffer.buffer.Buffer.record">
+<span class="sig-name descname"><span class="pre">record</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obs_tuple</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/main/model/environment/buffer/buffer.html#Buffer.record"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.main.model.environment.buffer.buffer.Buffer.record" title="Link to this definition"></a></dt>
+<dd><p>Records a tuple (s, a, r, s’) inside the buffer
+:param obs_tuple: observation tuple
+:return:</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.main.model.environment.buffer.buffer.Buffer.sample_batch">
+<span class="sig-name descname"><span class="pre">sample_batch</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/main/model/environment/buffer/buffer.html#Buffer.sample_batch"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.main.model.environment.buffer.buffer.Buffer.sample_batch" title="Link to this definition"></a></dt>
+<dd><p>Samples a batch of data from the buffer
+:return: tuple of data</p>
+</dd></dl>
+
+</dd></dl>
+
 </section>
-<section id="src-main-model-environment-buffer-buffer-factory-module">
-<h2>src.main.model.environment.buffer.buffer_factory module<a class="headerlink" href="#src-main-model-environment-buffer-buffer-factory-module" title="Link to this heading"></a></h2>
+<section id="module-src.main.model.environment.buffer.buffer_factory">
+<span id="src-main-model-environment-buffer-buffer-factory-module"></span><h2>src.main.model.environment.buffer.buffer_factory module<a class="headerlink" href="#module-src.main.model.environment.buffer.buffer_factory" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="src.main.model.environment.buffer.buffer_factory.BufferFactory">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">src.main.model.environment.buffer.buffer_factory.</span></span><span class="sig-name descname"><span class="pre">BufferFactory</span></span><a class="reference internal" href="_modules/src/main/model/environment/buffer/buffer_factory.html#BufferFactory"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.main.model.environment.buffer.buffer_factory.BufferFactory" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="src.main.model.environment.buffer.buffer_factory.BufferFactory.create_buffers">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">create_buffers</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">num_states</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_actions</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sizes</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/main/model/environment/buffer/buffer_factory.html#BufferFactory.create_buffers"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.main.model.environment.buffer.buffer_factory.BufferFactory.create_buffers" title="Link to this definition"></a></dt>
+<dd><p>Creates n buffers where n = <a href="#id1"><span class="problematic" id="id2">|sizes|</span></a>
+:param num_states: number of states
+:param num_actions: number of actions
+:param sizes: array where each element is the number of agents per type
+:return:</p>
+</dd></dl>
+
+</dd></dl>
+
 </section>
 <section id="module-src.main.model.environment.buffer">
 <span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-src.main.model.environment.buffer" title="Link to this heading"></a></h2>
