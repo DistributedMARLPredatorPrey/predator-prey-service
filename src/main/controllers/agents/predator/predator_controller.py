@@ -24,6 +24,7 @@ class PredatorController(AgentController):
 
         .. math:: f(x, d) = \frac{e^{-x} - e^{-d}}{1 - e^{-d}}
 
+
         :return: the reward
         """
         return (
