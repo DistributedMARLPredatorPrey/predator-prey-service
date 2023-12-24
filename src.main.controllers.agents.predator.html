@@ -111,15 +111,17 @@
 <dl class="py method">
 <dt class="sig sig-object py" id="src.main.controllers.agents.predator.predator_controller.PredatorController.reward">
 <span class="sig-name descname"><span class="pre">reward</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="headerlink" href="#src.main.controllers.agents.predator.predator_controller.PredatorController.reward" title="Link to this definition"></a></dt>
-<dd><blockquote>
-<div><p>The predator reward is an exponential function that gets higher as the distance
+<dd><p>The predator reward is an exponential function that gets higher as the distance
 of the closest prey decreases.
 Furthermore, it’s a min-max normalized function, so that when the distance is 0 the reward is 1,
 and when it’s the maximum visual depth it’s equal to 0:</p>
 <div class="math notranslate nohighlight">
-\[f(x, d) = \]</div>
-</div></blockquote>
-<p>rac{e^{-x} - e^{-d}}{1 - e^{-d}}</p>
+\[f(x, d) = \frac{e^{-x} - e^{-d}}{1 - e^{-d}}\]</div>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>the reward</p>
+</dd>
+</dl>
 </dd></dl>
 
 </dd></dl>
