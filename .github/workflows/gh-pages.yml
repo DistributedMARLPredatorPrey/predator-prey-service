@@ -1,4 +1,4 @@
-name: Build and Deploy Docs
+name: Predator Prey app build and deploy doc
 
 on:
   push:
@@ -24,8 +24,8 @@ jobs:
           pip install sphinx sphinx_rtd_theme
       - name: Build documentation
         run: |
-           sphinx-apidoc -o docs src/
-           make html -C docs/
+          sphinx-apidoc -o docs src/
+          make html -C docs/
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
         with:
@@ -34,4 +34,3 @@ jobs:
           user_name: 'github-actions[bot]'
           user_email: 'github-actions[bot]@users.noreply.github.com'
           commit_message: 'docs: update code documentation'
-          # cname: your-custom-domain.com  # Optional: Add your custom domain here if needed
