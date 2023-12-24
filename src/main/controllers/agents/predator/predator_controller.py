@@ -8,10 +8,10 @@ from src.main.model.environment.params.environment_params import EnvironmentPara
 
 class PredatorController(AgentController):
     def __init__(
-            self,
-            env_params: EnvironmentParams,
-            predator: Predator,
-            par_service: ParameterService,
+        self,
+        env_params: EnvironmentParams,
+        predator: Predator,
+        par_service: ParameterService,
     ):
         super().__init__(env_params, predator, par_service)
 
@@ -27,8 +27,8 @@ class PredatorController(AgentController):
         :return: the reward
         """
         return (
-                np.power(np.e, -np.min(self.last_state.distances))
-                - np.power(np.e, -self.vd)
+            np.power(np.e, -np.min(self.last_state.distances))
+            - np.power(np.e, -self.vd)
         ) / (1 - np.power(np.e, -self.vd))
 
     def done(self) -> bool:
