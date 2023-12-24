@@ -1,4 +1,4 @@
-name: Predator Prey app build and deploy doc
+name: Predator Prey app Build and Deploy Documentation
 
 on:
   push:
@@ -10,7 +10,7 @@ permissions:
   contents: write
 
 jobs:
-  build-and-deploy:
+  doc-build-and-deploy:
     runs-on: ubuntu-latest
 
     steps:
