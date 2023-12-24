@@ -8,10 +8,10 @@ from src.main.model.environment.params.environment_params import EnvironmentPara
 
 class PredatorController(AgentController):
     def __init__(
-        self,
-        env_params: EnvironmentParams,
-        predator: Predator,
-        par_service: ParameterService,
+            self,
+            env_params: EnvironmentParams,
+            predator: Predator,
+            par_service: ParameterService,
     ):
         super().__init__(env_params, predator, par_service)
 
@@ -21,12 +21,14 @@ class PredatorController(AgentController):
         of the closest prey decreases.
         Furthermore, it's a min-max normalized function, so that when the distance is 0 the reward is 1,
         and when it's the maximum visual depth it's equal to 0:
-        f(x, d) = (e^(-x) - e^(-d)) / (1 - e^(-d))
+
+        .. math:: f(x, d) = \frac{e^{-x} - e^{-d}}{1 - e^{-d}}
+
         :return: the reward
         """
         return (
-            np.power(np.e, -np.min(self.last_state.distances))
-            - np.power(np.e, -self.vd)
+                np.power(np.e, -np.min(self.last_state.distances))
+                - np.power(np.e, -self.vd)
         ) / (1 - np.power(np.e, -self.vd))
 
     def done(self) -> bool:
