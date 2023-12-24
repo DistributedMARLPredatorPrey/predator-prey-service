@@ -18,9 +18,14 @@ class BufferTest(unittest.TestCase):
     def test_batch_size(self):
         self.buffer.record(([0, 0, 0, 0], [0, 0], [0, 0], [0, 0, 0, 0]))
         s, a, r, ns = self.buffer.sample_batch()
-        assert (
-            np.array(s).shape == (self.batch_size, self.num_states * self.num_agents),
-            np.array(a).shape == (self.batch_size, self.num_actions * self.num_agents),
-            np.array(r).shape == (self.batch_size, self.num_agents),
-            np.array(ns).shape == (self.batch_size, self.num_actions * self.num_agents),
+        assert all(
+            [
+                np.array(s).shape
+                == (self.batch_size, self.num_states * self.num_agents),
+                np.array(a).shape
+                == (self.batch_size, self.num_actions * self.num_agents),
+                np.array(r).shape == (self.batch_size, self.num_agents),
+                np.array(ns).shape
+                == (self.batch_size, self.num_states * self.num_agents),
+            ]
         )
