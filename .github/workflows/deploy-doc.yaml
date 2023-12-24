@@ -1,0 +1,36 @@
+name: Build and Deploy Docs
+
+on:
+  push:
+    branches:
+      - feature/*
+      - develop
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          pip install sphinx sphinx_rtd_theme
+
+      - name: Build documentation
+        run: |
+           sphinx-apidoc -o docs src/
+           make html -C docs/ 
+
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: docs/_build
+          # cname: your-custom-domain.com  # Optional: Add your custom domain here if needed
