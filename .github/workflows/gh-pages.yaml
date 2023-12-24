@@ -6,8 +6,8 @@ on:
       - feature/*
       - develop
 
-#permissions:
-#  contents: write
+permissions:
+  contents: write
 
 jobs:
   build-and-deploy:
