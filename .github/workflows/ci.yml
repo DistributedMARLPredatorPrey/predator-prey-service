@@ -1,4 +1,4 @@
-name: Predator Prey app Build
+name: Predator Prey Service Build
 
 on:
   push:

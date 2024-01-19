@@ -1,4 +1,4 @@
-name: Predator Prey app Build and Deploy Documentation
+name: Predator Prey Service Build and Deploy Documentation
 
 on:
   push:

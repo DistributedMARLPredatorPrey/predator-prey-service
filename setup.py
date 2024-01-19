@@ -4,9 +4,9 @@ with open("requirements.txt") as f:
     requirements = f.read().splitlines()
 
 setup(
-    name="predator-prey-app",
+    name="predator-prey-service",
     version="0.1.0",
-    description="Distributed RL training application",
+    description="Predator Prey Service",
     url="#",
     author="Luca Fabri",
     author_email="luca.fabri1999@gmail.com",

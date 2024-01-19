@@ -1,4 +1,4 @@
-name: Predator Prey app Deploy Image
+name: Predator Prey Service Deploy Image
 
 # Configures this workflow to run every time a change is pushed to the branch called `release`.
 on:

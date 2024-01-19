@@ -17,7 +17,7 @@ sys.path.insert(0, os.path.abspath(".."))
 # -- Project information -----------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 
-project = "Predator Prey App"
+project = "Predator Prey Service"
 copyright = "2023, Luca Fabri"
 author = "Luca Fabri"
 release = "0.1.0"

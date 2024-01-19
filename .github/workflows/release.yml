@@ -1,4 +1,4 @@
-name: Predator Prey app Release
+name: Predator Prey Service Release
 
 on:
   push:
