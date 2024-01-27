@@ -24,7 +24,7 @@ class AgentController:
         self.agent = agent
         self.par_service = par_service
 
-    def policy(self, state, verbose=False):
+    def action(self, state, verbose=False):
         """
         Computes the next action based on the current state, by getting the current actor model
         from the parameter server.

@@ -1,6 +1,6 @@
 import unittest
 
-from src.main.controllers.agents.prey.prey_controller import PreyController
+from main.controllers.agents.predator_prey.prey.prey_controller import PreyController
 from src.main.controllers.parameter_server.parameter_service import ParameterService
 from src.main.model.agents.predator import Predator
 from src.main.model.agents.prey import Prey

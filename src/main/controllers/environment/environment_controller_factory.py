@@ -1,7 +1,7 @@
-from src.main.controllers.agents.predator.predator_controller_factory import (
+from main.controllers.agents.predator_prey.predator import (
     PredatorControllerFactory,
 )
-from src.main.controllers.agents.prey.prey_controller_factory import (
+from main.controllers.agents.predator_prey.prey import (
     PreyControllerFactory,
 )
 from src.main.controllers.environment.environment_controller import (

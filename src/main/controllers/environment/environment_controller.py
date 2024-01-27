@@ -79,7 +79,7 @@ class EnvironmentController:
             tf_prev_state = tf.expand_dims(
                 tf.convert_to_tensor(states[agent.id].distances), 0
             )
-            action = agent_controller.policy(tf_prev_state)
+            action = agent_controller.action(tf_prev_state)
             actions.update({agent.id: list(action)})
         return actions
 
