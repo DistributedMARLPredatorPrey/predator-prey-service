@@ -82,8 +82,6 @@ class EnvironmentController:
         """
         Records inside the buffer given as parameter the observation tuple of the agents,
         where each agent is of a given type.
-        :param agent_type: agent type
-        :param buffer: buffer
         :param prev_states: joint state
         :param actions: joint action
         :param rewards: joint rewards
@@ -91,6 +89,7 @@ class EnvironmentController:
         :return:
         """
         agents_by_type = self._agent_by_type()
+        record_tuples = {}
         for at, agents in agents_by_type.items():
             prev_states_t, actions_t, rewards_t, next_states_t = [], [], [], []
             for agent in agents:
@@ -98,9 +97,8 @@ class EnvironmentController:
                 actions_t += actions[agent.id]
                 rewards_t.append(rewards[agent.id])
                 next_states_t += next_states[agent.id].distances
-                # Record to the buffer
-                self.buffer_controller.record(at, (prev_states_t, actions_t,
-                                                   rewards_t, next_states_t))
+            record_tuples.update({at, (prev_states_t, actions_t, rewards_t, next_states_t)})
+        self.buffer_controller.record(record_tuples)
 
     def _agent_by_type(self):
         return {
