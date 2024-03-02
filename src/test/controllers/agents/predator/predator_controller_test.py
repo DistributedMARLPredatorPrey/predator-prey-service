@@ -11,7 +11,7 @@ from src.main.model.environment.params.environment_params import (
 
 class StandardPredatorControllerTest(unittest.TestCase):
     predator_controller = PredatorController(
-        EnvironmentParamsFactory.standard_parameters(),
+        EnvironmentParamsFactory.environment_config(),
         Predator("predator-1", 0, 0),
         ParameterService(),
     )

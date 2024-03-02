@@ -4,24 +4,24 @@ import numpy as np
 import tensorflow as tf
 from z3 import Or, And, If, Solver, Optimize, AlgebraicNumRef, sat, Real
 
+from src.main.model.config.config import EnvironmentConfig
 from src.main.controllers.policy.agent_policy_controller import AgentPolicyController
-from src.main.model.environment.params.environment_params import EnvironmentParams
 from src.main.model.agents.agent import Agent
 from src.main.model.environment.state import State
 
 
 class AgentController:
     def __init__(
-        self, env_params: EnvironmentParams, agent: Agent,
+        self, env_config: EnvironmentConfig, agent: Agent,
             policy_controller: AgentPolicyController
     ):
         self.last_state = None
-        self.num_states = env_params.num_states
-        self.lower_bound = env_params.lower_bound
-        self.upper_bound = env_params.upper_bound
-        self.life = env_params.life
-        self.r = env_params.r
-        self.vd = env_params.vd
+        self.num_states = env_config.num_states
+        self.lower_bound = env_config.acc_lower_bound
+        self.upper_bound = env_config.acc_upper_bound
+        self.life = env_config.life
+        self.r = env_config.r
+        self.vd = env_config.vd
         self.agent = agent
         self.policy_controller = policy_controller
 

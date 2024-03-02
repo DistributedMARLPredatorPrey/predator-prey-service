@@ -1,27 +1,23 @@
+from src.main.model.config.config_utils import ConfigUtils
 from src.main.controllers.policy.agent_policy_controller_factory import AgentPolicyControllerFactory
-from src.main.controllers.policy.predator_prey.predator_prey_policy_controller import PredatorPreyPolicyController
 from src.main.controllers.agents.predator_prey.predator.predator_controller_factory import PredatorControllerFactory
 from src.main.controllers.agents.predator_prey.prey.prey_controller_factory import PreyControllerFactory
 from src.main.controllers.replay_buffer.replay_buffer_controller import ReplayBufferController
 from src.main.controllers.environment.environment_controller import EnvironmentController
 from src.main.model.environment.environment import Environment
-from src.main.model.environment.params.environment_params import EnvironmentParams, EnvironmentParamsFactory
 
 
 class EnvironmentControllerFactory:
     def __init__(self):
-        self._default_env_params: EnvironmentParams = (
-            EnvironmentParamsFactory.standard_parameters())
+        self._env_config = ConfigUtils().environment_configuration()
 
-    def create_predator_prey(self, env_params: EnvironmentParams = None) -> EnvironmentController:
+    def create_predator_prey(self) -> EnvironmentController:
         """
         Creates a random EnvironmentController, where the position of each agent
         inside the Environment is random.
         :param env_params: Environment parameters
         :return: random EnvironmentController
         """
-        params = env_params if env_params is not None else self._default_env_params
-
         # Controllers
         ## Actor receivers
         policy_controller_factory = AgentPolicyControllerFactory()
@@ -29,14 +25,14 @@ class EnvironmentControllerFactory:
         prey_actor_receiver_controller = policy_controller_factory.prey_policy_controller()
         ## Predators and Preys
         predator_controllers = (PredatorControllerFactory
-                                .create_from_params(params, pred_actor_receiver_controller))
+                                .create_from_params(self._env_config, pred_actor_receiver_controller))
         prey_controllers = (PreyControllerFactory
-                            .create_from_params(params, prey_actor_receiver_controller))
+                            .create_from_params(self._env_config, prey_actor_receiver_controller))
         ## Buffer
         buffer_controller = ReplayBufferController()
 
         # Model
-        environment = Environment(x_dim=params.x_dim, y_dim=params.y_dim,
+        environment = Environment(x_dim=self._env_config.x_dim, y_dim=self._env_config.y_dim,
                                   agents=[
                                       agent_controller.agent
                                       for agent_controller in predator_controllers + prey_controllers

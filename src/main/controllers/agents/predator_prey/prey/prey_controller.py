@@ -1,17 +1,17 @@
 import numpy as np
 
+from main.model.config.config import EnvironmentConfig
 from src.main.controllers.policy.agent_policy_controller import AgentPolicyController
-from src.main.model.environment.params.environment_params import EnvironmentParams
 from src.main.controllers.agents.agent_controller import AgentController
 from src.main.model.agents.prey import Prey
 
 
 class PreyController(AgentController):
     def __init__(
-        self, env_params: EnvironmentParams, prey: Prey,
+        self, env_config: EnvironmentConfig, prey: Prey,
             policy_controller: AgentPolicyController
     ):
-        super().__init__(env_params, prey, policy_controller)
+        super().__init__(env_config, prey, policy_controller)
 
     def reward(self) -> float:
         r"""

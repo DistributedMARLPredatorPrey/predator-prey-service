@@ -11,7 +11,7 @@ from src.main.model.environment.state import State
 
 
 class StandardAgentControllerTest(unittest.TestCase):
-    std_parameters = EnvironmentParamsFactory.standard_parameters()
+    std_parameters = EnvironmentParamsFactory.environment_config()
 
     agent_controller = AgentController(
         std_parameters, Prey("prey-1", 0, 0), ParameterService()

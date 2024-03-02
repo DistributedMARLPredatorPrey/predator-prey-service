@@ -11,7 +11,7 @@ from src.main.model.environment.params.environment_params import (
 
 class StandardPreyControllerTest(unittest.TestCase):
     prey_controller = PreyController(
-        EnvironmentParamsFactory.standard_parameters(),
+        EnvironmentParamsFactory.environment_config(),
         Prey("prey-1", 0, 0),
         ParameterService(),
     )
