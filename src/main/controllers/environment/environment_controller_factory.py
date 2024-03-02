@@ -9,13 +9,15 @@ from src.main.model.environment.environment import Environment
 
 class EnvironmentControllerFactory:
     def __init__(self):
-        self._env_config = ConfigUtils().environment_configuration()
+        config_utils = ConfigUtils()
+        self._env_config = config_utils.environment_configuration()
+        self._replay_buffer_config = config_utils.replay_buffer_configuration()
+        self._learner_config = config_utils.learner_service_configuration()
 
     def create_predator_prey(self) -> EnvironmentController:
         """
         Creates a random EnvironmentController, where the position of each agent
         inside the Environment is random.
-        :param env_params: Environment parameters
         :return: random EnvironmentController
         """
         # Controllers

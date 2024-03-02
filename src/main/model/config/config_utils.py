@@ -2,7 +2,7 @@ import os
 
 import yaml
 
-from src.main.model.config.config import EnvironmentConfig
+from src.main.model.config.config import EnvironmentConfig, ReplayBufferServiceConfig, LearnerServiceConfig
 
 
 class ConfigUtils:
@@ -39,3 +39,16 @@ class ConfigUtils:
             vd=env_conf["vd"],
             life=env_conf["life"]
         )
+
+    def replay_buffer_configuration(self) -> ReplayBufferServiceConfig:
+        """
+        Creates an ReplayBufferConfig object by extracting information from env variables
+        :return: replay buffer config
+        """
+        return ReplayBufferServiceConfig(
+            replay_buffer_host=os.environ.get("REPLAY_BUFFER_HOST"),
+            replay_buffer_port=int(os.environ.get("REPLAY_BUFFER_PORT")),
+        )
+
+    def learner_service_configuration(self) -> LearnerServiceConfig:
+        return LearnerServiceConfig(pubsub_broker=os.environ.get("BROKER_HOST"))
