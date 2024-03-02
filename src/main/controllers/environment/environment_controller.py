@@ -4,14 +4,14 @@ import numpy as np
 import tensorflow as tf
 
 from src.main.controllers.agents.agent_controller import AgentController
-from src.main.controllers.buffer.buffer_controller import BufferController
+from src.main.controllers.replay_buffer.replay_buffer_controller import ReplayBufferController
 from src.main.model.agents.agent_type import AgentType
 from src.main.model.environment.environment import Environment
 
 
 class EnvironmentController:
     def __init__(self, environment: Environment, agent_controllers: List[AgentController],
-                 buffer_controller: BufferController):
+                 buffer_controller: ReplayBufferController):
         self.environment = environment
         self.max_acc = 0.2
         self.t_step = 1
@@ -80,7 +80,7 @@ class EnvironmentController:
 
     def _record_to_buffer(self, prev_states, actions, rewards, next_states):
         """
-        Records inside the buffer given as parameter the observation tuple of the agents,
+        Records inside the replay_buffer given as parameter the observation tuple of the agents,
         where each agent is of a given type.
         :param prev_states: joint state
         :param actions: joint action

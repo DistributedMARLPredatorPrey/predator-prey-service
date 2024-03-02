@@ -3,7 +3,7 @@ import requests
 from src.main.model.agents.agent_type import AgentType
 
 
-class BufferController:
+class ReplayBufferController:
 
     def __init__(self):
         self._ip = "172.17.0.2"
@@ -22,9 +22,9 @@ class BufferController:
     def _send_record_tuple(self, route, record_tuple):
         prev_states, actions, rewards, next_states = record_tuple
         record_json = {
-            "prev_states": prev_states,
-            "actions": actions,
-            "rewards": rewards,
-            "next_states": next_states
+            "State": prev_states,
+            "Reward": actions,
+            "Action": rewards,
+            "Next state": next_states
         }
         requests.post(f"http://{self._ip}:{self._port}/{route}", record_json)

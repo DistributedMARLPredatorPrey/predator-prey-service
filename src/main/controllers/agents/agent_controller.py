@@ -4,15 +4,16 @@ import numpy as np
 import tensorflow as tf
 from z3 import Or, And, If, Solver, Optimize, AlgebraicNumRef, sat, Real
 
+from src.main.controllers.policy.agent_policy_controller import AgentPolicyController
 from src.main.model.environment.params.environment_params import EnvironmentParams
-from src.main.controllers.parameter_server.parameter_service import ParameterService
 from src.main.model.agents.agent import Agent
 from src.main.model.environment.state import State
 
 
 class AgentController:
     def __init__(
-        self, env_params: EnvironmentParams, agent: Agent, par_service: ParameterService
+        self, env_params: EnvironmentParams, agent: Agent,
+            policy_controller: AgentPolicyController
     ):
         self.last_state = None
         self.num_states = env_params.num_states
@@ -22,7 +23,7 @@ class AgentController:
         self.r = env_params.r
         self.vd = env_params.vd
         self.agent = agent
-        self.par_service = par_service
+        self.policy_controller = policy_controller
 
     def action(self, state, verbose=False):
         """
@@ -34,7 +35,7 @@ class AgentController:
         """
         # the policy used for training just add noise to the action
         # the amount of noise is kept constant during training
-        sampled_action = tf.squeeze(self.par_service.actor_model(state))
+        sampled_action = tf.squeeze(self.policy_controller.policy(state))
         noise = np.random.normal(scale=0.1, size=2)
 
         # we may change the amount of noise for actions during training

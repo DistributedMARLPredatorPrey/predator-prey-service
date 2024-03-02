@@ -6,17 +6,18 @@ import tensorflow as tf
 
 
 class ActorReceiverController:
+
     def __init__(self, actor_model_path: str, routing_key: str):
         self.actor_model_path = actor_model_path
         self.routing_key = routing_key
         self._setup_latest_actor()
-        self._receive_actors()
+        self.update_latest_actor()
 
-    def _receive_actors(self):
+    def update_latest_actor(self):
         """
         Gets the new actor models using a receiver started in a new thread
         """
-        self._setup_exchange_and_queue(self._get_latest_actor_and_exit)
+        self._setup_exchange_and_queue(self._update_actor)
         Thread(target=self._consume()).start()
 
     def _setup_latest_actor(self):
@@ -57,17 +58,19 @@ class ActorReceiverController:
         # TODO: what's the received format?
         self.latest_actor = body
         # Save actor model in h5 file
-        print(f" [x] Received message: {body}")
+        print(f" [x] First actor: {body}")
         self.connection.close()
 
     def _update_actor(self, ch, method, properties, body):
         self.latest_actor = body
         # Save actor model in h5 file
-        print(f" [x] Received message: {body}")
+        print(f" [x] Update actor: {body}")
 
     def _consume(self):
         # Start consuming messages
         self.channel.start_consuming()
 
 
-rec = ActorReceiverController("/home/luca/Desktop/model.h5", "actor-model")
+# rec = ActorReceiverController("/home/luca/Desktop/model.h5",
+#                               "actor-model")
+# print("done")
