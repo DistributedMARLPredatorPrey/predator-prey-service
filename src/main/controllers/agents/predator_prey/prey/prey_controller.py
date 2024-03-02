@@ -1,6 +1,6 @@
 import numpy as np
 
-from main.model.config.config import EnvironmentConfig
+from src.main.model.config.config import EnvironmentConfig
 from src.main.controllers.policy.agent_policy_controller import AgentPolicyController
 from src.main.controllers.agents.agent_controller import AgentController
 from src.main.model.agents.prey import Prey
