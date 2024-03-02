@@ -12,7 +12,6 @@ class EnvironmentControllerFactory:
         config_utils = ConfigUtils()
         self._env_config = config_utils.environment_configuration()
         self._replay_buffer_config = config_utils.replay_buffer_configuration()
-        self._learner_config = config_utils.learner_service_configuration()
 
     def create_predator_prey(self) -> EnvironmentController:
         """
@@ -31,7 +30,8 @@ class EnvironmentControllerFactory:
         prey_controllers = (PreyControllerFactory
                             .create_from_params(self._env_config, prey_actor_receiver_controller))
         ## Buffer
-        buffer_controller = ReplayBufferController()
+        buffer_controller = ReplayBufferController(self._replay_buffer_config.replay_buffer_host,
+                                                   self._replay_buffer_config.replay_buffer_port)
 
         # Model
         environment = Environment(x_dim=self._env_config.x_dim, y_dim=self._env_config.y_dim,
