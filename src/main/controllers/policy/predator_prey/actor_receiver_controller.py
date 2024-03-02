@@ -6,7 +6,6 @@ import tensorflow as tf
 
 
 class ActorReceiverController:
-
     def __init__(self, broker_host: str, actor_model_path: str, routing_key: str):
         self.broker_host = broker_host
         self.actor_model_path = actor_model_path
@@ -34,7 +33,9 @@ class ActorReceiverController:
 
     def _setup_exchange_and_queue(self, callback):
         # Establish a connection to RabbitMQ server
-        self.connection = pika.BlockingConnection(pika.ConnectionParameters(self.broker_host))
+        self.connection = pika.BlockingConnection(
+            pika.ConnectionParameters(self.broker_host)
+        )
         self.channel = self.connection.channel()
 
         # Declare a topic exchange named 'topic_exchange'

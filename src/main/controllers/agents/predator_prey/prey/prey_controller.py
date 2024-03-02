@@ -8,8 +8,10 @@ from src.main.model.agents.prey import Prey
 
 class PreyController(AgentController):
     def __init__(
-        self, env_config: EnvironmentConfig, prey: Prey,
-            policy_controller: AgentPolicyController
+        self,
+        env_config: EnvironmentConfig,
+        prey: Prey,
+        policy_controller: AgentPolicyController,
     ):
         super().__init__(env_config, prey, policy_controller)
 

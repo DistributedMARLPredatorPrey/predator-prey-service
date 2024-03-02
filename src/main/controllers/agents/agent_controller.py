@@ -12,8 +12,10 @@ from src.main.model.environment.state import State
 
 class AgentController:
     def __init__(
-        self, env_config: EnvironmentConfig, agent: Agent,
-            policy_controller: AgentPolicyController
+        self,
+        env_config: EnvironmentConfig,
+        agent: Agent,
+        policy_controller: AgentPolicyController,
     ):
         self.last_state = None
         self.num_states = env_config.num_states

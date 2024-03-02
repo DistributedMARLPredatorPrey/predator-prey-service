@@ -2,11 +2,14 @@ import os
 
 import yaml
 
-from src.main.model.config.config import EnvironmentConfig, ReplayBufferServiceConfig, LearnerServiceConfig
+from src.main.model.config.config import (
+    EnvironmentConfig,
+    ReplayBufferServiceConfig,
+    LearnerServiceConfig,
+)
 
 
 class ConfigUtils:
-
     @staticmethod
     def _load_config(file_path):
         """
@@ -37,7 +40,7 @@ class ConfigUtils:
             num_actions=env_conf["num_actions"],
             r=env_conf["r"],
             vd=env_conf["vd"],
-            life=env_conf["life"]
+            life=env_conf["life"],
         )
 
     def replay_buffer_configuration(self) -> ReplayBufferServiceConfig:

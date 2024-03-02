@@ -4,14 +4,20 @@ import numpy as np
 import tensorflow as tf
 
 from src.main.controllers.agents.agent_controller import AgentController
-from src.main.controllers.replay_buffer.replay_buffer_controller import ReplayBufferController
+from src.main.controllers.replay_buffer.replay_buffer_controller import (
+    ReplayBufferController,
+)
 from src.main.model.agents.agent_type import AgentType
 from src.main.model.environment.environment import Environment
 
 
 class EnvironmentController:
-    def __init__(self, environment: Environment, agent_controllers: List[AgentController],
-                 buffer_controller: ReplayBufferController):
+    def __init__(
+        self,
+        environment: Environment,
+        agent_controllers: List[AgentController],
+        buffer_controller: ReplayBufferController,
+    ):
         self.environment = environment
         self.max_acc = 0.2
         self.t_step = 1
@@ -97,14 +103,18 @@ class EnvironmentController:
                 actions_t += actions[agent.id]
                 rewards_t.append(rewards[agent.id])
                 next_states_t += next_states[agent.id].distances
-            record_tuples.update({at, (prev_states_t, actions_t, rewards_t, next_states_t)})
+            record_tuples.update(
+                {at, (prev_states_t, actions_t, rewards_t, next_states_t)}
+            )
         self.buffer_controller.record(record_tuples)
 
     def _agent_by_type(self):
         return {
-            agent_type: [agent_controller.agent
-                         for agent_controller in self.agent_controllers
-                         if agent_controller.agent.agent_type == agent_type]
+            agent_type: [
+                agent_controller.agent
+                for agent_controller in self.agent_controllers
+                if agent_controller.agent.agent_type == agent_type
+            ]
             for agent_type in list(AgentType)
         }
 

@@ -4,7 +4,6 @@ from src.main.model.agents.agent_type import AgentType
 
 
 class ReplayBufferController:
-
     def __init__(self, host: str, port: int):
         self._host = host
         self._port = port
@@ -25,6 +24,6 @@ class ReplayBufferController:
             "State": prev_states,
             "Reward": actions,
             "Action": rewards,
-            "Next state": next_states
+            "Next state": next_states,
         }
         requests.post(f"http://{self._host}:{self._port}/{route}", record_json)

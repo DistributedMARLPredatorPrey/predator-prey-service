@@ -1,4 +1,3 @@
-
 from main.controllers.policy.predator_prey.predator_prey_policy_controller import (
     PredatorPreyPolicyController,
 )
@@ -7,7 +6,6 @@ from src.main.controllers.policy.agent_policy_controller import AgentPolicyContr
 
 
 class AgentPolicyControllerFactory:
-
     @staticmethod
     def prey_policy_controller() -> AgentPolicyController:
         return PredatorPreyPolicyController(
