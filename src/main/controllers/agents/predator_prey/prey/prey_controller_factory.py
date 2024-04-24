@@ -21,7 +21,7 @@ class PreyControllerFactory:
         :return: list of PreyControllers
         """
         prey_controllers = []
-        for i in range(env_config.num_predators):
+        for i in range(env_config.num_preys):
             prey = Prey(
                 id=f"prey_{i}",
                 x=uniform(0, env_config.x_dim),
