@@ -9,8 +9,8 @@ Subpackages
 
    src.main.controllers.agents
    src.main.controllers.environment
-   src.main.controllers.learner
-   src.main.controllers.parameter_server
+   src.main.controllers.policy
+   src.main.controllers.replay_buffer
 
 Module contents
 ---------------
