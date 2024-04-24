@@ -1,0 +1,29 @@
+src.main.model.config package
+=============================
+
+Submodules
+----------
+
+src.main.model.config.config module
+-----------------------------------
+
+.. automodule:: src.main.model.config.config
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+src.main.model.config.config\_utils module
+------------------------------------------
+
+.. automodule:: src.main.model.config.config_utils
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Module contents
+---------------
+
+.. automodule:: src.main.model.config
+   :members:
+   :undoc-members:
+   :show-inheritance:

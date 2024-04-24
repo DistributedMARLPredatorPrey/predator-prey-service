@@ -8,6 +8,7 @@ Subpackages
    :maxdepth: 4
 
    src.main.model.agents
+   src.main.model.config
    src.main.model.environment
 
 Module contents

@@ -7,8 +7,7 @@ Subpackages
 .. toctree::
    :maxdepth: 4
 
-   src.main.controllers.agents.predator
-   src.main.controllers.agents.prey
+   src.main.controllers.agents.predator_prey
 
 Submodules
 ----------

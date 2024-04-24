@@ -3,15 +3,16 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Welcome to Predator Prey App's documentation!
+Welcome to Predator Prey Service's documentation!
 =============================================
 
-**Predator Prey App** is a Python application which simulates a Predator Prey environment.
+**Predator Prey Service** is a Python application which simulates a Predator Prey environment.
 
 It could either be run in 'simulation' mode, where the environment is simulated using an existing policy,
 or in 'learning' mode, where the policy changes over time and gets synchronized from an external service.
 
-It provides a *simple* and *intuitive* API to get the environment current state, including the agents' position.
+It provides a *simple* and *intuitive* API to get the environment current state, including the agents' position and,
+during the learning process, to update the agent's Actor network.
 
 .. toctree::
    :maxdepth: 2
