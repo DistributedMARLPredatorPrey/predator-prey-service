@@ -10,7 +10,7 @@ class AgentPolicyControllerFactory:
     def prey_policy_controller() -> AgentPolicyController:
         return PredatorPreyPolicyController(
             broker_host=ConfigUtils().learner_service_configuration().pubsub_broker,
-            actor_model_path="src/main/resources/prey.h5",
+            actor_model_path="src/main/resources/prey.keras",
             routing_key="prey-actor-model",
         )
 
@@ -18,6 +18,6 @@ class AgentPolicyControllerFactory:
     def predator_policy_controller() -> AgentPolicyController:
         return PredatorPreyPolicyController(
             broker_host=ConfigUtils().learner_service_configuration().pubsub_broker,
-            actor_model_path="src/main/resources/predator.h5",
+            actor_model_path="src/main/resources/predator.keras",
             routing_key="predator-actor-model",
         )
