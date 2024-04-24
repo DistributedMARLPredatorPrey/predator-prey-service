@@ -4,9 +4,10 @@ import numpy as np
 import tensorflow as tf
 
 from src.main.controllers.agents.agent_controller import AgentController
-from src.main.controllers.learner.learner import Learner
+from src.main.controllers.replay_buffer.replay_buffer_controller import (
+    ReplayBufferController,
+)
 from src.main.model.agents.agent_type import AgentType
-from src.main.model.environment.buffer.buffer import Buffer
 from src.main.model.environment.environment import Environment
 
 
@@ -15,15 +16,13 @@ class EnvironmentController:
         self,
         environment: Environment,
         agent_controllers: List[AgentController],
-        buffers: List[Buffer],
-        learners: List[Learner],
+        buffer_controller: ReplayBufferController,
     ):
         self.environment = environment
         self.max_acc = 0.2
         self.t_step = 1
         self.agent_controllers = agent_controllers
-        self.buffers = buffers
-        self.learners = learners
+        self.buffer_controller = buffer_controller
         self.total_iterations = 50_000
 
     def train(self):
@@ -33,29 +32,13 @@ class EnvironmentController:
         """
         prev_states = self._states()
         for it in range(self.total_iterations):
-            # avg_rewards = {agent.id: 0 for agent in self.environment.agents}
-            for k in range(20):
-                # Collect all agents action
-                actions = self._actions(prev_states)
-                # Move all the agents at once and get their rewards only after
-                next_states = self._step(actions)
-                rewards = self._rewards()
-                print(next_states)
-                print(rewards)
-                # print([reward for reward in rewards])
-                for i, agent_type in enumerate(AgentType):
-                    self._record_by_type(
-                        agent_type,
-                        self.buffers[i],
-                        prev_states,
-                        actions,
-                        rewards,
-                        next_states,
-                    )
-
-            # print([(p_id, r / 10) for p_id, r in avg_rewards.items()])
-            for learner in self.learners:
-                learner.update()
+            # Collect all agents action
+            actions = self._actions(prev_states)
+            # Move all the agents at once and get their rewards only after
+            next_states, rewards = self._step(actions), self._rewards()
+            print("avg rewards: ", np.average(list(rewards.values())))
+            self._record_to_buffer(prev_states, actions, rewards, next_states)
+            prev_states = next_states
 
     def _states(self):
         """
@@ -79,7 +62,7 @@ class EnvironmentController:
             tf_prev_state = tf.expand_dims(
                 tf.convert_to_tensor(states[agent.id].distances), 0
             )
-            action = agent_controller.policy(tf_prev_state)
+            action = agent_controller.action(tf_prev_state)
             actions.update({agent.id: list(action)})
         return actions
 
@@ -103,43 +86,43 @@ class EnvironmentController:
             for agent_controller in self.agent_controllers
         }
 
-    def _record_by_type(
-        self,
-        agent_type: AgentType,
-        buffer: Buffer,
-        prev_states,
-        actions,
-        rewards,
-        next_states,
-    ):
+    def _record_to_buffer(self, prev_states, actions, rewards, next_states):
         """
-        Records inside the buffer given as parameter the observation tuple of the agents,
+        Records inside the replay_buffer given as parameter the observation tuple of the agents,
         where each agent is of a given type.
-        :param agent_type: agent type
-        :param buffer: buffer
         :param prev_states: joint state
         :param actions: joint action
         :param rewards: joint rewards
         :param next_states: joint next states
         :return:
         """
-        prev_states_t, actions_t, rewards_t, next_states_t = [], [], [], []
-        agents = [
-            agent_controller.agent
-            for agent_controller in self.agent_controllers
-            if agent_controller.agent.agent_type == agent_type
-        ]
-        # avg_rewards = {}
-        for agent in agents:
-            prev_states_t += prev_states[agent.id].distances
-            actions_t += actions[agent.id]
-            rewards_t.append(rewards[agent.id])
-            next_states_t += next_states[agent.id].distances
-            # avg_rewards.update({agent.id: avg_rewards[agent.id] + rewards_t[agent.id]})
-        # print(avg_rewards)
-        buffer.record((prev_states_t, actions_t, rewards_t, next_states_t))
+        agents_by_type = self._agent_by_type()
+        record_tuples = {}
+        for at, agents in agents_by_type.items():
+            # record_tuples = {}
+            prev_states_t, actions_t, rewards_t, next_states_t = [], [], [], []
+            for agent in agents:
+                prev_states_t.append(prev_states[agent.id].distances)
+                actions_t.append(actions[agent.id])
+                rewards_t.append(rewards[agent.id])
+                next_states_t.append(next_states[agent.id].distances)
+            record_tuples.update(
+                {at: (prev_states_t, actions_t, rewards_t, next_states_t)}
+            )
+        print("Sending data to the replay buffer")
+        self.buffer_controller.record(record_tuples)
 
-    def _get_agent_by_id(self, agent_id: str):
+    def _agent_by_type(self):
+        return {
+            agent_type: [
+                agent_controller.agent
+                for agent_controller in self.agent_controllers
+                if agent_controller.agent.agent_type == agent_type
+            ]
+            for agent_type in list(AgentType)
+        }
+
+    def _agent_by_id(self, agent_id: str):
         """
         Get the agent with the specified id.
         :param agent_id: agent id to search for
@@ -156,7 +139,7 @@ class EnvironmentController:
         :param action: respective action
         :return:
         """
-        agent = self._get_agent_by_id(agent_id)
+        agent = self._agent_by_id(agent_id)
         acc, turn = action[0], action[1]
         max_incr = self.max_acc * self.t_step
         v = np.sqrt(np.power(agent.vx, 2) + np.power(agent.vy, 2))

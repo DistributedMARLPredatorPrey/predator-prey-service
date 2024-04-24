@@ -8,8 +8,9 @@ from src.main.controllers.environment.environment_controller_factory import (
 )
 
 if __name__ == "__main__":
+    print("Pred-Prey-Service: starting")
     env_controller: EnvironmentController = (
-        EnvironmentControllerFactory().create_random()
+        EnvironmentControllerFactory().create_predator_prey()
     )
     start_t = datetime.now()
     env_controller.train()

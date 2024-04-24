@@ -3,6 +3,6 @@ FROM python:3.11
 WORKDIR /usr/app
 
 COPY . .
-RUN pip install --no-cache-dir -r requirements.txt
+RUN pip install -r requirements.txt
 
-CMD [ "pytest", "-v", "--cov" ]
+CMD [ "python3", "-m", "src.main.view.main" ]

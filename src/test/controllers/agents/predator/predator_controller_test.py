@@ -1,6 +1,6 @@
 import unittest
 
-from src.main.controllers.agents.predator.predator_controller import PredatorController
+from main.controllers.agents.predator_prey.predator import PredatorController
 from src.main.controllers.parameter_server.parameter_service import ParameterService
 from src.main.model.agents.predator import Predator
 from src.main.model.agents.prey import Prey
@@ -11,7 +11,7 @@ from src.main.model.environment.params.environment_params import (
 
 class StandardPredatorControllerTest(unittest.TestCase):
     predator_controller = PredatorController(
-        EnvironmentParamsFactory.standard_parameters(),
+        EnvironmentParamsFactory.environment_config(),
         Predator("predator-1", 0, 0),
         ParameterService(),
     )

@@ -1,19 +1,19 @@
 import numpy as np
 
+from src.main.model.config.config import EnvironmentConfig
+from src.main.controllers.policy.agent_policy_controller import AgentPolicyController
 from src.main.controllers.agents.agent_controller import AgentController
-from src.main.controllers.parameter_server.parameter_service import ParameterService
 from src.main.model.agents.predator import Predator
-from src.main.model.environment.params.environment_params import EnvironmentParams
 
 
 class PredatorController(AgentController):
     def __init__(
         self,
-        env_params: EnvironmentParams,
+        env_config: EnvironmentConfig,
         predator: Predator,
-        par_service: ParameterService,
+        policy_controller: AgentPolicyController,
     ):
-        super().__init__(env_params, predator, par_service)
+        super().__init__(env_config, predator, policy_controller)
 
     def reward(self) -> float:
         r"""
@@ -25,7 +25,7 @@ class PredatorController(AgentController):
         .. math::
             f(x, d) = \frac{e^{-x} - e^{-d}}{1 - e^{-d}}
 
-        :return: the reward
+        :return:  the reward
         """
         return (
             np.power(np.e, -np.min(self.last_state.distances))
