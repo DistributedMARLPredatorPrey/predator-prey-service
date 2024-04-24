@@ -1,8 +1,8 @@
-import os
+import os.path
 from threading import Thread
 
 import pika
-import tensorflow as tf
+from tensorflow.keras.models import load_model
 
 
 class ActorReceiverController:
@@ -10,28 +10,31 @@ class ActorReceiverController:
         self.broker_host = broker_host
         self.actor_model_path = actor_model_path
         self.routing_key = routing_key
-        self._setup_latest_actor()
-        self.update_latest_actor()
+        if os.path.exists(actor_model_path):
+            self.latest_actor = load_model(actor_model_path)
+            self.__setup_receiver()
+        else:
+            self.__setup_latest_actor()
 
-    def update_latest_actor(self):
+    def __setup_receiver(self):
+        self.__update_latest_actor()
+        Thread(target=self.__consume).start()
+
+    def __update_latest_actor(self):
         """
         Gets the new actor models using a receiver started in a new thread
         """
-        self._setup_exchange_and_queue(self._update_actor)
-        Thread(target=self._consume()).start()
+        self.__setup_exchange_and_queue(self.__update_actor)
 
-    def _setup_latest_actor(self):
+    def __setup_latest_actor(self):
         """
         Blocking call to setup the current actor model
         """
-        if os.path.exists(self.actor_model_path):
-            self.latest_actor = tf.keras.models.load_model(self.actor_model_path)
-        else:
-            # Block the thread until an actor model is received
-            self._setup_exchange_and_queue(self._get_latest_actor_and_exit)
-            self._consume()
+        self.__setup_exchange_and_queue(self.__get_latest_actor_and_exit)
+        print("waiting first actor")
+        self.__consume()
 
-    def _setup_exchange_and_queue(self, callback):
+    def __setup_exchange_and_queue(self, callback):
         # Establish a connection to RabbitMQ server
         self.connection = pika.BlockingConnection(
             pika.ConnectionParameters(self.broker_host)
@@ -54,23 +57,18 @@ class ActorReceiverController:
             queue=queue_name, on_message_callback=callback, auto_ack=True
         )
 
-    def _get_latest_actor_and_exit(self, ch, method, properties, body):
-        # TODO: what's the received format?
-        self.latest_actor = body
-        # Save actor model in h5 file
-        print(f" [x] First actor: {body}")
+    def __get_latest_actor_and_exit(self, ch, method, properties, body):
+        with open(self.actor_model_path, "wb") as actor_model_file:
+            actor_model_file.write(body)
+        print("Actor received")
         self.connection.close()
 
-    def _update_actor(self, ch, method, properties, body):
-        self.latest_actor = body
-        # Save actor model in h5 file
-        print(f" [x] Update actor: {body}")
+    def __update_actor(self, ch, method, properties, body):
+        with open(self.actor_model_path, "wb") as actor_model_file:
+            actor_model_file.write(body)
+        self.latest_actor = load_model(self.actor_model_path)
+        print("Actor updated")
 
-    def _consume(self):
+    def __consume(self):
         # Start consuming messages
         self.channel.start_consuming()
-
-
-# rec = ActorReceiverController("/home/luca/Desktop/model.h5",
-#                               "actor-model")
-# print("done")
