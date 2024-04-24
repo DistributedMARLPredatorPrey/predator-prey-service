@@ -1,0 +1,21 @@
+src.main.model.environment.params package
+=========================================
+
+Submodules
+----------
+
+src.main.model.environment.params.environment\_params module
+------------------------------------------------------------
+
+.. automodule:: src.main.model.environment.params.environment_params
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Module contents
+---------------
+
+.. automodule:: src.main.model.environment.params
+   :members:
+   :undoc-members:
+   :show-inheritance:

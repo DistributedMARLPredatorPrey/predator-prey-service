@@ -16,8 +16,9 @@
         <script src="_static/jquery.js?v=5d32c60e"></script>
         <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
         <script src="_static/documentation_options.js?v=01f34227"></script>
-        <script src="_static/doctools.js?v=888ff710"></script>
+        <script src="_static/doctools.js?v=9a2dae69"></script>
         <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+        <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
@@ -95,9 +96,18 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="src.main.controllers.agents.html">src.main.controllers.agents package</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="src.main.controllers.agents.html#subpackages">Subpackages</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="src.main.controllers.agents.predator_prey.html">src.main.controllers.agents.predator_prey package</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="src.main.controllers.agents.predator_prey.html#subpackages">Subpackages</a></li>
-<li class="toctree-l4"><a class="reference internal" href="src.main.controllers.agents.predator_prey.html#module-src.main.controllers.agents.predator_prey">Module contents</a></li>
+<li class="toctree-l3"><a class="reference internal" href="src.main.controllers.agents.predator.html">src.main.controllers.agents.predator package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="src.main.controllers.agents.predator.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="src.main.controllers.agents.predator.html#module-src.main.controllers.agents.predator.predator_controller">src.main.controllers.agents.predator.predator_controller module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="src.main.controllers.agents.predator.html#module-src.main.controllers.agents.predator.predator_controller_factory">src.main.controllers.agents.predator.predator_controller_factory module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="src.main.controllers.agents.predator.html#module-src.main.controllers.agents.predator">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="src.main.controllers.agents.prey.html">src.main.controllers.agents.prey package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="src.main.controllers.agents.prey.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="src.main.controllers.agents.prey.html#module-src.main.controllers.agents.prey.prey_controller">src.main.controllers.agents.prey.prey_controller module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="src.main.controllers.agents.prey.html#module-src.main.controllers.agents.prey.prey_controller_factory">src.main.controllers.agents.prey.prey_controller_factory module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="src.main.controllers.agents.prey.html#module-src.main.controllers.agents.prey">Module contents</a></li>
 </ul>
 </li>
 </ul>
@@ -105,9 +115,9 @@
 <li class="toctree-l2"><a class="reference internal" href="src.main.controllers.agents.html#submodules">Submodules</a></li>
 <li class="toctree-l2"><a class="reference internal" href="src.main.controllers.agents.html#module-src.main.controllers.agents.agent_controller">src.main.controllers.agents.agent_controller module</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="src.main.controllers.agents.html#src.main.controllers.agents.agent_controller.AgentController"><code class="docutils literal notranslate"><span class="pre">AgentController</span></code></a><ul>
-<li class="toctree-l4"><a class="reference internal" href="src.main.controllers.agents.html#src.main.controllers.agents.agent_controller.AgentController.action"><code class="docutils literal notranslate"><span class="pre">AgentController.action()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="src.main.controllers.agents.html#src.main.controllers.agents.agent_controller.AgentController.done"><code class="docutils literal notranslate"><span class="pre">AgentController.done()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="src.main.controllers.agents.html#src.main.controllers.agents.agent_controller.AgentController.is_eaten"><code class="docutils literal notranslate"><span class="pre">AgentController.is_eaten()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="src.main.controllers.agents.html#src.main.controllers.agents.agent_controller.AgentController.policy"><code class="docutils literal notranslate"><span class="pre">AgentController.policy()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="src.main.controllers.agents.html#src.main.controllers.agents.agent_controller.AgentController.reward"><code class="docutils literal notranslate"><span class="pre">AgentController.reward()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="src.main.controllers.agents.html#src.main.controllers.agents.agent_controller.AgentController.state"><code class="docutils literal notranslate"><span class="pre">AgentController.state()</span></code></a></li>
 </ul>
@@ -128,8 +138,8 @@
 </li>
 <li class="toctree-l2"><a class="reference internal" href="src.main.controllers.environment.html#module-src.main.controllers.environment.environment_controller_factory">src.main.controllers.environment.environment_controller_factory module</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="src.main.controllers.environment.html#src.main.controllers.environment.environment_controller_factory.EnvironmentControllerFactory"><code class="docutils literal notranslate"><span class="pre">EnvironmentControllerFactory</span></code></a><ul>
-<li class="toctree-l4"><a class="reference internal" href="src.main.controllers.environment.html#src.main.controllers.environment.environment_controller_factory.EnvironmentControllerFactory.create_predator_prey"><code class="docutils literal notranslate"><span class="pre">EnvironmentControllerFactory.create_predator_prey()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="src.main.controllers.environment.html#src.main.controllers.environment.environment_controller_factory.EnvironmentControllerFactory.f"><code class="docutils literal notranslate"><span class="pre">EnvironmentControllerFactory.f()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="src.main.controllers.environment.html#src.main.controllers.environment.environment_controller_factory.EnvironmentControllerFactory.create_random"><code class="docutils literal notranslate"><span class="pre">EnvironmentControllerFactory.create_random()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="src.main.controllers.environment.html#src.main.controllers.environment.environment_controller_factory.EnvironmentControllerFactory.from_existing"><code class="docutils literal notranslate"><span class="pre">EnvironmentControllerFactory.from_existing()</span></code></a></li>
 </ul>
 </li>
 </ul>
@@ -137,48 +147,35 @@
 <li class="toctree-l2"><a class="reference internal" href="src.main.controllers.environment.html#module-src.main.controllers.environment">Module contents</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="src.main.controllers.policy.html">src.main.controllers.policy package</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="src.main.controllers.policy.html#subpackages">Subpackages</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="src.main.controllers.policy.predator_prey.html">src.main.controllers.policy.predator_prey package</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="src.main.controllers.policy.predator_prey.html#submodules">Submodules</a></li>
-<li class="toctree-l4"><a class="reference internal" href="src.main.controllers.policy.predator_prey.html#module-src.main.controllers.policy.predator_prey.actor_receiver_controller">src.main.controllers.policy.predator_prey.actor_receiver_controller module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="src.main.controllers.policy.predator_prey.html#module-src.main.controllers.policy.predator_prey.actor_receiver_healthcheck">src.main.controllers.policy.predator_prey.actor_receiver_healthcheck module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="src.main.controllers.policy.predator_prey.html#module-src.main.controllers.policy.predator_prey.predator_prey_policy_controller">src.main.controllers.policy.predator_prey.predator_prey_policy_controller module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="src.main.controllers.policy.predator_prey.html#src-main-controllers-policy-predator-prey-sender-module">src.main.controllers.policy.predator_prey.sender module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="src.main.controllers.policy.predator_prey.html#module-src.main.controllers.policy.predator_prey">Module contents</a></li>
+<li class="toctree-l1"><a class="reference internal" href="src.main.controllers.learner.html">src.main.controllers.learner package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="src.main.controllers.learner.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="src.main.controllers.learner.html#module-src.main.controllers.learner.learner">src.main.controllers.learner.learner module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="src.main.controllers.learner.html#src.main.controllers.learner.learner.Learner"><code class="docutils literal notranslate"><span class="pre">Learner</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="src.main.controllers.learner.html#src.main.controllers.learner.learner.Learner.update"><code class="docutils literal notranslate"><span class="pre">Learner.update()</span></code></a></li>
 </ul>
 </li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="src.main.controllers.policy.html#submodules">Submodules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="src.main.controllers.policy.html#module-src.main.controllers.policy.agent_policy_controller">src.main.controllers.policy.agent_policy_controller module</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="src.main.controllers.policy.html#src.main.controllers.policy.agent_policy_controller.AgentPolicyController"><code class="docutils literal notranslate"><span class="pre">AgentPolicyController</span></code></a><ul>
-<li class="toctree-l4"><a class="reference internal" href="src.main.controllers.policy.html#src.main.controllers.policy.agent_policy_controller.AgentPolicyController.policy"><code class="docutils literal notranslate"><span class="pre">AgentPolicyController.policy()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="src.main.controllers.learner.html#module-src.main.controllers.learner.learner_factory">src.main.controllers.learner.learner_factory module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="src.main.controllers.learner.html#src.main.controllers.learner.learner_factory.LearnerFactory"><code class="docutils literal notranslate"><span class="pre">LearnerFactory</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="src.main.controllers.learner.html#src.main.controllers.learner.learner_factory.LearnerFactory.create_learners"><code class="docutils literal notranslate"><span class="pre">LearnerFactory.create_learners()</span></code></a></li>
 </ul>
 </li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="src.main.controllers.policy.html#module-src.main.controllers.policy.agent_policy_controller_factory">src.main.controllers.policy.agent_policy_controller_factory module</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="src.main.controllers.policy.html#src.main.controllers.policy.agent_policy_controller_factory.AgentPolicyControllerFactory"><code class="docutils literal notranslate"><span class="pre">AgentPolicyControllerFactory</span></code></a><ul>
-<li class="toctree-l4"><a class="reference internal" href="src.main.controllers.policy.html#src.main.controllers.policy.agent_policy_controller_factory.AgentPolicyControllerFactory.predator_policy_controller"><code class="docutils literal notranslate"><span class="pre">AgentPolicyControllerFactory.predator_policy_controller()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="src.main.controllers.policy.html#src.main.controllers.policy.agent_policy_controller_factory.AgentPolicyControllerFactory.prey_policy_controller"><code class="docutils literal notranslate"><span class="pre">AgentPolicyControllerFactory.prey_policy_controller()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="src.main.controllers.learner.html#module-src.main.controllers.learner">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="src.main.controllers.parameter_server.html">src.main.controllers.parameter_server package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="src.main.controllers.parameter_server.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="src.main.controllers.parameter_server.html#module-src.main.controllers.parameter_server.parameter_service">src.main.controllers.parameter_server.parameter_service module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="src.main.controllers.parameter_server.html#src.main.controllers.parameter_server.parameter_service.ParameterService"><code class="docutils literal notranslate"><span class="pre">ParameterService</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="src.main.controllers.parameter_server.html#src.main.controllers.parameter_server.parameter_service.ParameterService.set_model"><code class="docutils literal notranslate"><span class="pre">ParameterService.set_model()</span></code></a></li>
 </ul>
 </li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="src.main.controllers.policy.html#module-src.main.controllers.policy">Module contents</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="src.main.controllers.replay_buffer.html">src.main.controllers.replay_buffer package</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="src.main.controllers.replay_buffer.html#submodules">Submodules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="src.main.controllers.replay_buffer.html#module-src.main.controllers.replay_buffer.replay_buffer_controller">src.main.controllers.replay_buffer.replay_buffer_controller module</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="src.main.controllers.replay_buffer.html#src.main.controllers.replay_buffer.replay_buffer_controller.ReplayBufferController"><code class="docutils literal notranslate"><span class="pre">ReplayBufferController</span></code></a><ul>
-<li class="toctree-l4"><a class="reference internal" href="src.main.controllers.replay_buffer.html#src.main.controllers.replay_buffer.replay_buffer_controller.ReplayBufferController.record"><code class="docutils literal notranslate"><span class="pre">ReplayBufferController.record()</span></code></a></li>
-</ul>
-</li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="src.main.controllers.replay_buffer.html#module-src.main.controllers.replay_buffer">Module contents</a></li>
+<li class="toctree-l2"><a class="reference internal" href="src.main.controllers.parameter_server.html#module-src.main.controllers.parameter_server">Module contents</a></li>
 </ul>
 </li>
 </ul>

@@ -16,7 +16,7 @@
         <script src="_static/jquery.js?v=5d32c60e"></script>
         <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
         <script src="_static/documentation_options.js?v=01f34227"></script>
-        <script src="_static/doctools.js?v=888ff710"></script>
+        <script src="_static/doctools.js?v=9a2dae69"></script>
         <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
@@ -96,13 +96,27 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="src.test.controllers.agents.predator.html">src.test.controllers.agents.predator package</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="src.test.controllers.agents.predator.html#submodules">Submodules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="src.test.controllers.agents.predator.html#src-test-controllers-agents-predator-predator-controller-test-module">src.test.controllers.agents.predator.predator_controller_test module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="src.test.controllers.agents.predator.html#module-src.test.controllers.agents.predator.predator_controller_test">src.test.controllers.agents.predator.predator_controller_test module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="src.test.controllers.agents.predator.html#src.test.controllers.agents.predator.predator_controller_test.StandardPredatorControllerTest"><code class="docutils literal notranslate"><span class="pre">StandardPredatorControllerTest</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="src.test.controllers.agents.predator.html#src.test.controllers.agents.predator.predator_controller_test.StandardPredatorControllerTest.predator_controller"><code class="docutils literal notranslate"><span class="pre">StandardPredatorControllerTest.predator_controller</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="src.test.controllers.agents.predator.html#src.test.controllers.agents.predator.predator_controller_test.StandardPredatorControllerTest.test_reward_proportional_to_distance"><code class="docutils literal notranslate"><span class="pre">StandardPredatorControllerTest.test_reward_proportional_to_distance()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="src.test.controllers.agents.predator.html#module-src.test.controllers.agents.predator">Module contents</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="src.test.controllers.agents.prey.html">src.test.controllers.agents.prey package</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="src.test.controllers.agents.prey.html#submodules">Submodules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="src.test.controllers.agents.prey.html#src-test-controllers-agents-prey-prey-controller-test-module">src.test.controllers.agents.prey.prey_controller_test module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="src.test.controllers.agents.prey.html#module-src.test.controllers.agents.prey.prey_controller_test">src.test.controllers.agents.prey.prey_controller_test module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="src.test.controllers.agents.prey.html#src.test.controllers.agents.prey.prey_controller_test.StandardPreyControllerTest"><code class="docutils literal notranslate"><span class="pre">StandardPreyControllerTest</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="src.test.controllers.agents.prey.html#src.test.controllers.agents.prey.prey_controller_test.StandardPreyControllerTest.prey_controller"><code class="docutils literal notranslate"><span class="pre">StandardPreyControllerTest.prey_controller</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="src.test.controllers.agents.prey.html#src.test.controllers.agents.prey.prey_controller_test.StandardPreyControllerTest.test_reward_inversely_proportional_to_distance"><code class="docutils literal notranslate"><span class="pre">StandardPreyControllerTest.test_reward_inversely_proportional_to_distance()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="src.test.controllers.agents.prey.html#module-src.test.controllers.agents.prey">Module contents</a></li>
 </ul>
 </li>
@@ -112,8 +126,44 @@
 <section id="submodules">
 <h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading"></a></h2>
 </section>
-<section id="src-test-controllers-agents-agent-controller-test-module">
-<h2>src.test.controllers.agents.agent_controller_test module<a class="headerlink" href="#src-test-controllers-agents-agent-controller-test-module" title="Link to this heading"></a></h2>
+<section id="module-src.test.controllers.agents.agent_controller_test">
+<span id="src-test-controllers-agents-agent-controller-test-module"></span><h2>src.test.controllers.agents.agent_controller_test module<a class="headerlink" href="#module-src.test.controllers.agents.agent_controller_test" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="src.test.controllers.agents.agent_controller_test.StandardAgentControllerTest">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">src.test.controllers.agents.agent_controller_test.</span></span><span class="sig-name descname"><span class="pre">StandardAgentControllerTest</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">methodName</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'runTest'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.test.controllers.agents.agent_controller_test.StandardAgentControllerTest" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">TestCase</span></code></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.test.controllers.agents.agent_controller_test.StandardAgentControllerTest.agent_controller">
+<span class="sig-name descname"><span class="pre">agent_controller</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;src.main.controllers.agents.agent_controller.AgentController</span> <span class="pre">object&gt;</span></em><a class="headerlink" href="#src.test.controllers.agents.agent_controller_test.StandardAgentControllerTest.agent_controller" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.test.controllers.agents.agent_controller_test.StandardAgentControllerTest.std_parameters">
+<span class="sig-name descname"><span class="pre">std_parameters</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">EnvironmentParams(x_dim=250,</span> <span class="pre">y_dim=250,</span> <span class="pre">num_predators=10,</span> <span class="pre">num_preys=10,</span> <span class="pre">num_states=14,</span> <span class="pre">num_actions=2,</span> <span class="pre">lower_bound=-1,</span> <span class="pre">upper_bound=1,</span> <span class="pre">r=1,</span> <span class="pre">vd=30,</span> <span class="pre">life=100)</span></em><a class="headerlink" href="#src.test.controllers.agents.agent_controller_test.StandardAgentControllerTest.std_parameters" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.test.controllers.agents.agent_controller_test.StandardAgentControllerTest.test_prey_eaten_by_predator">
+<span class="sig-name descname"><span class="pre">test_prey_eaten_by_predator</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.test.controllers.agents.agent_controller_test.StandardAgentControllerTest.test_prey_eaten_by_predator" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.test.controllers.agents.agent_controller_test.StandardAgentControllerTest.test_state_maximum_visual_depth_constraint">
+<span class="sig-name descname"><span class="pre">test_state_maximum_visual_depth_constraint</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.test.controllers.agents.agent_controller_test.StandardAgentControllerTest.test_state_maximum_visual_depth_constraint" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.test.controllers.agents.agent_controller_test.StandardAgentControllerTest.test_state_size_as_env_parameters">
+<span class="sig-name descname"><span class="pre">test_state_size_as_env_parameters</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.test.controllers.agents.agent_controller_test.StandardAgentControllerTest.test_state_size_as_env_parameters" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.test.controllers.agents.agent_controller_test.StandardAgentControllerTest.test_state_two_agents_observation">
+<span class="sig-name descname"><span class="pre">test_state_two_agents_observation</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.test.controllers.agents.agent_controller_test.StandardAgentControllerTest.test_state_two_agents_observation" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
 </section>
 <section id="module-src.test.controllers.agents">
 <span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-src.test.controllers.agents" title="Link to this heading"></a></h2>

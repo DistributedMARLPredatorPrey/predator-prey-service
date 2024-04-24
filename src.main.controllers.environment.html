@@ -16,13 +16,13 @@
         <script src="_static/jquery.js?v=5d32c60e"></script>
         <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
         <script src="_static/documentation_options.js?v=01f34227"></script>
-        <script src="_static/doctools.js?v=888ff710"></script>
+        <script src="_static/doctools.js?v=9a2dae69"></script>
         <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="src.main.controllers.policy package" href="src.main.controllers.policy.html" />
-    <link rel="prev" title="src.main.controllers.agents.predator_prey.prey package" href="src.main.controllers.agents.predator_prey.prey.html" /> 
+    <link rel="next" title="src.main.controllers.learner package" href="src.main.controllers.learner.html" />
+    <link rel="prev" title="src.main.controllers.agents.prey package" href="src.main.controllers.agents.prey.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -97,7 +97,7 @@
 <span id="src-main-controllers-environment-environment-controller-module"></span><h2>src.main.controllers.environment.environment_controller module<a class="headerlink" href="#module-src.main.controllers.environment.environment_controller" title="Link to this heading"></a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="src.main.controllers.environment.environment_controller.EnvironmentController">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">src.main.controllers.environment.environment_controller.</span></span><span class="sig-name descname"><span class="pre">EnvironmentController</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">environment</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="src.main.model.environment.html#src.main.model.environment.environment.Environment" title="src.main.model.environment.environment.Environment"><span class="pre">Environment</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">agent_controllers</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="src.main.controllers.agents.html#src.main.controllers.agents.agent_controller.AgentController" title="src.main.controllers.agents.agent_controller.AgentController"><span class="pre">AgentController</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">buffer_controller</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="src.main.controllers.replay_buffer.html#src.main.controllers.replay_buffer.replay_buffer_controller.ReplayBufferController" title="src.main.controllers.replay_buffer.replay_buffer_controller.ReplayBufferController"><span class="pre">ReplayBufferController</span></a></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.main.controllers.environment.environment_controller.EnvironmentController" title="Link to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">src.main.controllers.environment.environment_controller.</span></span><span class="sig-name descname"><span class="pre">EnvironmentController</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">environment</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="src.main.model.environment.html#src.main.model.environment.environment.Environment" title="src.main.model.environment.environment.Environment"><span class="pre">Environment</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">agent_controllers</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="src.main.controllers.agents.html#src.main.controllers.agents.agent_controller.AgentController" title="src.main.controllers.agents.agent_controller.AgentController"><span class="pre">AgentController</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">buffers</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="src.main.model.environment.buffer.html#src.main.model.environment.buffer.buffer.Buffer" title="src.main.model.environment.buffer.buffer.Buffer"><span class="pre">Buffer</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">learners</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="src.main.controllers.learner.html#src.main.controllers.learner.learner.Learner" title="src.main.controllers.learner.learner.Learner"><span class="pre">Learner</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.main.controllers.environment.environment_controller.EnvironmentController" title="Link to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <dl class="py method">
 <dt class="sig sig-object py" id="src.main.controllers.environment.environment_controller.EnvironmentController.train">
@@ -116,17 +116,21 @@
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">src.main.controllers.environment.environment_controller_factory.</span></span><span class="sig-name descname"><span class="pre">EnvironmentControllerFactory</span></span><a class="headerlink" href="#src.main.controllers.environment.environment_controller_factory.EnvironmentControllerFactory" title="Link to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <dl class="py method">
-<dt class="sig sig-object py" id="src.main.controllers.environment.environment_controller_factory.EnvironmentControllerFactory.create_predator_prey">
-<span class="sig-name descname"><span class="pre">create_predator_prey</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#src.main.controllers.environment.environment_controller.EnvironmentController" title="src.main.controllers.environment.environment_controller.EnvironmentController"><span class="pre">EnvironmentController</span></a></span></span><a class="headerlink" href="#src.main.controllers.environment.environment_controller_factory.EnvironmentControllerFactory.create_predator_prey" title="Link to this definition"></a></dt>
-<dd><p>Creates a random EnvironmentController, where the position of each agent
-inside the Environment is random.
+<dt class="sig sig-object py" id="src.main.controllers.environment.environment_controller_factory.EnvironmentControllerFactory.create_random">
+<span class="sig-name descname"><span class="pre">create_random</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env_params</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="src.main.model.environment.params.html#src.main.model.environment.params.environment_params.EnvironmentParams" title="src.main.model.environment.params.environment_params.EnvironmentParams"><span class="pre">EnvironmentParams</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#src.main.controllers.environment.environment_controller.EnvironmentController" title="src.main.controllers.environment.environment_controller.EnvironmentController"><span class="pre">EnvironmentController</span></a></span></span><a class="headerlink" href="#src.main.controllers.environment.environment_controller_factory.EnvironmentControllerFactory.create_random" title="Link to this definition"></a></dt>
+<dd><p>Creates a random EnvironmentController, where the position of each agent inside the Environment is random.
+:param env_params: Environment parameters
 :return: random EnvironmentController</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="src.main.controllers.environment.environment_controller_factory.EnvironmentControllerFactory.f">
-<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">f</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">v</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.main.controllers.environment.environment_controller_factory.EnvironmentControllerFactory.f" title="Link to this definition"></a></dt>
-<dd></dd></dl>
+<dt class="sig sig-object py" id="src.main.controllers.environment.environment_controller_factory.EnvironmentControllerFactory.from_existing">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_existing</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">environment</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="src.main.model.environment.html#src.main.model.environment.environment.Environment" title="src.main.model.environment.environment.Environment"><span class="pre">Environment</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#src.main.controllers.environment.environment_controller.EnvironmentController" title="src.main.controllers.environment.environment_controller.EnvironmentController"><span class="pre">EnvironmentController</span></a></span></span><a class="headerlink" href="#src.main.controllers.environment.environment_controller_factory.EnvironmentControllerFactory.from_existing" title="Link to this definition"></a></dt>
+<dd><p>TODO: it should create an EnvironmentController based on previous computation, i.e. where the neural networks
+are partially trained
+:param environment: existing Environment
+:return:</p>
+</dd></dl>
 
 </dd></dl>
 
@@ -140,8 +144,8 @@ inside the Environment is random.
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="src.main.controllers.agents.predator_prey.prey.html" class="btn btn-neutral float-left" title="src.main.controllers.agents.predator_prey.prey package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="src.main.controllers.policy.html" class="btn btn-neutral float-right" title="src.main.controllers.policy package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="src.main.controllers.agents.prey.html" class="btn btn-neutral float-left" title="src.main.controllers.agents.prey package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="src.main.controllers.learner.html" class="btn btn-neutral float-right" title="src.main.controllers.learner package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

@@ -8,6 +8,7 @@ Subpackages
    :maxdepth: 4
 
    src.test.controllers.agents
+   src.test.controllers.environment
 
 Module contents
 ---------------

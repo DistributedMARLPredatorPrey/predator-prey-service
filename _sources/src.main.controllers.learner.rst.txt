@@ -1,0 +1,29 @@
+src.main.controllers.learner package
+====================================
+
+Submodules
+----------
+
+src.main.controllers.learner.learner module
+-------------------------------------------
+
+.. automodule:: src.main.controllers.learner.learner
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+src.main.controllers.learner.learner\_factory module
+----------------------------------------------------
+
+.. automodule:: src.main.controllers.learner.learner_factory
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Module contents
+---------------
+
+.. automodule:: src.main.controllers.learner
+   :members:
+   :undoc-members:
+   :show-inheritance:
