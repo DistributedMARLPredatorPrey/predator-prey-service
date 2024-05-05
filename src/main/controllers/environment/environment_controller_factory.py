@@ -1,6 +1,4 @@
-import os
-from multiprocessing import Process, Pool
-from threading import Thread
+from multiprocessing import Pool
 
 from src.main.model.config.config_utils import ConfigUtils
 from src.main.controllers.policy.agent_policy_controller_factory import (
@@ -55,21 +53,9 @@ class EnvironmentControllerFactory:
         :return: random EnvironmentController
         """
         # Controllers
-        ## Actor receivers
         print("Create actor receivers")
-
-        # t1, t2 = (Process(target=self._set_pred_actor_rec_controller),
-        #           Process(target=self._set_prey_actor_rec_controller))
-        # t1.start()
-        # t2.start()
-        #
-        # t1.join()
-        # t2.join()
-
         with Pool(2) as p:
             p.map(self.f, [True, False])
-
-        print("done")
 
         self._set_pred_actor_rec_controller()
         self._set_prey_actor_rec_controller()
@@ -88,7 +74,6 @@ class EnvironmentControllerFactory:
             self._replay_buffer_config.replay_buffer_host,
             self._replay_buffer_config.replay_buffer_port,
         )
-
         # Model
         print("Create env")
         environment = Environment(

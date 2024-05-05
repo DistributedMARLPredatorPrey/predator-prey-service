@@ -2,7 +2,7 @@ from typing import List
 
 import numpy as np
 import tensorflow as tf
-
+import os
 from src.main.controllers.agents.agent_controller import AgentController
 from src.main.controllers.replay_buffer.replay_buffer_controller import (
     ReplayBufferController,
@@ -36,7 +36,9 @@ class EnvironmentController:
             actions = self._actions(prev_states)
             # Move all the agents at once and get their rewards only after
             next_states, rewards = self._step(actions), self._rewards()
-            print("avg rewards: ", np.average(list(rewards.values())))
+            avg_rewards = np.average(list(rewards.values()))
+            with open(f"/usr/app/config/rewards_{os.environ.get('REL_PATH')}.txt", "a") as f:
+                f.write(f"{avg_rewards}\n")
             self._record_to_buffer(prev_states, actions, rewards, next_states)
             prev_states = next_states
 
@@ -106,10 +108,11 @@ class EnvironmentController:
                 actions_t.append(actions[agent.id])
                 rewards_t.append(rewards[agent.id])
                 next_states_t.append(next_states[agent.id].distances)
+            print(f"Avg reward {at}: {np.average(rewards_t)}")
             record_tuples.update(
                 {at: (prev_states_t, actions_t, rewards_t, next_states_t)}
             )
-        print("Sending data to the replay buffer")
+        print("Post data to the replay buffer:", record_tuples)
         self.buffer_controller.record(record_tuples)
 
     def _agent_by_type(self):

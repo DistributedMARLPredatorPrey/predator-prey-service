@@ -1,3 +1,5 @@
+import os
+
 from src.main.controllers.policy.predator_prey.predator_prey_policy_controller import (
     PredatorPreyPolicyController,
 )
@@ -10,7 +12,7 @@ class AgentPolicyControllerFactory:
     def prey_policy_controller() -> AgentPolicyController:
         return PredatorPreyPolicyController(
             broker_host=ConfigUtils().learner_service_configuration().pubsub_broker,
-            actor_model_path="src/main/resources/prey.keras",
+            actor_model_path=f"src/main/resources/prey_{os.environ.get('REL_PATH')}.keras",
             routing_key="prey-actor-model",
         )
 
@@ -18,6 +20,6 @@ class AgentPolicyControllerFactory:
     def predator_policy_controller() -> AgentPolicyController:
         return PredatorPreyPolicyController(
             broker_host=ConfigUtils().learner_service_configuration().pubsub_broker,
-            actor_model_path="src/main/resources/predator.keras",
+            actor_model_path=f"src/main/resources/predator_{os.environ.get('REL_PATH')}.keras",
             routing_key="predator-actor-model",
         )
