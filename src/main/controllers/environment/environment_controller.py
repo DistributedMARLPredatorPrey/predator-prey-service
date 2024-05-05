@@ -37,7 +37,9 @@ class EnvironmentController:
             # Move all the agents at once and get their rewards only after
             next_states, rewards = self._step(actions), self._rewards()
             avg_rewards = np.average(list(rewards.values()))
-            with open(f"/usr/app/config/rewards_{os.environ.get('REL_PATH')}.txt", "a") as f:
+            with open(
+                f"/usr/app/config/rewards_{os.environ.get('REL_PATH')}.txt", "a"
+            ) as f:
                 f.write(f"{avg_rewards}\n")
             self._record_to_buffer(prev_states, actions, rewards, next_states)
             prev_states = next_states
