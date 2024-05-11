@@ -36,11 +36,12 @@ class EnvironmentController:
             actions = self._actions(prev_states)
             # Move all the agents at once and get their rewards only after
             next_states, rewards = self._step(actions), self._rewards()
-            avg_rewards = np.average(list(rewards.values()))
-            with open(
-                f"/usr/app/config/rewards_{os.environ.get('REL_PATH')}.txt", "a"
-            ) as f:
-                f.write(f"{avg_rewards}\n")
+            #avg_rewards = np.average(list(rewards.values()))
+            # with open(
+            #     f"/usr/app/config/rewards_{os.environ.get('REL_PATH')}.txt", "a"
+            # ) as f:
+            #     f.write(f"{avg_rewards}\n")
+            print([(ac.agent.x, ac.agent.y) for ac in self.agent_controllers])
             self._record_to_buffer(prev_states, actions, rewards, next_states)
             prev_states = next_states
 
@@ -114,7 +115,7 @@ class EnvironmentController:
             record_tuples.update(
                 {at: (prev_states_t, actions_t, rewards_t, next_states_t)}
             )
-        print("Post data to the replay buffer:", record_tuples)
+        #print("Post data to the replay buffer:", prev_states_t)
         self.buffer_controller.record(record_tuples)
 
     def _agent_by_type(self):
