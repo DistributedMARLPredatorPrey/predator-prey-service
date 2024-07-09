@@ -12,6 +12,9 @@ class PredatorPreyUtils:
 
     @staticmethod
     def initialize_policy_receivers():
+        """
+        Initialize policy receivers of both predator and prey.
+        """
         policy_controller_factory = AgentPolicyControllerFactory
         with Pool(2) as p:
             p.map(
