@@ -1,21 +1,23 @@
-from multiprocessing import Pool
-
-from src.main.model.config.config_utils import ConfigUtils
-from src.main.controllers.policy.agent_policy_controller_factory import (
-    AgentPolicyControllerFactory,
-)
 from src.main.controllers.agents.predator_prey.predator.predator_controller_factory import (
     PredatorControllerFactory,
 )
 from src.main.controllers.agents.predator_prey.prey.prey_controller_factory import (
     PreyControllerFactory,
 )
-from src.main.controllers.replay_buffer.replay_buffer_controller import (
-    ReplayBufferController,
-)
 from src.main.controllers.environment.environment_controller import (
     EnvironmentController,
 )
+from main.controllers.environment.utils.environment_controller_utils import (
+    EnvironmentControllerUtils,
+)
+from src.main.controllers.environment.utils.predator_prey_utils.predator_prey_utils import PredatorPreyUtils
+from src.main.controllers.policy.agent_policy_controller_factory import (
+    AgentPolicyControllerFactory,
+)
+from src.main.controllers.replay_buffer.replay_buffer_controller import (
+    ReplayBufferController,
+)
+from src.main.model.config.config_utils import ConfigUtils
 from src.main.model.environment.environment import Environment
 
 
@@ -28,24 +30,6 @@ class EnvironmentControllerFactory:
         self._pred_actor_receiver_controller = None
         self._prey_actor_receiver_controller = None
 
-    def _set_pred_actor_rec_controller(self):
-        self._pred_actor_receiver_controller = (
-            self._policy_controller_factory.predator_policy_controller()
-        )
-
-    def _set_prey_actor_rec_controller(self):
-        self._prey_actor_receiver_controller = (
-            self._policy_controller_factory.prey_policy_controller()
-        )
-
-    @staticmethod
-    def f(v):
-        policy_controller_factory = AgentPolicyControllerFactory()
-        if v:
-            policy_controller_factory.predator_policy_controller()
-        else:
-            policy_controller_factory.prey_policy_controller()
-
     def create_predator_prey(self) -> EnvironmentController:
         """
         Creates a random EnvironmentController, where the position of each agent
@@ -54,13 +38,13 @@ class EnvironmentControllerFactory:
         """
         # Controllers
         print("Create actor receivers")
-        with Pool(2) as p:
-            p.map(self.f, [True, False])
+        utils = PredatorPreyUtils()
+        utils.initialize_policy_receivers()
+        factory = AgentPolicyControllerFactory()
+        self._prey_actor_receiver_controller, self._pred_actor_receiver_controller = (factory.prey_policy_controller(),
+                                                                                      factory.predator_policy_controller())
 
-        self._set_pred_actor_rec_controller()
-        self._set_prey_actor_rec_controller()
-
-        ## Predators and Preys
+        # Predators and Preys
         print("Create pred and preys")
         predator_controllers = PredatorControllerFactory.create_from_params(
             self._env_config, self._pred_actor_receiver_controller
@@ -68,7 +52,7 @@ class EnvironmentControllerFactory:
         prey_controllers = PreyControllerFactory.create_from_params(
             self._env_config, self._prey_actor_receiver_controller
         )
-        ## Buffer
+        # Buffer
         print("Create buffer contr")
         buffer_controller = ReplayBufferController(
             self._replay_buffer_config.replay_buffer_host,
@@ -89,4 +73,8 @@ class EnvironmentControllerFactory:
             environment=environment,
             agent_controllers=predator_controllers + prey_controllers,
             buffer_controller=buffer_controller,
+            env_controller_utils=EnvironmentControllerUtils(
+                self._env_config.base_experiment_path,
+                self._env_config.rel_experiment_path,
+            ),
         )
