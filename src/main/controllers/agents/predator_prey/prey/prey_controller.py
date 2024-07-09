@@ -1,5 +1,10 @@
+from typing import List
+
 import numpy as np
 
+from z3 import Solver, sat, Real
+
+from src.main.model.agents.agent import Agent
 from src.main.model.config.config import EnvironmentConfig
 from src.main.controllers.policy.agent_policy_controller import AgentPolicyController
 from src.main.controllers.agents.agent_controller import AgentController
@@ -29,10 +34,28 @@ class PreyController(AgentController):
         """
         return (1 - np.power(np.e, -np.min(self.last_state.distances))) / (
             1 - np.power(np.e, -self.vd)
-        )
+        ) - 1
 
-    def done(self) -> bool:
+    def done(self, agents: List[Agent]) -> bool:
         """
-        :return:
+        Checks if this agent is eaten by the target agents given as parameter
+        :param agents: other agents inside the environment
+        :return: True if the current agent is being eaten, False otherwise
         """
+        for agent in agents:
+            x, y = Real("x"), Real("y")
+            s = Solver()
+            s.add(
+                x < self.agent.x + self.r,
+                x >= self.agent.x - self.r,
+                x < agent.x + self.r,
+                x >= agent.x - self.r,
+                y < self.agent.y + self.r,
+                y >= self.agent.y - self.r,
+                y < agent.y + self.r,
+                y >= agent.y - self.r,
+            )
+            if s.check() == sat:
+                print("Prey is dead")
+                return True
         return False

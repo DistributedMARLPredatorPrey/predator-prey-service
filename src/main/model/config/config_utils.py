@@ -11,7 +11,7 @@ from src.main.model.config.config import (
 
 class ConfigUtils:
     @staticmethod
-    def _load_config(file_path):
+    def __load_config(file_path):
         """
         Loads a config file.
         :param file_path: file's path
@@ -26,7 +26,7 @@ class ConfigUtils:
         whose path is specified by GLOBAL_CONFIG_PATH environment variable.
         :return: environment config
         """
-        env_conf = self._load_config(os.environ.get("GLOBAL_CONFIG_PATH"))[
+        env_conf = self.__load_config(os.environ.get("GLOBAL_CONFIG_PATH"))[
             "environment"
         ]
         return EnvironmentConfig(
@@ -41,6 +41,9 @@ class ConfigUtils:
             r=env_conf["r"],
             vd=env_conf["vd"],
             life=env_conf["life"],
+            save_experiment_data=bool(env_conf["save_experiment_data"]),
+            base_experiment_path="/usr/app/",
+            rel_experiment_path=os.environ.get("REL_PATH"),
         )
 
     def replay_buffer_configuration(self) -> ReplayBufferServiceConfig:

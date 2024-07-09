@@ -9,10 +9,12 @@ from src.main.controllers.environment.environment_controller_factory import (
 
 if __name__ == "__main__":
     print("Pred-Prey-Service: starting")
-    env_controller: EnvironmentController = (
-        EnvironmentControllerFactory().create_predator_prey()
-    )
     start_t = datetime.now()
-    env_controller.train()
-    end_t = datetime.now()
-    print("Time elapsed: {}".format(end_t - start_t))
+    init = True
+    while True:
+        env_controller: EnvironmentController = (
+            EnvironmentControllerFactory().create_predator_prey(init=init)
+        )
+        env_controller.train()
+        print("Done")
+        init = False

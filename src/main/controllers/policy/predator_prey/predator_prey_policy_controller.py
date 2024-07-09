@@ -11,5 +11,5 @@ class PredatorPreyPolicyController(AgentPolicyController):
         )
 
     def policy(self, state):
-        actor = self.actor_receiver_controller.latest_actor
+        actor = self.actor_receiver_controller.get_latest_actor()
         return actor(state)
