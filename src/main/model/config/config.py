@@ -18,6 +18,9 @@ class EnvironmentConfig:
     r: float
     vd: float
     life: int
+    save_experiment_data: bool
+    base_experiment_path: str
+    rel_experiment_path: str
 
 
 @dataclass(frozen=True)
