@@ -3,6 +3,7 @@ from threading import Thread
 
 import pika
 from tensorflow.keras.models import load_model
+from threading import Lock
 
 
 class ActorReceiverController:
@@ -10,11 +11,21 @@ class ActorReceiverController:
         self.broker_host = broker_host
         self.actor_model_path = actor_model_path
         self.routing_key = routing_key
+        self.__lock = Lock()
+        self.__latest_actor = None
         if os.path.exists(actor_model_path):
-            self.latest_actor = load_model(actor_model_path)
+            self.set_latest_actor(load_model(actor_model_path))
             self.__setup_receiver()
         else:
             self.__setup_latest_actor()
+
+    def set_latest_actor(self, latest_actor):
+        with self.__lock:
+            self.__latest_actor = latest_actor
+
+    def get_latest_actor(self):
+        with self.__lock:
+            return self.__latest_actor
 
     def __setup_receiver(self):
         self.__update_latest_actor()
@@ -66,7 +77,7 @@ class ActorReceiverController:
     def __update_actor(self, ch, method, properties, body):
         with open(self.actor_model_path, "wb") as actor_model_file:
             actor_model_file.write(body)
-        self.latest_actor = load_model(self.actor_model_path)
+        self.set_latest_actor(load_model(self.actor_model_path))
         print("Actor updated")
 
     def __consume(self):

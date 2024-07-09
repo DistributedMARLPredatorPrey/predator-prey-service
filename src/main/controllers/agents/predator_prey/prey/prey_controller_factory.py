@@ -26,6 +26,8 @@ class PreyControllerFactory:
                 id=f"prey_{i}",
                 x=uniform(0, env_config.x_dim),
                 y=uniform(0, env_config.y_dim),
+                vx=uniform(-1, 1),
+                vy=uniform(-1, 1),
             )
             prey_controllers.append(
                 PreyController(

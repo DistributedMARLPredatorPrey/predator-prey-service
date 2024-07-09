@@ -1,5 +1,8 @@
+from typing import List
+
 import numpy as np
 
+from src.main.model.agents.agent import Agent
 from src.main.model.config.config import EnvironmentConfig
 from src.main.controllers.policy.agent_policy_controller import AgentPolicyController
 from src.main.controllers.agents.agent_controller import AgentController
@@ -13,6 +16,7 @@ class PredatorController(AgentController):
         predator: Predator,
         policy_controller: AgentPolicyController,
     ):
+        self.life = 50
         super().__init__(env_config, predator, policy_controller)
 
     def reward(self) -> float:
@@ -30,11 +34,15 @@ class PredatorController(AgentController):
         return (
             np.power(np.e, -np.min(self.last_state.distances))
             - np.power(np.e, -self.vd)
-        ) / (1 - np.power(np.e, -self.vd))
+        ) / (1 - np.power(np.e, -self.vd)) - 1
 
-    def done(self) -> bool:
+    def done(self, _: List[Agent]) -> bool:
         """
         The predator is done when life is equal to zero.
         :return: true if it is done, false otherwise
         """
-        return self.life == 0
+        self.life = self.life - 1
+        if self.life == 0:
+            print("Predator is dead")
+            return True
+        return False

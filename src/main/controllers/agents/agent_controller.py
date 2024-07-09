@@ -56,26 +56,6 @@ class AgentController:
         legal_action = np.clip(sampled_action, self.lower_bound, self.upper_bound)
         return np.squeeze(legal_action)
 
-    def is_eaten(self, target: Agent) -> bool:
-        """
-        Checks if this agent is eaten by the target agent given as parameter
-        :param target: target agent
-        :return: True if the current agent is being eaten, False otherwise
-        """
-        x, y = Real("x"), Real("y")
-        s = Solver()
-        s.add(
-            x < self.agent.x + self.r,
-            x >= self.agent.x - self.r,
-            x < target.x + self.r,
-            x >= target.x - self.r,
-            y < self.agent.y + self.r,
-            y >= self.agent.y - self.r,
-            y < target.y + self.r,
-            y >= target.y - self.r,
-        )
-        return s.check() == sat
-
     def state(self, agents: List[Agent]) -> State:
         r"""
         Captures the state given the other agents inside the environment.
@@ -112,8 +92,8 @@ class AgentController:
         x_rng = x - x_0
 
         range_constraint = [
-            If(y_rng > 0, y_rng, If(y_rng < 0, -y_rng, self.vd - 1)) - self.vd < 0,
-            If(x_rng > 0, x_rng, If(x_rng < 0, -x_rng, self.vd - 1)) - self.vd < 0,
+            If(y_rng > 0, y_rng, -y_rng) - self.vd < 0,
+            If(x_rng > 0, x_rng, -x_rng) - self.vd < 0,
         ]
 
         agent_boxes_constraint = self._box_constraints(x, y, cds)
@@ -145,9 +125,10 @@ class AgentController:
         """
         raise NotImplementedError("Subclasses must implement this method")
 
-    def done(self) -> bool:
+    def done(self, agents: List[Agent]) -> bool:
         """
         Base done method, to be overridden by subclasses
+        :param agents: other agents inside the environment
         :return: True if it is done, False otherwise
         """
         raise NotImplementedError("Subclasses must implement this method")
@@ -196,5 +177,5 @@ class AgentController:
                 float(my.numerator_as_long()) / float(my.denominator_as_long()),
             )
             # Compute the distance between the agent center (x_0, y_0)
-            return np.sqrt(np.power(x_0 - x_p, 2) + np.power(y_0 - y_p, 2))
-        return self.vd
+            return np.sqrt(np.square(x_0 - x_p) + np.square(y_0 - y_p)) / self.vd
+        return self.vd / self.vd
