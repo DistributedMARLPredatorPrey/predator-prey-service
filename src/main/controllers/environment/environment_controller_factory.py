@@ -7,7 +7,7 @@ from src.main.controllers.agents.predator_prey.prey.prey_controller_factory impo
 from src.main.controllers.environment.environment_controller import (
     EnvironmentController,
 )
-from main.controllers.environment.utils.environment_controller_utils import (
+from src.main.controllers.environment.utils.environment_controller_utils import (
     EnvironmentControllerUtils,
 )
 from src.main.controllers.environment.utils.predator_prey_utils.predator_prey_utils import (
@@ -32,7 +32,7 @@ class EnvironmentControllerFactory:
         self._pred_actor_receiver_controller = None
         self._prey_actor_receiver_controller = None
 
-    def create_predator_prey(self) -> EnvironmentController:
+    def create_predator_prey(self, init: bool = True) -> EnvironmentController:
         """
         Creates a random EnvironmentController, where the position of each agent
         inside the Environment is random.
@@ -40,8 +40,9 @@ class EnvironmentControllerFactory:
         """
         # Controllers
         print("Create actor receivers")
-        utils = PredatorPreyUtils()
-        utils.initialize_policy_receivers()
+        if init:
+            utils = PredatorPreyUtils()
+            utils.initialize_policy_receivers()
         factory = AgentPolicyControllerFactory()
         self._prey_actor_receiver_controller, self._pred_actor_receiver_controller = (
             factory.prey_policy_controller(),
