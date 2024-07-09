@@ -13,10 +13,14 @@ class ActorReceiverController:
         self.routing_key = routing_key
         self.__lock = Lock()
         self.__latest_actor = None
+
         if os.path.exists(actor_model_path):
+            # An actor model already exists from previous computation,
+            # load it and start a new thread to subscribe for model updates
             self.set_latest_actor(load_model(actor_model_path))
-            self.__setup_receiver()
+            self.__update_latest_actor()
         else:
+            # Block until the controller receives the latest actor model
             self.__setup_latest_actor()
 
     def set_latest_actor(self, latest_actor):
@@ -27,15 +31,12 @@ class ActorReceiverController:
         with self.__lock:
             return self.__latest_actor
 
-    def __setup_receiver(self):
-        self.__update_latest_actor()
-        Thread(target=self.__consume).start()
-
     def __update_latest_actor(self):
         """
         Gets the new actor models using a receiver started in a new thread
         """
         self.__setup_exchange_and_queue(self.__update_actor)
+        Thread(target=self.__consume).start()
 
     def __setup_latest_actor(self):
         """

@@ -4,7 +4,7 @@ import numpy as np
 import tensorflow as tf
 
 from src.main.controllers.agents.agent_controller import AgentController
-from main.controllers.environment.utils.environment_controller_utils import (
+from src.main.controllers.environment.utils.environment_controller_utils import (
     EnvironmentControllerUtils,
 )
 from src.main.controllers.replay_buffer.replay_buffer_controller import (
