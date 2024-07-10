@@ -1,6 +1,14 @@
 src.main.controllers.environment package
 ========================================
 
+Subpackages
+-----------
+
+.. toctree::
+   :maxdepth: 4
+
+   src.main.controllers.environment.utils
+
 Submodules
 ----------
 

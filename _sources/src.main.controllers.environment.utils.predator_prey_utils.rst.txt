@@ -1,0 +1,21 @@
+src.main.controllers.environment.utils.predator\_prey\_utils package
+====================================================================
+
+Submodules
+----------
+
+src.main.controllers.environment.utils.predator\_prey\_utils.predator\_prey\_utils module
+-----------------------------------------------------------------------------------------
+
+.. automodule:: src.main.controllers.environment.utils.predator_prey_utils.predator_prey_utils
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Module contents
+---------------
+
+.. automodule:: src.main.controllers.environment.utils.predator_prey_utils
+   :members:
+   :undoc-members:
+   :show-inheritance:

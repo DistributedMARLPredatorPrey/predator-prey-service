@@ -22,7 +22,7 @@
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="src.main.controllers.policy.predator_prey package" href="src.main.controllers.policy.predator_prey.html" />
-    <link rel="prev" title="src.main.controllers.environment package" href="src.main.controllers.environment.html" /> 
+    <link rel="prev" title="src.main.controllers.environment.utils.predator_prey_utils package" href="src.main.controllers.environment.utils.predator_prey_utils.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -50,6 +50,7 @@
 <li class="toctree-l2 current"><a class="reference internal" href="src.html">src package</a><ul class="current">
 <li class="toctree-l3 current"><a class="reference internal" href="src.html#subpackages">Subpackages</a><ul class="current">
 <li class="toctree-l4 current"><a class="reference internal" href="src.main.html">src.main package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="src.notebooks.html">src.notebooks package</a></li>
 <li class="toctree-l4"><a class="reference internal" href="src.test.html">src.test package</a></li>
 </ul>
 </li>
@@ -96,9 +97,26 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="src.main.controllers.policy.predator_prey.html">src.main.controllers.policy.predator_prey package</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="src.main.controllers.policy.predator_prey.html#submodules">Submodules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="src.main.controllers.policy.predator_prey.html#src-main-controllers-policy-predator-prey-actor-receiver-controller-module">src.main.controllers.policy.predator_prey.actor_receiver_controller module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="src.main.controllers.policy.predator_prey.html#src-main-controllers-policy-predator-prey-actor-receiver-healthcheck-module">src.main.controllers.policy.predator_prey.actor_receiver_healthcheck module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="src.main.controllers.policy.predator_prey.html#src-main-controllers-policy-predator-prey-predator-prey-policy-controller-module">src.main.controllers.policy.predator_prey.predator_prey_policy_controller module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="src.main.controllers.policy.predator_prey.html#module-src.main.controllers.policy.predator_prey.actor_receiver_controller">src.main.controllers.policy.predator_prey.actor_receiver_controller module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="src.main.controllers.policy.predator_prey.html#src.main.controllers.policy.predator_prey.actor_receiver_controller.ActorReceiverController"><code class="docutils literal notranslate"><span class="pre">ActorReceiverController</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="src.main.controllers.policy.predator_prey.html#src.main.controllers.policy.predator_prey.actor_receiver_controller.ActorReceiverController.get_latest_actor"><code class="docutils literal notranslate"><span class="pre">ActorReceiverController.get_latest_actor()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="src.main.controllers.policy.predator_prey.html#src.main.controllers.policy.predator_prey.actor_receiver_controller.ActorReceiverController.set_latest_actor"><code class="docutils literal notranslate"><span class="pre">ActorReceiverController.set_latest_actor()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="src.main.controllers.policy.predator_prey.html#module-src.main.controllers.policy.predator_prey.actor_receiver_healthcheck">src.main.controllers.policy.predator_prey.actor_receiver_healthcheck module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="src.main.controllers.policy.predator_prey.html#src.main.controllers.policy.predator_prey.actor_receiver_healthcheck.check_pika_consumer"><code class="docutils literal notranslate"><span class="pre">check_pika_consumer()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="src.main.controllers.policy.predator_prey.html#module-src.main.controllers.policy.predator_prey.predator_prey_policy_controller">src.main.controllers.policy.predator_prey.predator_prey_policy_controller module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="src.main.controllers.policy.predator_prey.html#src.main.controllers.policy.predator_prey.predator_prey_policy_controller.PredatorPreyPolicyController"><code class="docutils literal notranslate"><span class="pre">PredatorPreyPolicyController</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="src.main.controllers.policy.predator_prey.html#src.main.controllers.policy.predator_prey.predator_prey_policy_controller.PredatorPreyPolicyController.policy"><code class="docutils literal notranslate"><span class="pre">PredatorPreyPolicyController.policy()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="src.main.controllers.policy.predator_prey.html#src.main.controllers.policy.predator_prey.predator_prey_policy_controller.PredatorPreyPolicyController.stop"><code class="docutils literal notranslate"><span class="pre">PredatorPreyPolicyController.stop()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="src.main.controllers.policy.predator_prey.html#src-main-controllers-policy-predator-prey-sender-module">src.main.controllers.policy.predator_prey.sender module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="src.main.controllers.policy.predator_prey.html#module-src.main.controllers.policy.predator_prey">Module contents</a></li>
 </ul>
@@ -122,11 +140,34 @@
 :return: action</p>
 </dd></dl>
 
+<dl class="py method">
+<dt class="sig sig-object py" id="src.main.controllers.policy.agent_policy_controller.AgentPolicyController.stop">
+<span class="sig-name descname"><span class="pre">stop</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.main.controllers.policy.agent_policy_controller.AgentPolicyController.stop" title="Link to this definition"></a></dt>
+<dd><p>Base Stop method to stop update policy, to be overridden by subclasses
+:return:</p>
+</dd></dl>
+
 </dd></dl>
 
 </section>
-<section id="src-main-controllers-policy-agent-policy-controller-factory-module">
-<h2>src.main.controllers.policy.agent_policy_controller_factory module<a class="headerlink" href="#src-main-controllers-policy-agent-policy-controller-factory-module" title="Link to this heading"></a></h2>
+<section id="module-src.main.controllers.policy.agent_policy_controller_factory">
+<span id="src-main-controllers-policy-agent-policy-controller-factory-module"></span><h2>src.main.controllers.policy.agent_policy_controller_factory module<a class="headerlink" href="#module-src.main.controllers.policy.agent_policy_controller_factory" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="src.main.controllers.policy.agent_policy_controller_factory.AgentPolicyControllerFactory">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">src.main.controllers.policy.agent_policy_controller_factory.</span></span><span class="sig-name descname"><span class="pre">AgentPolicyControllerFactory</span></span><a class="headerlink" href="#src.main.controllers.policy.agent_policy_controller_factory.AgentPolicyControllerFactory" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="src.main.controllers.policy.agent_policy_controller_factory.AgentPolicyControllerFactory.predator_policy_controller">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">predator_policy_controller</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#src.main.controllers.policy.agent_policy_controller.AgentPolicyController" title="src.main.controllers.policy.agent_policy_controller.AgentPolicyController"><span class="pre">AgentPolicyController</span></a></span></span><a class="headerlink" href="#src.main.controllers.policy.agent_policy_controller_factory.AgentPolicyControllerFactory.predator_policy_controller" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.main.controllers.policy.agent_policy_controller_factory.AgentPolicyControllerFactory.prey_policy_controller">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">prey_policy_controller</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#src.main.controllers.policy.agent_policy_controller.AgentPolicyController" title="src.main.controllers.policy.agent_policy_controller.AgentPolicyController"><span class="pre">AgentPolicyController</span></a></span></span><a class="headerlink" href="#src.main.controllers.policy.agent_policy_controller_factory.AgentPolicyControllerFactory.prey_policy_controller" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
 </section>
 <section id="module-src.main.controllers.policy">
 <span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-src.main.controllers.policy" title="Link to this heading"></a></h2>
@@ -137,7 +178,7 @@
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="src.main.controllers.environment.html" class="btn btn-neutral float-left" title="src.main.controllers.environment package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="src.main.controllers.environment.utils.predator_prey_utils.html" class="btn btn-neutral float-left" title="src.main.controllers.environment.utils.predator_prey_utils package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
         <a href="src.main.controllers.policy.predator_prey.html" class="btn btn-neutral float-right" title="src.main.controllers.policy.predator_prey package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 

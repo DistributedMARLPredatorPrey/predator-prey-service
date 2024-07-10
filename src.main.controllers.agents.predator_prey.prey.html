@@ -51,6 +51,7 @@
 <li class="toctree-l2 current"><a class="reference internal" href="src.html">src package</a><ul class="current">
 <li class="toctree-l3 current"><a class="reference internal" href="src.html#subpackages">Subpackages</a><ul class="current">
 <li class="toctree-l4 current"><a class="reference internal" href="src.main.html">src.main package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="src.notebooks.html">src.notebooks package</a></li>
 <li class="toctree-l4"><a class="reference internal" href="src.test.html">src.test package</a></li>
 </ul>
 </li>
@@ -104,12 +105,10 @@
 <dd><p>Bases: <a class="reference internal" href="src.main.controllers.agents.html#src.main.controllers.agents.agent_controller.AgentController" title="src.main.controllers.agents.agent_controller.AgentController"><code class="xref py py-class docutils literal notranslate"><span class="pre">AgentController</span></code></a></p>
 <dl class="py method">
 <dt class="sig sig-object py" id="src.main.controllers.agents.predator_prey.prey.prey_controller.PreyController.done">
-<span class="sig-name descname"><span class="pre">done</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#src.main.controllers.agents.predator_prey.prey.prey_controller.PreyController.done" title="Link to this definition"></a></dt>
-<dd><dl class="field-list simple">
-<dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p></p>
-</dd>
-</dl>
+<span class="sig-name descname"><span class="pre">done</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">agents</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="src.main.model.agents.html#src.main.model.agents.agent.Agent" title="src.main.model.agents.agent.Agent"><span class="pre">Agent</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#src.main.controllers.agents.predator_prey.prey.prey_controller.PreyController.done" title="Link to this definition"></a></dt>
+<dd><p>Checks if this agent is eaten by the target agents given as parameter
+:param agents: other agents inside the environment
+:return: True if the current agent is being eaten, False otherwise</p>
 </dd></dl>
 
 <dl class="py method">
@@ -141,6 +140,7 @@ and when it’s the maximum visual depth it’s equal to 1:</p>
 <dt class="sig sig-object py" id="src.main.controllers.agents.predator_prey.prey.prey_controller_factory.PreyControllerFactory.create_from_params">
 <em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">create_from_params</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env_config</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="src.main.model.config.html#src.main.model.config.config.EnvironmentConfig" title="src.main.model.config.config.EnvironmentConfig"><span class="pre">EnvironmentConfig</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">policy_controller</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="src.main.controllers.policy.html#src.main.controllers.policy.agent_policy_controller.AgentPolicyController" title="src.main.controllers.policy.agent_policy_controller.AgentPolicyController"><span class="pre">AgentPolicyController</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#src.main.controllers.agents.predator_prey.prey.prey_controller.PreyController" title="src.main.controllers.agents.predator_prey.prey.prey_controller.PreyController"><span class="pre">PreyController</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#src.main.controllers.agents.predator_prey.prey.prey_controller_factory.PreyControllerFactory.create_from_params" title="Link to this definition"></a></dt>
 <dd><p>Creates a list of PreyControllers from the given parameters.
+:param policy_controller: AgentPolicyController
 :param env_config: EnvironmentConfig
 :return: list of PreyControllers</p>
 </dd></dl>
