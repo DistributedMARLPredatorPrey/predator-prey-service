@@ -75,7 +75,10 @@ class EnvironmentControllerFactory:
             environment=environment,
             agent_controllers=predator_controllers + prey_controllers,
             buffer_controller=buffer_controller,
-            policy_controllers=[self._prey_actor_receiver_controller, self._pred_actor_receiver_controller],
+            policy_controllers=[
+                self._prey_actor_receiver_controller,
+                self._pred_actor_receiver_controller,
+            ],
             env_controller_utils=EnvironmentControllerUtils(
                 self._env_config.base_experiment_path,
                 self._env_config.rel_experiment_path,

@@ -18,12 +18,12 @@ from src.main.model.environment.environment import Environment
 
 class EnvironmentController:
     def __init__(
-            self,
-            environment: Environment,
-            agent_controllers: List[AgentController],
-            buffer_controller: ReplayBufferController,
-            policy_controllers: List[AgentPolicyController],
-            env_controller_utils: EnvironmentControllerUtils,
+        self,
+        environment: Environment,
+        agent_controllers: List[AgentController],
+        buffer_controller: ReplayBufferController,
+        policy_controllers: List[AgentPolicyController],
+        env_controller_utils: EnvironmentControllerUtils,
     ):
         self.environment = environment
         self.max_acc = 0.5
@@ -44,9 +44,7 @@ class EnvironmentController:
             actions = self.__actions(prev_states)
             # Move all the agents at once and get their rewards only after
             next_states, rewards = self.__step(actions), self.__rewards()
-            logging.info(
-                [(ac.agent.x, ac.agent.y) for ac in self.agent_controllers]
-            )
+            logging.info([(ac.agent.x, ac.agent.y) for ac in self.agent_controllers])
             self.__record_to_buffer(prev_states, actions, rewards, next_states)
             prev_states = next_states
         self.__stop_policy_controllers()
