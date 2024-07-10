@@ -1,3 +1,5 @@
+import logging
+
 from src.main.controllers.agents.predator_prey.predator.predator_controller_factory import (
     PredatorControllerFactory,
 )
@@ -39,7 +41,7 @@ class EnvironmentControllerFactory:
         :return: random EnvironmentController
         """
         # Controllers
-        print("Create actor receivers")
+        logging.info("Creating Environment")
         if init:
             utils = PredatorPreyUtils()
             utils.initialize_policy_receivers()
@@ -49,22 +51,18 @@ class EnvironmentControllerFactory:
             factory.predator_policy_controller(),
         )
 
-        # Predators and Preys
-        print("Create pred and preys")
         predator_controllers = PredatorControllerFactory.create_from_params(
             self._env_config, self._pred_actor_receiver_controller
         )
         prey_controllers = PreyControllerFactory.create_from_params(
             self._env_config, self._prey_actor_receiver_controller
         )
-        # Buffer
-        print("Create buffer contr")
+
         buffer_controller = ReplayBufferController(
             self._replay_buffer_config.replay_buffer_host,
             self._replay_buffer_config.replay_buffer_port,
         )
-        # Model
-        print("Create env")
+
         environment = Environment(
             x_dim=self._env_config.x_dim,
             y_dim=self._env_config.y_dim,
@@ -73,11 +71,11 @@ class EnvironmentControllerFactory:
                 for agent_controller in predator_controllers + prey_controllers
             ],
         )
-        print("Create env controller")
         return EnvironmentController(
             environment=environment,
             agent_controllers=predator_controllers + prey_controllers,
             buffer_controller=buffer_controller,
+            policy_controllers=[self._prey_actor_receiver_controller, self._pred_actor_receiver_controller],
             env_controller_utils=EnvironmentControllerUtils(
                 self._env_config.base_experiment_path,
                 self._env_config.rel_experiment_path,

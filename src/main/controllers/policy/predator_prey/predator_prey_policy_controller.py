@@ -13,3 +13,7 @@ class PredatorPreyPolicyController(AgentPolicyController):
     def policy(self, state):
         actor = self.actor_receiver_controller.get_latest_actor()
         return actor(state)
+
+    def stop(self):
+        self.actor_receiver_controller.stop_recv = True
+        self.actor_receiver_controller.recv_thread.join()

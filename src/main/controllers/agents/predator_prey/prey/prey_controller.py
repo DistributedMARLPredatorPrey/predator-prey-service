@@ -56,6 +56,5 @@ class PreyController(AgentController):
                 y >= agent.y - self.r,
             )
             if s.check() == sat:
-                print("Prey is dead")
                 return True
         return False

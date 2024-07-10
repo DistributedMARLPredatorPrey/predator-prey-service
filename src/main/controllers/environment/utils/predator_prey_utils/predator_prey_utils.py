@@ -8,6 +8,9 @@ from src.main.controllers.policy.agent_policy_controller_factory import (
 class PredatorPreyUtils:
     @staticmethod
     def call_f(f):
+        """
+        Pick-able function.
+        """
         f()
 
     @staticmethod
