@@ -1,4 +1,6 @@
+import logging
 import os.path
+import threading
 import time
 from threading import Thread
 
@@ -16,7 +18,7 @@ class ActorReceiverController:
         self.__save_lock = Lock()
         self.__latest_actor = None
         self.stop_recv = False
-        self.recv_thread = None
+        self.recv_thread: Thread = None
         if os.path.exists(actor_model_path):
             # An actor model already exists from previous computation,
             # load it and start a new thread to subscribe for model updates
@@ -47,7 +49,7 @@ class ActorReceiverController:
         Blocking call to setup the current actor model
         """
         self.__setup_exchange_and_queue(self.__get_actor_and_exit_callback)
-        print("waiting first actor")
+        logging.info("Waiting first actor")
         self.channel.start_consuming()
 
     def __setup_exchange_and_queue(self, callback):
@@ -75,7 +77,8 @@ class ActorReceiverController:
 
     def __get_actor_and_exit_callback(self, a, b, c, body):
         self.__save_actor(body)
-        print("Actor received")
+        self.channel.stop_consuming()
+        self.channel.close()
         self.connection.close()
 
     def __save_actor(self, body):
@@ -89,6 +92,8 @@ class ActorReceiverController:
         if not self.stop_recv:
             self.__save_actor(body)
             self.set_latest_actor(load_model(self.actor_model_path))
-            print("Actor updated")
+            logging.info("Actor updated")
         else:
+            self.channel.stop_consuming()
+            self.channel.close()
             self.connection.close()

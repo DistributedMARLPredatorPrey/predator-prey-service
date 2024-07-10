@@ -1,8 +1,10 @@
+import logging
 from typing import List
 
 import numpy as np
 import tensorflow as tf
 
+from src.main.controllers.policy.agent_policy_controller import AgentPolicyController
 from src.main.controllers.agents.agent_controller import AgentController
 from src.main.controllers.environment.utils.environment_controller_utils import (
     EnvironmentControllerUtils,
@@ -16,17 +18,19 @@ from src.main.model.environment.environment import Environment
 
 class EnvironmentController:
     def __init__(
-        self,
-        environment: Environment,
-        agent_controllers: List[AgentController],
-        buffer_controller: ReplayBufferController,
-        env_controller_utils: EnvironmentControllerUtils,
+            self,
+            environment: Environment,
+            agent_controllers: List[AgentController],
+            buffer_controller: ReplayBufferController,
+            policy_controllers: List[AgentPolicyController],
+            env_controller_utils: EnvironmentControllerUtils,
     ):
         self.environment = environment
         self.max_acc = 0.5
         self.t_step = 2
         self.agent_controllers = agent_controllers
         self.buffer_controller = buffer_controller
+        self.policy_controllers = policy_controllers
         self.utils = env_controller_utils
 
     def train(self):
@@ -40,12 +44,12 @@ class EnvironmentController:
             actions = self.__actions(prev_states)
             # Move all the agents at once and get their rewards only after
             next_states, rewards = self.__step(actions), self.__rewards()
-            print(
-                "[Pred-Prey Service]",
-                [(ac.agent.x, ac.agent.y) for ac in self.agent_controllers],
+            logging.info(
+                [(ac.agent.x, ac.agent.y) for ac in self.agent_controllers]
             )
             self.__record_to_buffer(prev_states, actions, rewards, next_states)
             prev_states = next_states
+        self.__stop_policy_controllers()
 
     def __states(self):
         """
@@ -72,6 +76,10 @@ class EnvironmentController:
             action = agent_controller.action(tf_prev_state)
             actions.update({agent.id: list(action)})
         return actions
+
+    def __stop_policy_controllers(self):
+        for policy_controller in self.policy_controllers:
+            policy_controller.stop()
 
     def __is_done(self):
         return any(
@@ -129,7 +137,7 @@ class EnvironmentController:
         self.utils.save_data(
             average_rewards, [(ac.agent.x, ac.agent.y) for ac in self.agent_controllers]
         )
-        print("[Pred-Prey Service]", f"Avg reward: {average_rewards}")
+        logging.info(f"Avg reward: {average_rewards}")
         record_tuple = (prev_states_t, actions_t, rewards_t, next_states_t)
         self.buffer_controller.record(record_tuple)
 

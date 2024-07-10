@@ -41,7 +41,4 @@ class PredatorController(AgentController):
         :return: true if it is done, false otherwise
         """
         self.life = self.life - 1
-        if self.life == 0:
-            self.policy_controller.stop()
-            return True
-        return False
+        return self.life == 0

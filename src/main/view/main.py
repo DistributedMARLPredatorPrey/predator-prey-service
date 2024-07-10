@@ -1,3 +1,4 @@
+import logging
 from datetime import datetime
 
 from src.main.controllers.environment.environment_controller import (
@@ -8,9 +9,9 @@ from src.main.controllers.environment.environment_controller_factory import (
 )
 
 if __name__ == "__main__":
-    print("[Pred-Prey Service]", "Starting...")
     init = True
     while True:
+        logging.info("Starting...")
         env_controller: EnvironmentController = (
             EnvironmentControllerFactory().create_predator_prey(init=init)
         )
