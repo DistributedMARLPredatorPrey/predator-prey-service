@@ -57,5 +57,6 @@ class PreyController(AgentController):
             )
             if s.check() == sat:
                 print("Prey is dead")
+                self.policy_controller.stop()
                 return True
         return False

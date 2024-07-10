@@ -1,4 +1,5 @@
 import os.path
+import time
 from threading import Thread
 
 import pika
@@ -12,8 +13,10 @@ class ActorReceiverController:
         self.actor_model_path = actor_model_path
         self.routing_key = routing_key
         self.__lock = Lock()
+        self.__save_lock = Lock()
         self.__latest_actor = None
-
+        self.stop_recv = False
+        self.recv_thread = None
         if os.path.exists(actor_model_path):
             # An actor model already exists from previous computation,
             # load it and start a new thread to subscribe for model updates
@@ -35,16 +38,17 @@ class ActorReceiverController:
         """
         Gets the new actor models using a receiver started in a new thread
         """
-        self.__setup_exchange_and_queue(self.__update_actor)
-        Thread(target=self.__consume).start()
+        self.__setup_exchange_and_queue(self.__update_actor_callback)
+        self.recv_thread = Thread(target=self.channel.start_consuming)
+        self.recv_thread.start()
 
     def __setup_latest_actor(self):
         """
         Blocking call to setup the current actor model
         """
-        self.__setup_exchange_and_queue(self.__get_latest_actor_and_exit)
+        self.__setup_exchange_and_queue(self.__get_actor_and_exit_callback)
         print("waiting first actor")
-        self.__consume()
+        self.channel.start_consuming()
 
     def __setup_exchange_and_queue(self, callback):
         # Establish a connection to RabbitMQ server
@@ -69,18 +73,22 @@ class ActorReceiverController:
             queue=queue_name, on_message_callback=callback, auto_ack=True
         )
 
-    def __get_latest_actor_and_exit(self, ch, method, properties, body):
-        with open(self.actor_model_path, "wb") as actor_model_file:
-            actor_model_file.write(body)
+    def __get_actor_and_exit_callback(self, a, b, c, body):
+        self.__save_actor(body)
         print("Actor received")
         self.connection.close()
 
-    def __update_actor(self, ch, method, properties, body):
-        with open(self.actor_model_path, "wb") as actor_model_file:
-            actor_model_file.write(body)
-        self.set_latest_actor(load_model(self.actor_model_path))
-        print("Actor updated")
+    def __save_actor(self, body):
+        with self.__save_lock:
+            with open(self.actor_model_path, "wb") as actor_model_file:
+                actor_model_file.write(body)
+            actor_model_file.close()
+            time.sleep(0.5)
 
-    def __consume(self):
-        # Start consuming messages
-        self.channel.start_consuming()
+    def __update_actor_callback(self, a, b, c, body):
+        if not self.stop_recv:
+            self.__save_actor(body)
+            self.set_latest_actor(load_model(self.actor_model_path))
+            print("Actor updated")
+        else:
+            self.connection.close()

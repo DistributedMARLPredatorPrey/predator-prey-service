@@ -7,12 +7,28 @@ import pandas as pd
 
 class EnvironmentControllerUtils:
     def __init__(self, base_experiment_path, rel_experiment_path):
-        self.__rewards_file: str = f"{base_experiment_path}src/main/resources/experiment_data/rewards_{rel_experiment_path}.csv"
-        self.__positions_file: str = f"{base_experiment_path}src/main/resources/experiment_data/positions_{rel_experiment_path}.csv"
+        self.__rewards_file, self.__coordinates_file = self.__experiment_files_path(base_experiment_path,
+                                                                                    rel_experiment_path)
         self.__elapsed_times = []
         self.__rewards = []
         self.__coordinates = []
         self.__t_start = time.time()
+
+    @staticmethod
+    def __experiment_files_path(base_experiment_path, rel_experiment_path):
+        common_path = os.path.join(base_experiment_path, "src", "main", "resources", "experiment_data")
+        return (os.path.join(common_path, f"rewards_{rel_experiment_path}.csv"),
+                os.path.join(common_path, f"positions_{rel_experiment_path}.csv"))
+
+    # def __init_fields(self):
+    #     self.__elapsed_times, self.__rewards, self.__coordinates = [], [], []
+    #     if os.path.exists(self.__rewards_file):
+    #         df_rewards = pd.read_csv(self.__rewards_file)
+    #         self.__elapsed_times = list(df_rewards["elapsed_time"])
+    #         self.__rewards = list(df_rewards["avg_rewards"])
+    #     if os.path.exists(self.__coordinates_file):
+    #         df_coord = pd.read_csv(self.__rewards_file)
+    #         self.__coordinates = list(df_coord[""])
 
     def save_data(self, avg_rewards, coordinates):
         print(avg_rewards, coordinates)
@@ -39,4 +55,4 @@ class EnvironmentControllerUtils:
                 }
             )
         df_positions = pd.DataFrame(positions_dict)
-        df_positions.to_csv(self.__positions_file)
+        df_positions.to_csv(self.__coordinates_file)

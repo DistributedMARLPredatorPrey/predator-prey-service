@@ -17,6 +17,7 @@ class PreyControllerFactory:
     ) -> List[PreyController]:
         """
         Creates a list of PreyControllers from the given parameters.
+        :param policy_controller: AgentPolicyController
         :param env_config: EnvironmentConfig
         :return: list of PreyControllers
         """

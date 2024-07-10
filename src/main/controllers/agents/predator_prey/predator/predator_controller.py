@@ -16,7 +16,6 @@ class PredatorController(AgentController):
         predator: Predator,
         policy_controller: AgentPolicyController,
     ):
-        self.life = 50
         super().__init__(env_config, predator, policy_controller)
 
     def reward(self) -> float:
@@ -43,6 +42,6 @@ class PredatorController(AgentController):
         """
         self.life = self.life - 1
         if self.life == 0:
-            print("Predator is dead")
+            self.policy_controller.stop()
             return True
         return False
