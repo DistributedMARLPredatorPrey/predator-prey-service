@@ -8,13 +8,11 @@ from src.main.controllers.environment.environment_controller_factory import (
 )
 
 if __name__ == "__main__":
-    print("Pred-Prey-Service: starting...")
-    # start_t = datetime.now()
+    print("[Pred-Prey Service]", "Starting...")
     init = True
     while True:
         env_controller: EnvironmentController = (
             EnvironmentControllerFactory().create_predator_prey(init=init)
         )
         env_controller.train()
-        print("Reinitializing environment...")
         init = False

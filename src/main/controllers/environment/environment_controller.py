@@ -40,7 +40,10 @@ class EnvironmentController:
             actions = self.__actions(prev_states)
             # Move all the agents at once and get their rewards only after
             next_states, rewards = self.__step(actions), self.__rewards()
-            print([(ac.agent.x, ac.agent.y) for ac in self.agent_controllers])
+            print(
+                "[Pred-Prey Service]",
+                [(ac.agent.x, ac.agent.y) for ac in self.agent_controllers],
+            )
             self.__record_to_buffer(prev_states, actions, rewards, next_states)
             prev_states = next_states
 
@@ -126,7 +129,7 @@ class EnvironmentController:
         self.utils.save_data(
             average_rewards, [(ac.agent.x, ac.agent.y) for ac in self.agent_controllers]
         )
-        print(f"Avg reward: {average_rewards}")
+        print("[Pred-Prey Service]", f"Avg reward: {average_rewards}")
         record_tuple = (prev_states_t, actions_t, rewards_t, next_states_t)
         self.buffer_controller.record(record_tuple)
 

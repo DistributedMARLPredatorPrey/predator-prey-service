@@ -7,8 +7,9 @@ import pandas as pd
 
 class EnvironmentControllerUtils:
     def __init__(self, base_experiment_path, rel_experiment_path):
-        self.__rewards_file, self.__coordinates_file = self.__experiment_files_path(base_experiment_path,
-                                                                                    rel_experiment_path)
+        self.__rewards_file, self.__coordinates_file = self.__experiment_files_path(
+            base_experiment_path, rel_experiment_path
+        )
         self.__elapsed_times = []
         self.__rewards = []
         self.__coordinates = []
@@ -16,9 +17,13 @@ class EnvironmentControllerUtils:
 
     @staticmethod
     def __experiment_files_path(base_experiment_path, rel_experiment_path):
-        common_path = os.path.join(base_experiment_path, "src", "main", "resources", "experiment_data")
-        return (os.path.join(common_path, f"rewards_{rel_experiment_path}.csv"),
-                os.path.join(common_path, f"positions_{rel_experiment_path}.csv"))
+        common_path = os.path.join(
+            base_experiment_path, "src", "main", "resources", "experiment_data"
+        )
+        return (
+            os.path.join(common_path, f"rewards_{rel_experiment_path}.csv"),
+            os.path.join(common_path, f"positions_{rel_experiment_path}.csv"),
+        )
 
     # def __init_fields(self):
     #     self.__elapsed_times, self.__rewards, self.__coordinates = [], [], []
