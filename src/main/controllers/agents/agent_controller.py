@@ -2,11 +2,11 @@ from typing import List
 
 import numpy as np
 import tensorflow as tf
-from z3 import Or, And, If, Solver, Optimize, AlgebraicNumRef, sat, Real
+from z3 import Or, And, If, Optimize, AlgebraicNumRef, sat, Real
 
 from src.main.model.config.config import EnvironmentConfig
 from src.main.controllers.policy.agent_policy_controller import AgentPolicyController
-from src.main.model.agents.agent import Agent
+from src.main.model.environment.agents.agent import Agent
 from src.main.model.environment.state import State
 
 

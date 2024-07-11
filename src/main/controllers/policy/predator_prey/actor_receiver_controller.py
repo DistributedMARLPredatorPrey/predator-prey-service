@@ -1,12 +1,10 @@
 import logging
 import os.path
-import threading
-import time
+from threading import Lock
 from threading import Thread
 
 import pika
 from tensorflow.keras.models import load_model
-from threading import Lock
 
 
 class ActorReceiverController:
@@ -86,7 +84,6 @@ class ActorReceiverController:
             with open(self.actor_model_path, "wb") as actor_model_file:
                 actor_model_file.write(body)
             actor_model_file.close()
-            time.sleep(0.5)
 
     def __update_actor_callback(self, a, b, c, body):
         if not self.stop_recv:
