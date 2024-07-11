@@ -9,8 +9,8 @@ from src.main.controllers.agents.agent_controller import AgentController
 from src.main.controllers.environment.utils.environment_controller_utils import (
     EnvironmentControllerUtils,
 )
-from src.main.controllers.replay_buffer.replay_buffer_controller import (
-    ReplayBufferController,
+from main.controllers.replay_buffer.remote.remote_replay_buffer_controller import (
+    RemoteReplayBufferController,
 )
 from src.main.model.agents.agent_type import AgentType
 from src.main.model.environment.environment import Environment
@@ -21,7 +21,7 @@ class EnvironmentController:
         self,
         environment: Environment,
         agent_controllers: List[AgentController],
-        buffer_controller: ReplayBufferController,
+        buffer_controller: RemoteReplayBufferController,
         policy_controllers: List[AgentPolicyController],
         env_controller_utils: EnvironmentControllerUtils,
     ):

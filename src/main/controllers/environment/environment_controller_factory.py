@@ -18,8 +18,8 @@ from src.main.controllers.environment.utils.predator_prey_utils.predator_prey_ut
 from src.main.controllers.policy.agent_policy_controller_factory import (
     AgentPolicyControllerFactory,
 )
-from src.main.controllers.replay_buffer.replay_buffer_controller import (
-    ReplayBufferController,
+from main.controllers.replay_buffer.remote.remote_replay_buffer_controller import (
+    RemoteReplayBufferController,
 )
 from src.main.model.config.config_utils import ConfigUtils
 from src.main.model.environment.environment import Environment
@@ -58,7 +58,7 @@ class EnvironmentControllerFactory:
             self._env_config, self._prey_actor_receiver_controller
         )
 
-        buffer_controller = ReplayBufferController(
+        buffer_controller = RemoteReplayBufferController(
             self._replay_buffer_config.replay_buffer_host,
             self._replay_buffer_config.replay_buffer_port,
         )
