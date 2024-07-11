@@ -47,8 +47,8 @@ class EnvironmentControllerFactory:
             utils.initialize_policy_receivers()
         factory = AgentPolicyControllerFactory()
         self._prey_actor_receiver_controller, self._pred_actor_receiver_controller = (
-            factory.prey_policy_controller(),
-            factory.predator_policy_controller(),
+            factory.prey_policy_controller(init=False),
+            factory.predator_policy_controller(init=False),
         )
 
         predator_controllers = PredatorControllerFactory.create_from_params(

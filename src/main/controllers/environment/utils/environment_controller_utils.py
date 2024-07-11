@@ -24,16 +24,6 @@ class EnvironmentControllerUtils:
             os.path.join(common_path, f"positions_{rel_experiment_path}.csv"),
         )
 
-    # def __init_fields(self):
-    #     self.__elapsed_times, self.__rewards, self.__coordinates = [], [], []
-    #     if os.path.exists(self.__rewards_file):
-    #         df_rewards = pd.read_csv(self.__rewards_file)
-    #         self.__elapsed_times = list(df_rewards["elapsed_time"])
-    #         self.__rewards = list(df_rewards["avg_rewards"])
-    #     if os.path.exists(self.__coordinates_file):
-    #         df_coord = pd.read_csv(self.__rewards_file)
-    #         self.__coordinates = list(df_coord[""])
-
     def save_data(self, avg_rewards, coordinates):
         print(avg_rewards, coordinates)
         self.__elapsed_times.append(time.time() - self.__t_start)

@@ -1,3 +1,4 @@
+from functools import partial
 from multiprocessing import Pool
 
 from src.main.controllers.policy.agent_policy_controller_factory import (
@@ -18,12 +19,13 @@ class PredatorPreyUtils:
         """
         Initialize policy receivers of both predator and prey.
         """
-        policy_controller_factory = AgentPolicyControllerFactory
+        partial_prey_policy_controller = partial(AgentPolicyControllerFactory.prey_policy_controller, init=True)
+        partial_pred_policy_controller = partial(AgentPolicyControllerFactory.predator_policy_controller, init=True)
         with Pool(2) as p:
             p.map(
                 PredatorPreyUtils.call_f,
                 [
-                    policy_controller_factory.prey_policy_controller,
-                    policy_controller_factory.predator_policy_controller,
+                    partial_prey_policy_controller,
+                    partial_pred_policy_controller
                 ],
             )

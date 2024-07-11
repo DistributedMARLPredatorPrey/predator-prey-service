@@ -9,16 +9,18 @@ from src.main.controllers.policy.agent_policy_controller import AgentPolicyContr
 
 class AgentPolicyControllerFactory:
     @staticmethod
-    def prey_policy_controller() -> AgentPolicyController:
+    def prey_policy_controller(init: bool) -> AgentPolicyController:
         return PredatorPreyPolicyController(
+            init=init,
             broker_host=ConfigUtils().learner_service_configuration().pubsub_broker,
             actor_model_path=f"src/main/resources/prey_{os.environ.get('REL_PATH')}.keras",
             routing_key="prey-actor-model",
         )
 
     @staticmethod
-    def predator_policy_controller() -> AgentPolicyController:
+    def predator_policy_controller(init: bool) -> AgentPolicyController:
         return PredatorPreyPolicyController(
+            init=init,
             broker_host=ConfigUtils().learner_service_configuration().pubsub_broker,
             actor_model_path=f"src/main/resources/predator_{os.environ.get('REL_PATH')}.keras",
             routing_key="predator-actor-model",

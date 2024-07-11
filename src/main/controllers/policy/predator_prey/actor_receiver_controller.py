@@ -8,23 +8,16 @@ from tensorflow.keras.models import load_model
 
 
 class ActorReceiverController:
-    def __init__(self, broker_host: str, actor_model_path: str, routing_key: str):
-        self.broker_host = broker_host
-        self.actor_model_path = actor_model_path
-        self.routing_key = routing_key
+    def __init__(self, init: bool, broker_host: str, actor_model_path: str, routing_key: str, ):
+        self.__broker_host = broker_host
+        self.__actor_model_path = actor_model_path
+        self.__routing_key = routing_key
         self.__lock = Lock()
         self.__save_lock = Lock()
         self.__latest_actor = None
         self.stop_recv = False
-        self.recv_thread: Thread = None
-        if os.path.exists(actor_model_path):
-            # An actor model already exists from previous computation,
-            # load it and start a new thread to subscribe for model updates
-            self.set_latest_actor(load_model(actor_model_path))
-            self.__update_latest_actor()
-        else:
-            # Block until the controller receives the latest actor model
-            self.__setup_latest_actor()
+        self.recv_thread = None
+        self.__start(init)
 
     def set_latest_actor(self, latest_actor):
         with self.__lock:
@@ -33,6 +26,16 @@ class ActorReceiverController:
     def get_latest_actor(self):
         with self.__lock:
             return self.__latest_actor
+
+    def __start(self, init: bool):
+        if init:
+            # Block until the controller receives the latest actor model
+            self.__setup_latest_actor()
+        else:
+            # An actor model already exists from previous computation,
+            # load it and start a new thread to subscribe for model updates
+            self.set_latest_actor(load_model(self.__actor_model_path))
+            self.__update_latest_actor()
 
     def __update_latest_actor(self):
         """
@@ -53,7 +56,7 @@ class ActorReceiverController:
     def __setup_exchange_and_queue(self, callback):
         # Establish a connection to RabbitMQ server
         self.connection = pika.BlockingConnection(
-            pika.ConnectionParameters(self.broker_host)
+            pika.ConnectionParameters(self.__broker_host)
         )
         self.channel = self.connection.channel()
 
@@ -66,7 +69,7 @@ class ActorReceiverController:
 
         # Bind the queue to the topic exchange with the specified routing key
         self.channel.queue_bind(
-            exchange="topic_exchange", queue=queue_name, routing_key=self.routing_key
+            exchange="topic_exchange", queue=queue_name, routing_key=self.__routing_key
         )
         # Set up the consumer to use the callback function
         self.channel.basic_consume(
@@ -81,14 +84,14 @@ class ActorReceiverController:
 
     def __save_actor(self, body):
         with self.__save_lock:
-            with open(self.actor_model_path, "wb") as actor_model_file:
+            with open(self.__actor_model_path, "wb") as actor_model_file:
                 actor_model_file.write(body)
             actor_model_file.close()
 
     def __update_actor_callback(self, a, b, c, body):
         if not self.stop_recv:
             self.__save_actor(body)
-            self.set_latest_actor(load_model(self.actor_model_path))
+            self.set_latest_actor(load_model(self.__actor_model_path))
             logging.info("Actor updated")
         else:
             self.channel.stop_consuming()

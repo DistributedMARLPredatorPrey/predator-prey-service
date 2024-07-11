@@ -11,6 +11,7 @@ logging.getLogger().setLevel(logging.INFO)
 
 if __name__ == "__main__":
     init = True
+
     while True:
         logging.info("Starting Predator-Prey Service...")
         env_controller: EnvironmentController = (
