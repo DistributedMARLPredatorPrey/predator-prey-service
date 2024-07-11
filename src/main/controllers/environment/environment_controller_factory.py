@@ -18,10 +18,10 @@ from src.main.controllers.environment.utils.predator_prey_utils.predator_prey_ut
 from src.main.controllers.policy.agent_policy_controller_factory import (
     AgentPolicyControllerFactory,
 )
-from main.controllers.replay_buffer.remote.remote_replay_buffer_controller import (
+from src.main.controllers.replay_buffer.remote.remote_replay_buffer_controller import (
     RemoteReplayBufferController,
 )
-from main.model.config.config_utils import ConfigUtils
+from src.main.model.config.config_utils import ConfigUtils
 from src.main.model.environment.environment import Environment
 
 

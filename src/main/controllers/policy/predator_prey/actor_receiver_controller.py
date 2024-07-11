@@ -1,12 +1,10 @@
 import logging
 import os.path
-import threading
-import time
+from threading import Lock
 from threading import Thread
 
 import pika
 from tensorflow.keras.models import load_model
-from threading import Lock
 
 
 class ActorReceiverController:

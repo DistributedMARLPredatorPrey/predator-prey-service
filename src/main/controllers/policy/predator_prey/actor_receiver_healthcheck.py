@@ -2,7 +2,7 @@ import sys
 
 import requests
 
-from main.model.config.config_utils import ConfigUtils
+from src.main.model.config.config_utils import ConfigUtils
 
 
 def check_pika_consumer(

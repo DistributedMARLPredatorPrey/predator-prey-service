@@ -2,11 +2,11 @@ from typing import List
 
 import numpy as np
 
-from main.model.environment.agents.agent import Agent
-from main.model.config.config import EnvironmentConfig
+from src.main.model.environment.agents.agent import Agent
+from src.main.model.config.config import EnvironmentConfig
 from src.main.controllers.policy.agent_policy_controller import AgentPolicyController
 from src.main.controllers.agents.agent_controller import AgentController
-from main.model.environment.agents import Predator
+from src.main.model.environment.agents.predator import Predator
 
 
 class PredatorController(AgentController):

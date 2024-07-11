@@ -1,5 +1,5 @@
-from main.model.environment.agents.agent import Agent
-from main.model.environment.agents.agent_type import AgentType
+from src.main.model.environment.agents.agent import Agent
+from src.main.model.environment.agents.agent_type import AgentType
 
 
 class Predator(Agent):

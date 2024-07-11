@@ -9,10 +9,10 @@ from src.main.controllers.agents.agent_controller import AgentController
 from src.main.controllers.environment.utils.environment_controller_utils import (
     EnvironmentControllerUtils,
 )
-from main.controllers.replay_buffer.remote.remote_replay_buffer_controller import (
+from src.main.controllers.replay_buffer.remote.remote_replay_buffer_controller import (
     RemoteReplayBufferController,
 )
-from main.model.environment.agents.agent_type import AgentType
+from src.main.model.environment.agents.agent_type import AgentType
 from src.main.model.environment.environment import Environment
 
 

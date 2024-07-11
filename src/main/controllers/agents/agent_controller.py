@@ -4,9 +4,9 @@ import numpy as np
 import tensorflow as tf
 from z3 import Or, And, If, Optimize, AlgebraicNumRef, sat, Real
 
-from main.model.config.config import EnvironmentConfig
+from src.main.model.config.config import EnvironmentConfig
 from src.main.controllers.policy.agent_policy_controller import AgentPolicyController
-from main.model.environment.agents.agent import Agent
+from src.main.model.environment.agents.agent import Agent
 from src.main.model.environment.state import State
 
 

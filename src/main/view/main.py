@@ -1,5 +1,4 @@
 import logging
-from datetime import datetime
 
 from src.main.controllers.environment.environment_controller import (
     EnvironmentController,
