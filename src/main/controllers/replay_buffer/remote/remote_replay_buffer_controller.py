@@ -3,7 +3,9 @@ import logging
 
 import requests
 
-from src.main.controllers.replay_buffer.replay_buffer_controller import ReplayBufferController
+from src.main.controllers.replay_buffer.replay_buffer_controller import (
+    ReplayBufferController,
+)
 
 
 class RemoteReplayBufferController(ReplayBufferController):

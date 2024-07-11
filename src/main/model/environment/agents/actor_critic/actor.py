@@ -4,7 +4,6 @@ from tensorflow.keras import layers
 
 
 class Actor:
-
     def __init__(self, num_states: int):
         """
         The Actor network is responsible to choose the action, given the state.
