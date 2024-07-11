@@ -49,6 +49,19 @@ class EnvironmentController:
             prev_states = next_states
         self.__stop_policy_controllers()
 
+    def simulate(self):
+        """
+        Starts the simulation
+        :return:
+        """
+        prev_states = self.__states()
+        while not self.__is_done():
+            actions = self.__actions(prev_states)
+            next_states = self.__step(actions)
+            logging.info([(ac.agent.x, ac.agent.y) for ac in self.agent_controllers])
+            prev_states = next_states
+        self.__stop_policy_controllers()
+
     def __states(self):
         """
         Gets each agent current state.

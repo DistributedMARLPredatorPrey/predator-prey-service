@@ -28,30 +28,5 @@ def check_pika_consumer(
 
 if __name__ == "__main__":
     learner_conf = ConfigUtils().learner_service_configuration()
-
-    # # Establish a connection to RabbitMQ server
-    # connection = pika.BlockingConnection(
-    #     pika.ConnectionParameters(learner_conf.pubsub_broker)
-    # )
-    # channel = connection.channel()
-    # # Declare a topic exchange named 'topic_exchange'
-    # channel.exchange_declare(exchange="topic_exchange", exchange_type="topic")
-    #
-    # # Declare a queue with a generated name (exclusive=True makes it exclusive to this connection)
-    # result = channel.queue_declare("", exclusive=True)
-    # queue_name = result.method.queue
-    #
-    # # # Bind the queue to the topic exchange with the specified routing key
-    # # channel.queue_bind(
-    # #     exchange="topic_exchange", queue=queue_name, routing_key=""
-    # # )
-    #
-    # if len(channel.consumer_tags) == 0:
-    #     LOGGER.info("Nobody is listening.  I'll come back in a couple of minutes.")
-    #     # Failure
-    #     sys.exit(1)
-    # sys.exit(0)
-
-    # Example usage
     queue_name_to_check = ""
     check_pika_consumer(queue_name_to_check, rabbitmq_host=learner_conf.pubsub_broker)

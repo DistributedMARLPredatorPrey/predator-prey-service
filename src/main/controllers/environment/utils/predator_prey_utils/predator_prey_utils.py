@@ -19,13 +19,14 @@ class PredatorPreyUtils:
         """
         Initialize policy receivers of both predator and prey.
         """
-        partial_prey_policy_controller = partial(AgentPolicyControllerFactory.prey_policy_controller, init=True)
-        partial_pred_policy_controller = partial(AgentPolicyControllerFactory.predator_policy_controller, init=True)
+        partial_prey_policy_controller = partial(
+            AgentPolicyControllerFactory.prey_policy_controller_learning, init=True
+        )
+        partial_pred_policy_controller = partial(
+            AgentPolicyControllerFactory.predator_policy_controller_learning, init=True
+        )
         with Pool(2) as p:
             p.map(
                 PredatorPreyUtils.call_f,
-                [
-                    partial_prey_policy_controller,
-                    partial_pred_policy_controller
-                ],
+                [partial_prey_policy_controller, partial_pred_policy_controller],
             )

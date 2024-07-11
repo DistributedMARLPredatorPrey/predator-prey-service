@@ -8,7 +8,13 @@ from tensorflow.keras.models import load_model
 
 
 class ActorReceiverController:
-    def __init__(self, init: bool, broker_host: str, actor_model_path: str, routing_key: str, ):
+    def __init__(
+        self,
+        init: bool,
+        broker_host: str,
+        actor_model_path: str,
+        routing_key: str,
+    ):
         self.__broker_host = broker_host
         self.__actor_model_path = actor_model_path
         self.__routing_key = routing_key

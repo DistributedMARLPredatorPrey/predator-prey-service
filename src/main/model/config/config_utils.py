@@ -5,7 +5,7 @@ import yaml
 from src.main.model.config.config import (
     EnvironmentConfig,
     ReplayBufferServiceConfig,
-    LearnerServiceConfig,
+    LearnerServiceConfig, Mode,
 )
 
 
@@ -44,6 +44,7 @@ class ConfigUtils:
             save_experiment_data=bool(env_conf["save_experiment_data"]),
             base_experiment_path="/usr/app/",
             rel_experiment_path=os.environ.get("REL_PATH"),
+            mode=Mode.TRAINING if os.environ.get("MODE") == "train" else Mode.SIMULATION,
         )
 
     def replay_buffer_configuration(self) -> ReplayBufferServiceConfig:

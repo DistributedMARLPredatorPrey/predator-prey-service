@@ -4,8 +4,10 @@ from src.main.controllers.policy.predator_prey.actor_receiver_controller import 
 from src.main.controllers.policy.agent_policy_controller import AgentPolicyController
 
 
-class PredatorPreyPolicyController(AgentPolicyController):
-    def __init__(self, init: bool, broker_host: str, actor_model_path: str, routing_key: str):
+class PredatorPreyPolicyControllerLearning(AgentPolicyController):
+    def __init__(
+        self, init: bool, broker_host: str, actor_model_path: str, routing_key: str
+    ):
         self.actor_receiver_controller = ActorReceiverController(
             init, broker_host, actor_model_path, routing_key
         )

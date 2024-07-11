@@ -1,4 +1,14 @@
 from dataclasses import dataclass
+from enum import Enum
+
+
+class Mode(Enum):
+    """
+    Enum modelling the possible ways to run the service
+    """
+
+    TRAINING = 1
+    SIMULATION = 2
 
 
 @dataclass(frozen=True)
@@ -21,6 +31,7 @@ class EnvironmentConfig:
     save_experiment_data: bool
     base_experiment_path: str
     rel_experiment_path: str
+    mode: Mode
 
 
 @dataclass(frozen=True)

@@ -1,5 +1,6 @@
 import logging
 
+from src.main.controllers.policy.agent_policy_controller import AgentPolicyController
 from src.main.controllers.agents.predator_prey.predator.predator_controller_factory import (
     PredatorControllerFactory,
 )
@@ -34,9 +35,9 @@ class EnvironmentControllerFactory:
         self._pred_actor_receiver_controller = None
         self._prey_actor_receiver_controller = None
 
-    def create_predator_prey(self, init: bool = True) -> EnvironmentController:
+    def create_predator_prey_learning(self, init: bool = True) -> EnvironmentController:
         """
-        Creates a random EnvironmentController, where the position of each agent
+        Creates a random EnvironmentController in learning mode, where the position of each agent
         inside the Environment is random.
         :return: random EnvironmentController
         """
@@ -45,24 +46,43 @@ class EnvironmentControllerFactory:
         if init:
             utils = PredatorPreyUtils()
             utils.initialize_policy_receivers()
-        factory = AgentPolicyControllerFactory()
-        self._prey_actor_receiver_controller, self._pred_actor_receiver_controller = (
-            factory.prey_policy_controller(init=False),
-            factory.predator_policy_controller(init=False),
+        policy_controller_factory = AgentPolicyControllerFactory()
+        return self.__create_predator_prey(
+            prey_policy_controller=policy_controller_factory.prey_policy_controller_learning(
+                init=False
+            ),
+            pred_policy_controller=policy_controller_factory.predator_policy_controller_learning(
+                init=False
+            ),
         )
 
+    def create_predator_prey_simulation(self):
+        """
+        Creates a random EnvironmentController in simulation mode, where the position of each agent
+        inside the Environment is random.
+        :return: random EnvironmentController
+        """
+        policy_controller_factory = AgentPolicyControllerFactory()
+        return self.__create_predator_prey(
+            prey_policy_controller=policy_controller_factory.prey_policy_controller_simulation(),
+            pred_policy_controller=policy_controller_factory.predator_policy_controller_simulation(),
+        )
+
+    def __create_predator_prey(
+        self,
+        prey_policy_controller: AgentPolicyController,
+        pred_policy_controller: AgentPolicyController,
+    ):
         predator_controllers = PredatorControllerFactory.create_from_params(
-            self._env_config, self._pred_actor_receiver_controller
+            self._env_config, pred_policy_controller
         )
         prey_controllers = PreyControllerFactory.create_from_params(
-            self._env_config, self._prey_actor_receiver_controller
+            self._env_config, prey_policy_controller
         )
-
         buffer_controller = RemoteReplayBufferController(
             self._replay_buffer_config.replay_buffer_host,
             self._replay_buffer_config.replay_buffer_port,
         )
-
         environment = Environment(
             x_dim=self._env_config.x_dim,
             y_dim=self._env_config.y_dim,
@@ -75,10 +95,7 @@ class EnvironmentControllerFactory:
             environment=environment,
             agent_controllers=predator_controllers + prey_controllers,
             buffer_controller=buffer_controller,
-            policy_controllers=[
-                self._prey_actor_receiver_controller,
-                self._pred_actor_receiver_controller,
-            ],
+            policy_controllers=[prey_policy_controller, pred_policy_controller],
             env_controller_utils=EnvironmentControllerUtils(
                 self._env_config.base_experiment_path,
                 self._env_config.rel_experiment_path,
