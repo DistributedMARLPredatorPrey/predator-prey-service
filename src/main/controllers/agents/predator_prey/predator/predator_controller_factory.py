@@ -2,9 +2,9 @@ from typing import List
 
 from numpy.random import uniform
 
-from src.main.model.config.config import EnvironmentConfig
+from main.model.config.config import EnvironmentConfig
 from src.main.controllers.policy.agent_policy_controller import AgentPolicyController
-from src.main.model.agents.predator import Predator
+from main.model.environment.agents import Predator
 from src.main.controllers.agents.predator_prey.predator.predator_controller import (
     PredatorController,
 )

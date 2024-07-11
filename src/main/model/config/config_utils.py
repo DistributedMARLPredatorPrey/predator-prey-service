@@ -2,7 +2,7 @@ import os
 
 import yaml
 
-from src.main.model.config.config import (
+from main.model.config.config import (
     EnvironmentConfig,
     ReplayBufferServiceConfig,
     LearnerServiceConfig,

@@ -21,7 +21,7 @@ from src.main.controllers.policy.agent_policy_controller_factory import (
 from main.controllers.replay_buffer.remote.remote_replay_buffer_controller import (
     RemoteReplayBufferController,
 )
-from src.main.model.config.config_utils import ConfigUtils
+from main.model.config.config_utils import ConfigUtils
 from src.main.model.environment.environment import Environment
 
 

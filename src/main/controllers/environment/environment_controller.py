@@ -12,7 +12,7 @@ from src.main.controllers.environment.utils.environment_controller_utils import 
 from main.controllers.replay_buffer.remote.remote_replay_buffer_controller import (
     RemoteReplayBufferController,
 )
-from src.main.model.agents.agent_type import AgentType
+from main.model.environment.agents.agent_type import AgentType
 from src.main.model.environment.environment import Environment
 
 

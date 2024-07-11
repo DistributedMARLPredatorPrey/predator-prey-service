@@ -3,7 +3,7 @@ import os
 from src.main.controllers.policy.predator_prey.predator_prey_policy_controller import (
     PredatorPreyPolicyController,
 )
-from src.main.model.config.config_utils import ConfigUtils
+from main.model.config.config_utils import ConfigUtils
 from src.main.controllers.policy.agent_policy_controller import AgentPolicyController
 
 
