@@ -1,6 +1,14 @@
 src.main.controllers.replay\_buffer package
 ===========================================
 
+Subpackages
+-----------
+
+.. toctree::
+   :maxdepth: 4
+
+   src.main.controllers.replay_buffer.remote
+
 Submodules
 ----------
 

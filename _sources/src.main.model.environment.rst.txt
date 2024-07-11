@@ -1,6 +1,14 @@
 src.main.model.environment package
 ==================================
 
+Subpackages
+-----------
+
+.. toctree::
+   :maxdepth: 4
+
+   src.main.model.environment.agents
+
 Submodules
 ----------
 

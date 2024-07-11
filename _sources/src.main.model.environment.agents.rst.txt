@@ -1,0 +1,53 @@
+src.main.model.environment.agents package
+=========================================
+
+Subpackages
+-----------
+
+.. toctree::
+   :maxdepth: 4
+
+   src.main.model.environment.agents.actor_critic
+
+Submodules
+----------
+
+src.main.model.environment.agents.agent module
+----------------------------------------------
+
+.. automodule:: src.main.model.environment.agents.agent
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+src.main.model.environment.agents.agent\_type module
+----------------------------------------------------
+
+.. automodule:: src.main.model.environment.agents.agent_type
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+src.main.model.environment.agents.predator module
+-------------------------------------------------
+
+.. automodule:: src.main.model.environment.agents.predator
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+src.main.model.environment.agents.prey module
+---------------------------------------------
+
+.. automodule:: src.main.model.environment.agents.prey
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Module contents
+---------------
+
+.. automodule:: src.main.model.environment.agents
+   :members:
+   :undoc-members:
+   :show-inheritance:

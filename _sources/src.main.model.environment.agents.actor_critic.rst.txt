@@ -1,0 +1,29 @@
+src.main.model.environment.agents.actor\_critic package
+=======================================================
+
+Submodules
+----------
+
+src.main.model.environment.agents.actor\_critic.actor module
+------------------------------------------------------------
+
+.. automodule:: src.main.model.environment.agents.actor_critic.actor
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+src.main.model.environment.agents.actor\_critic.critic module
+-------------------------------------------------------------
+
+.. automodule:: src.main.model.environment.agents.actor_critic.critic
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Module contents
+---------------
+
+.. automodule:: src.main.model.environment.agents.actor_critic
+   :members:
+   :undoc-members:
+   :show-inheritance:

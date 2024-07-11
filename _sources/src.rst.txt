@@ -9,7 +9,6 @@ Subpackages
 
    src.main
    src.notebooks
-   src.test
 
 Module contents
 ---------------
