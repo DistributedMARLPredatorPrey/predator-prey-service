@@ -1,4 +1,5 @@
 import json
+import logging
 
 import requests
 
@@ -19,6 +20,7 @@ class ReplayBufferController:
             ],
         }
         json_data = json.dumps(record_json)
+        logging.info("Posting data to replay buffer")
         requests.post(
             f"http://{self._host}:{self._port}/record_data/predator/", json=json_data
         )

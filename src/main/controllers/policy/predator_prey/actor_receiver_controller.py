@@ -86,7 +86,6 @@ class ActorReceiverController:
             with open(self.actor_model_path, "wb") as actor_model_file:
                 actor_model_file.write(body)
             actor_model_file.close()
-            time.sleep(0.5)
 
     def __update_actor_callback(self, a, b, c, body):
         if not self.stop_recv:
