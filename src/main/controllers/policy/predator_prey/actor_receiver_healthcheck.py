@@ -2,7 +2,7 @@ import sys
 
 import requests
 
-from src.main.model.config.config_utils import ConfigUtils
+from src.main.model.config.config_utils import PredatorPreyConfig
 
 
 def check_pika_consumer(
@@ -27,6 +27,6 @@ def check_pika_consumer(
 
 
 if __name__ == "__main__":
-    learner_conf = ConfigUtils().learner_service_configuration()
+    learner_conf = PredatorPreyConfig().learner_service_configuration()
     queue_name_to_check = ""
     check_pika_consumer(queue_name_to_check, rabbitmq_host=learner_conf.pubsub_broker)

@@ -32,6 +32,7 @@ class EnvironmentConfig:
     base_experiment_path: str
     rel_experiment_path: str
     mode: Mode
+    random_seed: int
 
 
 @dataclass(frozen=True)

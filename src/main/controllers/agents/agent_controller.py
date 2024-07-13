@@ -96,7 +96,7 @@ class AgentController:
             If(x_rng > 0, x_rng, -x_rng) - self.vd < 0,
         ]
 
-        agent_boxes_constraint = self._box_constraints(x, y, cds)
+        agent_boxes_constraint = self.__box_constraints(x, y, cds)
         distances = []
         for a in np.linspace(0, np.pi, int(self.num_states / 2), endpoint=False):
             half_line_constraints = (
@@ -113,7 +113,7 @@ class AgentController:
                     )
                 )
                 o.minimize(If(y > y_0, y, If(y < y_0, -y, If(x >= x_0, x, -x))))
-                distances.append(self._extract_distance(o, x, y, x_0, y_0))
+                distances.append(self.__extract_distance(o, x, y, x_0, y_0))
 
         self.last_state = State(distances)
         return self.last_state
@@ -133,7 +133,7 @@ class AgentController:
         """
         raise NotImplementedError("Subclasses must implement this method")
 
-    def _box_constraints(self, x: Real, y: Real, cds):
+    def __box_constraints(self, x: Real, y: Real, cds):
         """
         Box constraints ensure that the intersection point lies in the side of the box
         :param x: symbolic target variable of the x-coordinate
@@ -153,7 +153,7 @@ class AgentController:
             ]
         )
 
-    def _extract_distance(self, o: Optimize, x: Real, y: Real, x_0: float, y_0: float):
+    def __extract_distance(self, o: Optimize, x: Real, y: Real, x_0: float, y_0: float):
         """
         Checks if the Optimize object and extract distance, if SAT.
         :param o: Optimize object to check its satisfiability

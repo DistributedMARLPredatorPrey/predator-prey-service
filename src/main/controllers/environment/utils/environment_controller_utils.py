@@ -25,7 +25,7 @@ class EnvironmentControllerUtils:
         )
 
     def save_data(self, avg_rewards, coordinates):
-        print(avg_rewards, coordinates)
+        #print(avg_rewards, coordinates)
         self.__elapsed_times.append(time.time() - self.__t_start)
         self.save_rewards(avg_rewards)
         self.save_coordinates(coordinates)
