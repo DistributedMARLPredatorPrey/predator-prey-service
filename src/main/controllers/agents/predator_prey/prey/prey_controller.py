@@ -6,7 +6,7 @@ from z3 import Solver, sat, Real
 
 from src.main.model.environment.agents.agent import Agent
 from src.main.model.config.config import EnvironmentConfig
-from src.main.controllers.policy.agent_policy_controller import AgentPolicyController
+from src.main.controllers.agents.policy.agent_policy_controller import AgentPolicyController
 from src.main.controllers.agents.agent_controller import AgentController
 from src.main.model.environment.agents.prey import Prey
 

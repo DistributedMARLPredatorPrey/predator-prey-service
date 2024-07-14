@@ -1,6 +1,6 @@
 from tensorflow.keras.models import load_model
 
-from src.main.controllers.policy.agent_policy_controller import AgentPolicyController
+from src.main.controllers.agents.policy.agent_policy_controller import AgentPolicyController
 
 
 class PredatorPreyPolicyControllerSimulation(AgentPolicyController):

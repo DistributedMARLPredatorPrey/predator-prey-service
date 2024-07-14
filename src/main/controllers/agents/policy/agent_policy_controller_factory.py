@@ -1,13 +1,13 @@
 import os
 
-from src.main.controllers.policy.predator_prey.predator_prey_policy_controller_simulation import (
+from src.main.controllers.agents.policy.predator_prey.predator_prey_policy_controller_simulation import (
     PredatorPreyPolicyControllerSimulation,
 )
-from src.main.controllers.policy.predator_prey.predator_prey_policy_controller_learning import (
+from src.main.controllers.agents.policy.predator_prey.predator_prey_policy_controller_learning import (
     PredatorPreyPolicyControllerLearning,
 )
 from src.main.model.config.config_utils import PredatorPreyConfig
-from src.main.controllers.policy.agent_policy_controller import AgentPolicyController
+from src.main.controllers.agents.policy.agent_policy_controller import AgentPolicyController
 
 
 class AgentPolicyControllerFactory:

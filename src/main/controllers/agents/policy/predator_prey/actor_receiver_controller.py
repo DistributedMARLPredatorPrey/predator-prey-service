@@ -1,5 +1,4 @@
 import logging
-import os.path
 from threading import Lock
 from threading import Thread
 

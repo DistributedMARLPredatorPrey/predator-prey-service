@@ -8,7 +8,7 @@ from src.main.controllers.agents.agent_controller import AgentController
 from src.main.controllers.environment.utils.environment_controller_utils import (
     EnvironmentControllerUtils,
 )
-from src.main.controllers.policy.agent_policy_controller import AgentPolicyController
+from src.main.controllers.agents.policy.agent_policy_controller import AgentPolicyController
 from src.main.controllers.replay_buffer.replay_buffer_controller import (
     ReplayBufferController,
 )

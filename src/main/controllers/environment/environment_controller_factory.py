@@ -1,10 +1,8 @@
-import logging
-
 from src.main.model.config.config import EnvironmentConfig
 from src.main.controllers.replay_buffer.replay_buffer_controller import (
     ReplayBufferController,
 )
-from src.main.controllers.policy.agent_policy_controller import AgentPolicyController
+from src.main.controllers.agents.policy.agent_policy_controller import AgentPolicyController
 from src.main.controllers.agents.predator_prey.predator.predator_controller_factory import (
     PredatorControllerFactory,
 )
@@ -20,7 +18,7 @@ from src.main.controllers.environment.utils.environment_controller_utils import 
 from src.main.controllers.environment.utils.predator_prey_utils.predator_prey_utils import (
     PredatorPreyUtils,
 )
-from src.main.controllers.policy.agent_policy_controller_factory import (
+from src.main.controllers.agents.policy.agent_policy_controller_factory import (
     AgentPolicyControllerFactory,
 )
 from src.main.controllers.replay_buffer.remote.remote_replay_buffer_controller import (
@@ -54,6 +52,7 @@ class EnvironmentControllerFactory:
         )
         policy_controller_factory = AgentPolicyControllerFactory()
         return self.__create_predator_prey(
+            env_config=env_config,
             prey_policy_controller=policy_controller_factory.prey_policy_controller_learning(
                 init=False
             ),

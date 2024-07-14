@@ -1,7 +1,7 @@
 from functools import partial
 from multiprocessing import Pool
 
-from src.main.controllers.policy.agent_policy_controller_factory import (
+from src.main.controllers.agents.policy.agent_policy_controller_factory import (
     AgentPolicyControllerFactory,
 )
 
