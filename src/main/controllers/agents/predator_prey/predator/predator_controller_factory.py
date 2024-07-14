@@ -17,7 +17,6 @@ class PredatorControllerFactory:
     ) -> List[PredatorController]:
         """
         Creates a list of PredatorControllers from the given parameters.
-        :param random_seed:  Random seed for agents first positions
         :param policy_controller: AgentPolicyController
         :param env_config: EnvironmentParams
         :return: list of PredatorControllers

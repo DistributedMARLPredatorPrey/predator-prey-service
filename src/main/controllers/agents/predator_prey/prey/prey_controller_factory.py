@@ -1,8 +1,6 @@
 import random
 from typing import List
 
-import numpy as np
-
 from src.main.controllers.agents.predator_prey.prey.prey_controller import (
     PreyController,
 )
@@ -19,7 +17,6 @@ class PreyControllerFactory:
     ) -> List[PreyController]:
         """
         Creates a list of PreyControllers from the given parameters.
-        :param random_seed: Random seed for agents first positions
         :param policy_controller: AgentPolicyController
         :param env_config: EnvironmentConfig
         :return: list of PreyControllers

@@ -18,12 +18,12 @@ from src.main.model.environment.environment import Environment
 
 class EnvironmentController:
     def __init__(
-            self,
-            environment: Environment,
-            agent_controllers: List[AgentController],
-            buffer_controller: ReplayBufferController,
-            policy_controllers: List[AgentPolicyController],
-            env_controller_utils: EnvironmentControllerUtils,
+        self,
+        environment: Environment,
+        agent_controllers: List[AgentController],
+        buffer_controller: ReplayBufferController,
+        policy_controllers: List[AgentPolicyController],
+        env_controller_utils: EnvironmentControllerUtils,
     ):
         self.environment = environment
         self.max_acc = 0.5
@@ -44,7 +44,15 @@ class EnvironmentController:
             actions = self.__actions(prev_states)
             # Move all the agents at once and get their rewards only after
             next_states, rewards = self.__step(actions), self.__rewards()
-            # logging.info([(ac.agent.x, ac.agent.y) for ac in self.agent_controllers])
+
+            # Print and save coords and rewards
+            agents_coords = [(ac.agent.x, ac.agent.y) for ac in self.agent_controllers]
+            logging.info(agents_coords)
+            self.utils.save_data(
+                rewards, [(ac.agent.x, ac.agent.y) for ac in self.agent_controllers]
+            )
+
+            # Record to buffer for batch learning
             self.__record_to_buffer(prev_states, actions, rewards, next_states)
             prev_states = next_states
         self.__stop_policy_controllers()
@@ -54,18 +62,15 @@ class EnvironmentController:
         Starts the simulation
         :return:
         """
-        self.utils.save_data([], [(ac.agent.x, ac.agent.y) for ac in self.agent_controllers])
-
-        # prev_states = self.__states()
-        #
-        # while not self.__is_done():
-        #     actions = self.__actions(prev_states)
-        #     next_states = self.__step(actions)
-        #     # logging.info([(ac.agent.x, ac.agent.y) for ac in self.agent_controllers])
-        #     prev_states = next_states
-        #     self.utils.save_data([], [(ac.agent.x, ac.agent.y) for ac in self.agent_controllers])
-        #
-
+        prev_states = self.__states()
+        while not self.__is_done():
+            actions = self.__actions(prev_states)
+            next_states = self.__step(actions)
+            logging.info([(ac.agent.x, ac.agent.y) for ac in self.agent_controllers])
+            prev_states = next_states
+            self.utils.save_data(
+                [], [(ac.agent.x, ac.agent.y) for ac in self.agent_controllers]
+            )
 
     def __states(self):
         """

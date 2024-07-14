@@ -15,7 +15,9 @@ class AgentPolicyControllerFactory:
     def prey_policy_controller_learning(init: bool) -> AgentPolicyController:
         return PredatorPreyPolicyControllerLearning(
             init=init,
-            broker_host=PredatorPreyConfig().learner_service_configuration().pubsub_broker,
+            broker_host=PredatorPreyConfig()
+            .learner_service_configuration()
+            .pubsub_broker,
             actor_model_path=f"src/main/resources/prey_{os.environ.get('REL_PATH')}.keras",
             routing_key="prey-actor-model",
         )
@@ -24,7 +26,9 @@ class AgentPolicyControllerFactory:
     def predator_policy_controller_learning(init: bool) -> AgentPolicyController:
         return PredatorPreyPolicyControllerLearning(
             init=init,
-            broker_host=PredatorPreyConfig().learner_service_configuration().pubsub_broker,
+            broker_host=PredatorPreyConfig()
+            .learner_service_configuration()
+            .pubsub_broker,
             actor_model_path=f"src/main/resources/predator_{os.environ.get('REL_PATH')}.keras",
             routing_key="predator-actor-model",
         )

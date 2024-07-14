@@ -21,13 +21,11 @@ def train():
     :return:
     """
     init = True
-    random.seed(42)
-    seed = lambda: random.randint(0, np.iinfo(np.int32).max)
     while True:
         logging.info("Starting Predator-Prey Training...")
         env_controller: EnvironmentController = (
             EnvironmentControllerFactory().create_predator_prey_learning(
-                init=init, random_seed_gen=seed
+                init=init, pred_prey_config=PredatorPreyConfig()
             )
         )
         env_controller.train()
@@ -39,13 +37,15 @@ def simulate():
     Run Predator Prey Service in Simulation mode
     :return:
     """
-    config = PredatorPreyConfig()
+    predator_prey_config = PredatorPreyConfig()
     # Set seed for reproducibility
-    random.seed(config.environment_configuration().random_seed)
+    random.seed(predator_prey_config.environment_configuration().random_seed)
     while True:
         logging.info("Starting Predator-Prey Simulation...")
         env_controller: EnvironmentController = (
-            EnvironmentControllerFactory().create_predator_prey_simulation(pred_prey_config=config)
+            EnvironmentControllerFactory().create_predator_prey_simulation(
+                pred_prey_config=predator_prey_config
+            )
         )
         env_controller.simulate()
 

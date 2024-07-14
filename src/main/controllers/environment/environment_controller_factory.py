@@ -31,20 +31,20 @@ from src.main.model.environment.environment import Environment
 
 
 class EnvironmentControllerFactory:
-
     def create_predator_prey_learning(
         self, pred_prey_config: PredatorPreyConfig, init: bool = True
     ) -> EnvironmentController:
         """
         Creates a random EnvironmentController in learning mode, where the position of each agent
         inside the Environment is random.
-        :return: random EnvironmentController
         :param pred_prey_config: PredatorPreyConfig
         :param init: Should be True if it's the first run
         :return: EnvironmentController
         """
-        env_config, replay_buffer_config = (pred_prey_config.environment_configuration(),
-                                            pred_prey_config.replay_buffer_configuration())
+        env_config, replay_buffer_config = (
+            pred_prey_config.environment_configuration(),
+            pred_prey_config.replay_buffer_configuration(),
+        )
         if init:
             utils = PredatorPreyUtils()
             utils.initialize_policy_receivers()
@@ -63,7 +63,9 @@ class EnvironmentControllerFactory:
             buffer_controller=buffer_controller,
         )
 
-    def create_predator_prey_simulation(self, pred_prey_config: PredatorPreyConfig) -> EnvironmentController:
+    def create_predator_prey_simulation(
+        self, pred_prey_config: PredatorPreyConfig
+    ) -> EnvironmentController:
         """
         Creates a random EnvironmentController in simulation mode, where the position of each agent
         inside the Environment is random.

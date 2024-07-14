@@ -48,7 +48,7 @@ class PredatorPreyConfig:
             mode=Mode.TRAINING
             if os.environ.get("MODE") == "train"
             else Mode.SIMULATION,
-            random_seed=int(os.environ.get("RANDOM_SEED"))
+            random_seed=int(os.environ.get("RANDOM_SEED")),
         )
 
     def replay_buffer_configuration(self) -> ReplayBufferServiceConfig:
