@@ -1,16 +1,19 @@
 import logging
-from typing import List
+from typing import List, Tuple
 
 import numpy as np
 import tensorflow as tf
 
-from src.main.controllers.policy.agent_policy_controller import AgentPolicyController
+from src.main.model.environment.agents.predator import Predator
 from src.main.controllers.agents.agent_controller import AgentController
 from src.main.controllers.environment.utils.environment_controller_utils import (
     EnvironmentControllerUtils,
 )
-from src.main.controllers.replay_buffer.remote.remote_replay_buffer_controller import (
-    RemoteReplayBufferController,
+from src.main.controllers.agents.policy.agent_policy_controller import (
+    AgentPolicyController,
+)
+from src.main.controllers.replay_buffer.replay_buffer_controller import (
+    ReplayBufferController,
 )
 from src.main.model.environment.agents.agent_type import AgentType
 from src.main.model.environment.environment import Environment
@@ -18,12 +21,12 @@ from src.main.model.environment.environment import Environment
 
 class EnvironmentController:
     def __init__(
-        self,
-        environment: Environment,
-        agent_controllers: List[AgentController],
-        buffer_controller: RemoteReplayBufferController,
-        policy_controllers: List[AgentPolicyController],
-        env_controller_utils: EnvironmentControllerUtils,
+            self,
+            environment: Environment,
+            agent_controllers: List[AgentController],
+            buffer_controller: ReplayBufferController,
+            policy_controllers: List[AgentPolicyController],
+            env_controller_utils: EnvironmentControllerUtils,
     ):
         self.environment = environment
         self.max_acc = 0.5
@@ -44,10 +47,35 @@ class EnvironmentController:
             actions = self.__actions(prev_states)
             # Move all the agents at once and get their rewards only after
             next_states, rewards = self.__step(actions), self.__rewards()
-            logging.info([(ac.agent.x, ac.agent.y) for ac in self.agent_controllers])
-            self.__record_to_buffer(prev_states, actions, rewards, next_states)
+
+            # Print and save coords and rewards
+            agents_coords = [(ac.agent.x, ac.agent.y) for ac in self.agent_controllers]
+            logging.info(agents_coords)
+            logging.info(f"Avg reward: {np.average(list(rewards.values()))}")
+            self.utils.save_data(
+                np.average(list(rewards.values())),
+                [(ac.agent.x, ac.agent.y) for ac in self.agent_controllers],
+            )
+
+            # Record to buffer for batch learning
+            self.__record_to_buffer((prev_states, actions, rewards, next_states))
             prev_states = next_states
         self.__stop_policy_controllers()
+
+    def simulate(self):
+        """
+        Starts the simulation
+        :return:
+        """
+        prev_states = self.__states()
+        while not self.__is_done():
+            actions = self.__actions(prev_states)
+            next_states = self.__step(actions)
+            logging.info([(ac.agent.x, ac.agent.y) for ac in self.agent_controllers])
+            prev_states = next_states
+            self.utils.save_data(
+                [], [(ac.agent.x, ac.agent.y) for ac in self.agent_controllers]
+            )
 
     def __states(self):
         """
@@ -113,31 +141,31 @@ class EnvironmentController:
             for agent_controller in self.agent_controllers
         }
 
-    def __record_to_buffer(self, prev_states, actions, rewards, next_states):
+    def __record_to_buffer(self, tuple: Tuple):
         """
         Records inside the replay_buffer given as parameter the observation tuple of the agents,
         where each agent is of a given type.
-        :param prev_states: joint state
-        :param actions: joint action
-        :param rewards: joint rewards
-        :param next_states: joint next states
+        :param tuple: tuple of (prev_states, actions, rewards, next_states)
         :return:
         """
-        prev_states_t, actions_t, rewards_t, next_states_t = [], [], [], []
-        for agent_controller in self.agent_controllers:
-            agent = agent_controller.agent
-            prev_states_t.append(prev_states[agent.id].distances)
-            actions_t.append(actions[agent.id])
-            rewards_t.append(rewards[agent.id])
-            next_states_t.append(next_states[agent.id].distances)
+        def __record_to_buffer_per_agent_type(agents, agent_type, tuple):
+            prev_states, actions, rewards, next_states = tuple
+            prev_states_t, actions_t, rewards_t, next_states_t = [], [], [], []
+            for agent in agents:
+                prev_states_t.append(prev_states[agent.id].distances)
+                actions_t.append(actions[agent.id])
+                rewards_t.append(rewards[agent.id])
+                next_states_t.append(next_states[agent.id].distances)
+            # logging.info(f"{agent_type} rewards: {rewards_t}")
+            self.buffer_controller.record(agent_type=agent_type,
+                                          record_tuple=(prev_states_t, actions_t, rewards_t, next_states_t)
+                                          )
 
-        average_rewards = np.average(rewards_t)
-        self.utils.save_data(
-            average_rewards, [(ac.agent.x, ac.agent.y) for ac in self.agent_controllers]
-        )
-        logging.info(f"Avg reward: {average_rewards}")
-        record_tuple = (prev_states_t, actions_t, rewards_t, next_states_t)
-        self.buffer_controller.record(record_tuple)
+        agents = self.__agent_by_type()
+        __record_to_buffer_per_agent_type(agents[AgentType.PREDATOR], AgentType.PREDATOR, tuple)
+        __record_to_buffer_per_agent_type(agents[AgentType.PREY], AgentType.PREY, tuple)
+
+
 
     def __agent_by_type(self):
         return {
