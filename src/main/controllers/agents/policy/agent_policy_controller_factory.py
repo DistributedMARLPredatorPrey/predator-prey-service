@@ -7,7 +7,9 @@ from src.main.controllers.agents.policy.predator_prey.predator_prey_policy_contr
     PredatorPreyPolicyControllerLearning,
 )
 from src.main.model.config.config_utils import PredatorPreyConfig
-from src.main.controllers.agents.policy.agent_policy_controller import AgentPolicyController
+from src.main.controllers.agents.policy.agent_policy_controller import (
+    AgentPolicyController,
+)
 
 
 class AgentPolicyControllerFactory:

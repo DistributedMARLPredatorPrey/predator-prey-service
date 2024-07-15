@@ -4,7 +4,9 @@ from typing import List
 from src.main.controllers.agents.predator_prey.predator.predator_controller import (
     PredatorController,
 )
-from src.main.controllers.agents.policy.agent_policy_controller import AgentPolicyController
+from src.main.controllers.agents.policy.agent_policy_controller import (
+    AgentPolicyController,
+)
 from src.main.model.config.config import EnvironmentConfig
 from src.main.model.environment.agents.predator import Predator
 

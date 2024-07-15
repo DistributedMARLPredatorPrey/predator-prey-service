@@ -1,7 +1,9 @@
 from src.main.controllers.agents.policy.predator_prey.actor_receiver_controller import (
     ActorReceiverController,
 )
-from src.main.controllers.agents.policy.agent_policy_controller import AgentPolicyController
+from src.main.controllers.agents.policy.agent_policy_controller import (
+    AgentPolicyController,
+)
 
 
 class PredatorPreyPolicyControllerLearning(AgentPolicyController):

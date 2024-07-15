@@ -6,7 +6,9 @@ from z3 import Solver, sat, Real
 
 from src.main.model.environment.agents.agent import Agent
 from src.main.model.config.config import EnvironmentConfig
-from src.main.controllers.agents.policy.agent_policy_controller import AgentPolicyController
+from src.main.controllers.agents.policy.agent_policy_controller import (
+    AgentPolicyController,
+)
 from src.main.controllers.agents.agent_controller import AgentController
 from src.main.model.environment.agents.prey import Prey
 
@@ -33,8 +35,8 @@ class PreyController(AgentController):
         :return: the reward
         """
         return (1 - np.power(np.e, -np.min(self.last_state.distances))) / (
-            1 - np.power(np.e, -self.vd)
-        ) - 1
+            1 - np.power(np.e, -1)
+        ) * 1000 - 1000
 
     def done(self, agents: List[Agent]) -> bool:
         """

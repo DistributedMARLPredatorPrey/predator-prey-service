@@ -55,7 +55,7 @@ class ActorReceiverController:
         Blocking call to setup the current actor model
         """
         self.__setup_exchange_and_queue(self.__get_actor_and_exit_callback)
-        logging.info("Waiting first actor")
+        logging.info(f"Waiting first {self.__routing_key}")
         self.channel.start_consuming()
 
     def __setup_exchange_and_queue(self, callback):
@@ -97,7 +97,7 @@ class ActorReceiverController:
         if not self.stop_recv:
             self.__save_actor(body)
             self.set_latest_actor(load_model(self.__actor_model_path))
-            logging.info("Actor updated")
+            logging.info(f"{self.__routing_key} updated")
         else:
             self.channel.stop_consuming()
             self.channel.close()

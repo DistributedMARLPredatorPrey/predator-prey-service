@@ -2,7 +2,9 @@ from src.main.model.config.config import EnvironmentConfig
 from src.main.controllers.replay_buffer.replay_buffer_controller import (
     ReplayBufferController,
 )
-from src.main.controllers.agents.policy.agent_policy_controller import AgentPolicyController
+from src.main.controllers.agents.policy.agent_policy_controller import (
+    AgentPolicyController,
+)
 from src.main.controllers.agents.predator_prey.predator.predator_controller_factory import (
     PredatorControllerFactory,
 )

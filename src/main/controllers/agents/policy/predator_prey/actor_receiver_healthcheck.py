@@ -7,10 +7,10 @@ from src.main.model.config.config_utils import PredatorPreyConfig
 
 
 def check_pika_consumer(
-        rabbitmq_host="localhost",
-        rabbitmq_port=15672,
-        rabbitmq_user="guest",
-        rabbitmq_password="guest",
+    rabbitmq_host="localhost",
+    rabbitmq_port=15672,
+    rabbitmq_user="guest",
+    rabbitmq_password="guest",
 ):
     # Use RabbitMQ Management API for getting a list of consumers
     api_url = f"http://{rabbitmq_host}:{rabbitmq_port}/api/consumers"
@@ -22,7 +22,12 @@ def check_pika_consumer(
         if len(json_arr) > 0:
             hostname = socket.gethostname()
             local_ip = socket.gethostbyname(hostname)
-            if any([local_ip in json["channel_details"]["connection_name"] for json in json_arr]):
+            if any(
+                [
+                    local_ip in json["channel_details"]["connection_name"]
+                    for json in json_arr
+                ]
+            ):
                 sys.exit(0)
     sys.exit(1)
 

@@ -5,7 +5,9 @@ import tensorflow as tf
 from z3 import Or, And, If, Optimize, AlgebraicNumRef, sat, Real
 
 from src.main.model.config.config import EnvironmentConfig
-from src.main.controllers.agents.policy.agent_policy_controller import AgentPolicyController
+from src.main.controllers.agents.policy.agent_policy_controller import (
+    AgentPolicyController,
+)
 from src.main.model.environment.agents.agent import Agent
 from src.main.model.environment.state import State
 
@@ -176,6 +178,7 @@ class AgentController:
                 float(mx.numerator_as_long()) / float(mx.denominator_as_long()),
                 float(my.numerator_as_long()) / float(my.denominator_as_long()),
             )
-            # Compute the distance between the agent center (x_0, y_0)
-            return np.sqrt(np.square(x_0 - x_p) + np.square(y_0 - y_p)) / self.vd
+            # Compute the l2 distance between the agent center (x_0, y_0)
+            d = np.linalg.norm(np.array([x_0, y_0]) - np.array([x_p, y_p]))
+            return d / self.vd
         return self.vd / self.vd

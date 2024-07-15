@@ -1,8 +1,10 @@
 import json
 import logging
+from typing import Tuple
 
 import requests
 
+from src.main.model.environment.agents.agent_type import AgentType
 from src.main.controllers.replay_buffer.replay_buffer_controller import (
     ReplayBufferController,
 )
@@ -13,10 +15,11 @@ class RemoteReplayBufferController(ReplayBufferController):
         self._host = host
         self._port = port
 
-    def record(self, record_tuple):
+    def record(self, agent_type: AgentType, record_tuple: Tuple):
         """
         Record a tuple to a remote Replay Buffer Service
-        :param record_tuple: tuple to record
+        :param agent_type: agent type
+        :param record_tuple: tuple
         :return:
         """
         prev_states, actions, rewards, next_states = record_tuple
@@ -31,5 +34,7 @@ class RemoteReplayBufferController(ReplayBufferController):
         json_data = json.dumps(record_json)
         logging.info("Posting data to replay buffer")
         requests.post(
-            f"http://{self._host}:{self._port}/record_data/predator/", json=json_data
+            f"http://{self._host}:{self._port}/record_data/"
+            f"{'predator' if agent_type == AgentType.PREDATOR else 'prey'}/",
+            json=json_data
         )
