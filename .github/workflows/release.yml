@@ -1,0 +1,30 @@
+name: Predator Prey Service Release
+
+on:
+  push:
+    branches:
+      - release/*
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.11" 
+      - name: Build package
+        run: |
+          python3 setup.py build
+      - name: Publish package
+        uses: "marvinpinto/action-automatic-releases@latest"
+        with:
+          repo_token: "${{ secrets.GITHUB_TOKEN }}"
+          automatic_release_tag: "v0.2.0"
+          prerelease: false
+          files: |
+            dist/*

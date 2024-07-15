@@ -2,29 +2,34 @@ from typing import List
 
 import numpy as np
 import tensorflow as tf
-from z3 import Or, And, If, Solver, Optimize, AlgebraicNumRef, sat, Real
+from z3 import Or, And, If, Optimize, AlgebraicNumRef, sat, Real
 
-from src.main.model.environment.params.environment_params import EnvironmentParams
-from src.main.controllers.parameter_server.parameter_service import ParameterService
-from src.main.model.agents.agent import Agent
+from src.main.model.config.config import EnvironmentConfig
+from src.main.controllers.agents.policy.agent_policy_controller import (
+    AgentPolicyController,
+)
+from src.main.model.environment.agents.agent import Agent
 from src.main.model.environment.state import State
 
 
 class AgentController:
     def __init__(
-        self, env_params: EnvironmentParams, agent: Agent, par_service: ParameterService
+        self,
+        env_config: EnvironmentConfig,
+        agent: Agent,
+        policy_controller: AgentPolicyController,
     ):
         self.last_state = None
-        self.num_states = env_params.num_states
-        self.lower_bound = env_params.lower_bound
-        self.upper_bound = env_params.upper_bound
-        self.life = env_params.life
-        self.r = env_params.r
-        self.vd = env_params.vd
+        self.num_states = env_config.num_states
+        self.lower_bound = env_config.acc_lower_bound
+        self.upper_bound = env_config.acc_upper_bound
+        self.life = env_config.life
+        self.r = env_config.r
+        self.vd = env_config.vd
         self.agent = agent
-        self.par_service = par_service
+        self.policy_controller = policy_controller
 
-    def policy(self, state, verbose=False):
+    def action(self, state, verbose=False):
         """
         Computes the next action based on the current state, by getting the current actor model
         from the parameter server.
@@ -34,7 +39,7 @@ class AgentController:
         """
         # the policy used for training just add noise to the action
         # the amount of noise is kept constant during training
-        sampled_action = tf.squeeze(self.par_service.actor_model(state))
+        sampled_action = tf.squeeze(self.policy_controller.policy(state))
         noise = np.random.normal(scale=0.1, size=2)
 
         # we may change the amount of noise for actions during training
@@ -53,39 +58,24 @@ class AgentController:
         legal_action = np.clip(sampled_action, self.lower_bound, self.upper_bound)
         return np.squeeze(legal_action)
 
-    def is_eaten(self, target: Agent) -> bool:
-        """
-        Checks if this agent is eaten by the target agent given as parameter
-        :param target: target agent
-        :return: True if the current agent is being eaten, False otherwise
-        """
-        x, y = Real("x"), Real("y")
-        s = Solver()
-        s.add(
-            x < self.agent.x + self.r,
-            x >= self.agent.x - self.r,
-            x < target.x + self.r,
-            x >= target.x - self.r,
-            y < self.agent.y + self.r,
-            y >= self.agent.y - self.r,
-            y < target.y + self.r,
-            y >= target.y - self.r,
-        )
-        return s.check() == sat
-
     def state(self, agents: List[Agent]) -> State:
-        """
+        r"""
         Captures the state given the other agents inside the environment.
         A state is view of the surrounding area, with a given visual depth.
 
         More specifically it finds the intersection points given these equations and constraints:
 
         - Pencil of lines (set of lines passing through a common point)
-            (x - x_0) * sin(a) = (y - y_0) * cos(a) for a in [0, pi]
+
+            .. math:: (x - x_0) \sin{a} = (y - y_0) * \cos{a} \quad \forall a \in [0, pi]
+
         - Constraint x and y to the maximum visual depth:
-              |y - y_0| < vd, |x - x_0| < vd
+
+            .. math:: |y - y_0| < vd, |x - x_0| < vd
+
         - Box of center (x_c, y_c) and radius r:
-              x_c - r <= x <= x_c + r, y_c - r <= y <= y_c + r
+
+            .. math:: x_c - r \leq x \leq x_c + r, y_c - r \leq y \leq y_c + r
 
         :param agents: other agents inside the environment
         :return: a new state
@@ -104,11 +94,11 @@ class AgentController:
         x_rng = x - x_0
 
         range_constraint = [
-            If(y_rng > 0, y_rng, If(y_rng < 0, -y_rng, self.vd - 1)) - self.vd < 0,
-            If(x_rng > 0, x_rng, If(x_rng < 0, -x_rng, self.vd - 1)) - self.vd < 0,
+            If(y_rng > 0, y_rng, -y_rng) - self.vd < 0,
+            If(x_rng > 0, x_rng, -x_rng) - self.vd < 0,
         ]
 
-        agent_boxes_constraint = self._box_constraints(x, y, cds)
+        agent_boxes_constraint = self.__box_constraints(x, y, cds)
         distances = []
         for a in np.linspace(0, np.pi, int(self.num_states / 2), endpoint=False):
             half_line_constraints = (
@@ -125,7 +115,7 @@ class AgentController:
                     )
                 )
                 o.minimize(If(y > y_0, y, If(y < y_0, -y, If(x >= x_0, x, -x))))
-                distances.append(self._extract_distance(o, x, y, x_0, y_0))
+                distances.append(self.__extract_distance(o, x, y, x_0, y_0))
 
         self.last_state = State(distances)
         return self.last_state
@@ -137,14 +127,15 @@ class AgentController:
         """
         raise NotImplementedError("Subclasses must implement this method")
 
-    def done(self) -> bool:
+    def done(self, agents: List[Agent]) -> bool:
         """
         Base done method, to be overridden by subclasses
+        :param agents: other agents inside the environment
         :return: True if it is done, False otherwise
         """
         raise NotImplementedError("Subclasses must implement this method")
 
-    def _box_constraints(self, x: Real, y: Real, cds):
+    def __box_constraints(self, x: Real, y: Real, cds):
         """
         Box constraints ensure that the intersection point lies in the side of the box
         :param x: symbolic target variable of the x-coordinate
@@ -164,7 +155,7 @@ class AgentController:
             ]
         )
 
-    def _extract_distance(self, o: Optimize, x: Real, y: Real, x_0: float, y_0: float):
+    def __extract_distance(self, o: Optimize, x: Real, y: Real, x_0: float, y_0: float):
         """
         Checks if the Optimize object and extract distance, if SAT.
         :param o: Optimize object to check its satisfiability
@@ -187,6 +178,7 @@ class AgentController:
                 float(mx.numerator_as_long()) / float(mx.denominator_as_long()),
                 float(my.numerator_as_long()) / float(my.denominator_as_long()),
             )
-            # Compute the distance between the agent center (x_0, y_0)
-            return np.sqrt(np.power(x_0 - x_p, 2) + np.power(y_0 - y_p, 2))
-        return self.vd
+            # Compute the l2 distance between the agent center (x_0, y_0)
+            d = np.linalg.norm(np.array([x_0, y_0]) - np.array([x_p, y_p]))
+            return d / self.vd
+        return self.vd / self.vd
