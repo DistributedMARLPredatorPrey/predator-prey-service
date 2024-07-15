@@ -5,7 +5,7 @@ with open("requirements.txt") as f:
 
 setup(
     name="predator-prey-service",
-    version="0.1.0",
+    version="0.2.0",
     description="Predator Prey Service",
     url="#",
     author="Luca Fabri",
@@ -17,5 +17,5 @@ setup(
     test_suite="src.test",
     install_requires=requirements,
     zip_safe=False,
-    python_requires="==3.11",
+    #python_requires="==3.11",
 )
