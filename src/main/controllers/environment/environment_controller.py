@@ -21,12 +21,12 @@ from src.main.model.environment.environment import Environment
 
 class EnvironmentController:
     def __init__(
-            self,
-            environment: Environment,
-            agent_controllers: List[AgentController],
-            buffer_controller: ReplayBufferController,
-            policy_controllers: List[AgentPolicyController],
-            env_controller_utils: EnvironmentControllerUtils,
+        self,
+        environment: Environment,
+        agent_controllers: List[AgentController],
+        buffer_controller: ReplayBufferController,
+        policy_controllers: List[AgentPolicyController],
+        env_controller_utils: EnvironmentControllerUtils,
     ):
         self.environment = environment
         self.max_acc = 0.5
@@ -148,6 +148,7 @@ class EnvironmentController:
         :param tuple: tuple of (prev_states, actions, rewards, next_states)
         :return:
         """
+
         def __record_to_buffer_per_agent_type(agents, agent_type, tuple):
             prev_states, actions, rewards, next_states = tuple
             prev_states_t, actions_t, rewards_t, next_states_t = [], [], [], []
@@ -157,15 +158,16 @@ class EnvironmentController:
                 rewards_t.append(rewards[agent.id])
                 next_states_t.append(next_states[agent.id].distances)
             # logging.info(f"{agent_type} rewards: {rewards_t}")
-            self.buffer_controller.record(agent_type=agent_type,
-                                          record_tuple=(prev_states_t, actions_t, rewards_t, next_states_t)
-                                          )
+            self.buffer_controller.record(
+                agent_type=agent_type,
+                record_tuple=(prev_states_t, actions_t, rewards_t, next_states_t),
+            )
 
         agents = self.__agent_by_type()
-        __record_to_buffer_per_agent_type(agents[AgentType.PREDATOR], AgentType.PREDATOR, tuple)
+        __record_to_buffer_per_agent_type(
+            agents[AgentType.PREDATOR], AgentType.PREDATOR, tuple
+        )
         __record_to_buffer_per_agent_type(agents[AgentType.PREY], AgentType.PREY, tuple)
-
-
 
     def __agent_by_type(self):
         return {

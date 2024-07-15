@@ -36,5 +36,5 @@ class RemoteReplayBufferController(ReplayBufferController):
         requests.post(
             f"http://{self._host}:{self._port}/record_data/"
             f"{'predator' if agent_type == AgentType.PREDATOR else 'prey'}/",
-            json=json_data
+            json=json_data,
         )
