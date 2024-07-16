@@ -5,7 +5,7 @@ with open("requirements.txt") as f:
 
 setup(
     name="predator-prey-service",
-    version="0.2.1",
+    version="0.2.2",
     description="Predator Prey Service",
     url="#",
     author="Luca Fabri",
