@@ -24,7 +24,7 @@ class PredatorPreyConfig:
     def environment_configuration(self) -> EnvironmentConfig:
         """
         Creates an EnvironmentConfig object by extracting information from the config file,
-        whose path is specified by GLOBAL_CONFIG_PATH environment variable.
+        whose path is specified by GLOBAL_CONFIG_environment_configurationPATH environment variable.
         :return: environment config
         """
         env_conf = self.__load_config(os.environ.get("GLOBAL_CONFIG_PATH"))[
