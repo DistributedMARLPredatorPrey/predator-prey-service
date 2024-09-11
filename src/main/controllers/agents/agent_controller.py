@@ -2,7 +2,7 @@ from typing import List
 
 import numpy as np
 import tensorflow as tf
-from z3 import Or, And, If, Optimize, AlgebraicNumRef, sat, Real
+from z3 import Or, And, If, Optimize, AlgebraicNumRef, sat, Real, Solver, Not
 
 from src.main.model.config.config import EnvironmentConfig
 from src.main.controllers.agents.policy.agent_policy_controller import (
@@ -48,7 +48,7 @@ class AgentController:
 
         # Adding noise to action
         sampled_action = sampled_action.numpy()
-        sampled_action += noise
+        # sampled_action += noise
 
         # in verbose mode, we may print information about selected actions
         if verbose and sampled_action[0] < 0:
@@ -84,7 +84,7 @@ class AgentController:
             [
                 (agent.x, agent.y)
                 for agent in agents
-                if agent != self.agent and agent.agent_type != self.agent
+                if agent != self.agent and agent.agent_type != self.agent.agent_type
             ]
         )
         (x_0, y_0) = (self.agent.x, self.agent.y)
@@ -100,22 +100,38 @@ class AgentController:
 
         agent_boxes_constraint = self.__box_constraints(x, y, cds)
         distances = []
-        for a in np.linspace(0, np.pi, int(self.num_states / 2), endpoint=False):
-            half_line_constraints = (
-                [y > y_0, y < y_0] if a != 0 else [x >= x_0, x < x_0]
-            )
+
+        angles = np.linspace(0, np.pi, int(self.num_states / 2) + 1, endpoint=False)[1:]
+        for a in angles:
+            half_line_constraints = [x >= x_0, x < x_0]
             for half_line_constraint in half_line_constraints:
-                o = Optimize()
-                o.add(
-                    And(
-                        (x - x_0) * np.sin(a) - (y - y_0) * np.cos(a) == 0,
-                        And(range_constraint),
-                        agent_boxes_constraint,
-                        half_line_constraint,
+                is_sat = True
+                solutions = []
+                solutions_coords = []
+                while is_sat:
+                    s = Solver()
+                    s.add(
+                        And(
+                            (x - x_0) * np.sin(a) - (y - y_0) * np.cos(a) == 0,
+                            And(range_constraint),
+                            agent_boxes_constraint,
+                            half_line_constraint,
+                            And(
+                                [
+                                    And(x != s_x, y != s_y)
+                                    for s_x, s_y in solutions_coords
+                                ]
+                            ),
+                        )
                     )
-                )
-                o.minimize(If(y > y_0, y, If(y < y_0, -y, If(x >= x_0, x, -x))))
-                distances.append(self.__extract_distance(o, x, y, x_0, y_0))
+                    is_sat, distance, mx, my = self.__extract_distance(
+                        s, x, y, x_0, y_0
+                    )
+                    if is_sat:
+                        solutions_coords.append((mx, my))
+                    # o.minimize(If(y > y_0, y, If(y < y_0, -y, If(x >= x_0, x, -x))))
+                    solutions.append(distance)
+                distances.append(np.min(solutions))
 
         self.last_state = State(distances)
         return self.last_state
@@ -169,10 +185,10 @@ class AgentController:
             model = o.model()
 
             mx, my = model[x], model[y]
-            if isinstance(mx, AlgebraicNumRef):
-                mx = mx.approx(10)
-            if isinstance(my, AlgebraicNumRef):
-                my = my.approx(10)
+            # if isinstance(mx, AlgebraicNumRef):
+            #     mx = mx.approx(10)
+            # if isinstance(my, AlgebraicNumRef):
+            #     my = my.approx(10)
 
             x_p, y_p = (
                 float(mx.numerator_as_long()) / float(mx.denominator_as_long()),
@@ -180,5 +196,5 @@ class AgentController:
             )
             # Compute the l2 distance between the agent center (x_0, y_0)
             d = np.linalg.norm(np.array([x_0, y_0]) - np.array([x_p, y_p]))
-            return d / self.vd
-        return self.vd / self.vd
+            return True, d / self.vd, mx, my
+        return False, self.vd / self.vd, None, None

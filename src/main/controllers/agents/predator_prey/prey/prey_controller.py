@@ -34,9 +34,10 @@ class PreyController(AgentController):
 
         :return: the reward
         """
-        return (1 - np.power(np.e, -np.min(self.last_state.distances))) / (
-            1 - np.power(np.e, -1)
-        ) * 1000 - 1000
+        # return (1 - np.power(np.e, -np.min(self.last_state.distances))) / (
+        #     1 - np.power(np.e, -1)
+        # ) * 1000 - 1000
+        return np.min(self.last_state.distances)
 
     def done(self, agents: List[Agent]) -> bool:
         """

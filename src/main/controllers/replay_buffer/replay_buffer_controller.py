@@ -4,10 +4,9 @@ from src.main.model.environment.agents.agent_type import AgentType
 
 
 class ReplayBufferController:
-    def record(self, agent_type: AgentType, record_tuple: Tuple):
+    def record(self, record_tuple: Tuple):
         """
         Base record method, to be overridden by subclasses
-        :param agent_type: agent type
         :param record_tuple: tuple
         :return:
         """
