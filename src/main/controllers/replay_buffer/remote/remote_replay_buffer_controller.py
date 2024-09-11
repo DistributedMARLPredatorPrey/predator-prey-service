@@ -15,10 +15,9 @@ class RemoteReplayBufferController(ReplayBufferController):
         self._host = host
         self._port = port
 
-    def record(self, agent_type: AgentType, record_tuple: Tuple):
+    def record(self, record_tuple: Tuple):
         """
         Record a tuple to a remote Replay Buffer Service
-        :param agent_type: agent type
         :param record_tuple: tuple
         :return:
         """
@@ -32,9 +31,7 @@ class RemoteReplayBufferController(ReplayBufferController):
             ],
         }
         json_data = json.dumps(record_json)
-        logging.info("Posting data to replay buffer")
         requests.post(
-            f"http://{self._host}:{self._port}/record_data/"
-            f"{'predator' if agent_type == AgentType.PREDATOR else 'prey'}/",
+            f"http://{self._host}:{self._port}/record_data/",
             json=json_data,
         )
