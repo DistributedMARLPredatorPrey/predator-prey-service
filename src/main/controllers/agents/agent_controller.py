@@ -14,10 +14,10 @@ from src.main.model.environment.state import State
 
 class AgentController:
     def __init__(
-            self,
-            env_config: EnvironmentConfig,
-            agent: Agent,
-            policy_controller: AgentPolicyController,
+        self,
+        env_config: EnvironmentConfig,
+        agent: Agent,
+        policy_controller: AgentPolicyController,
     ):
         self.last_state = None
         self.num_states = env_config.num_states
@@ -116,10 +116,17 @@ class AgentController:
                             And(range_constraint),
                             agent_boxes_constraint,
                             half_line_constraint,
-                            And([And(x != s_x, y != s_y) for s_x, s_y in solutions_coords])
+                            And(
+                                [
+                                    And(x != s_x, y != s_y)
+                                    for s_x, s_y in solutions_coords
+                                ]
+                            ),
                         )
                     )
-                    is_sat, distance, mx, my = self.__extract_distance(s, x, y, x_0, y_0)
+                    is_sat, distance, mx, my = self.__extract_distance(
+                        s, x, y, x_0, y_0
+                    )
                     if is_sat:
                         solutions_coords.append((mx, my))
                     # o.minimize(If(y > y_0, y, If(y < y_0, -y, If(x >= x_0, x, -x))))

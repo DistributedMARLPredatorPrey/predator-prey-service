@@ -16,7 +16,7 @@ class EnvironmentControllerUtils:
 
     def __load_existing(self):
         if os.path.exists(self.__rewards_file) and os.path.exists(
-                self.__coordinates_file
+            self.__coordinates_file
         ):
             df_rewards = pd.read_csv(self.__rewards_file)
             df_coordinates = pd.read_csv(self.__coordinates_file)

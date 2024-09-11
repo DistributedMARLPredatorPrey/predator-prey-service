@@ -21,12 +21,12 @@ from src.main.model.environment.environment import Environment
 
 class EnvironmentController:
     def __init__(
-            self,
-            environment: Environment,
-            agent_controllers: List[AgentController],
-            buffer_controller: ReplayBufferController,
-            policy_controllers: List[AgentPolicyController],
-            env_controller_utils: EnvironmentControllerUtils,
+        self,
+        environment: Environment,
+        agent_controllers: List[AgentController],
+        buffer_controller: ReplayBufferController,
+        policy_controllers: List[AgentPolicyController],
+        env_controller_utils: EnvironmentControllerUtils,
     ):
         self.environment = environment
         self.max_acc = 0.5
