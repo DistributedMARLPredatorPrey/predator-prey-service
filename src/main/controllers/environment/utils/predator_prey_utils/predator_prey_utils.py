@@ -23,7 +23,8 @@ class PredatorPreyUtils:
             AgentPolicyControllerFactory().prey_policy_controller_learning, init=True
         )
         partial_pred_policy_controller = partial(
-            AgentPolicyControllerFactory().predator_policy_controller_learning, init=True
+            AgentPolicyControllerFactory().predator_policy_controller_learning,
+            init=True,
         )
         with Pool(2) as p:
             p.map(

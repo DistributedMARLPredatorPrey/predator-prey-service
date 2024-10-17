@@ -50,8 +50,10 @@ class AgentController:
         sampled_action += noise
 
         v, turn = sampled_action
-        new_v, new_turn = (np.clip(v * 10, -10, 10),
-                           np.clip(turn * np.pi, -np.pi, np.pi))
+        new_v, new_turn = (
+            np.clip(v * 10, -10, 10),
+            np.clip(turn * np.pi, -np.pi, np.pi),
+        )
         return np.squeeze([new_v, new_turn])
 
     def state(self, agents: List[Agent]) -> State:

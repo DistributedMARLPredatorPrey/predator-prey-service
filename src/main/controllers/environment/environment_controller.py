@@ -193,11 +193,15 @@ class EnvironmentController:
 
         agent.vx, agent.vy = np.abs(v) * np.cos(turn), np.abs(v) * np.sin(turn)
 
-        next_x, next_y = (agent.x + agent.vx * self.t_step,
-                          agent.y + agent.vy * self.t_step)
+        next_x, next_y = (
+            agent.x + agent.vx * self.t_step,
+            agent.y + agent.vy * self.t_step,
+        )
 
-        agent.x, agent.y = (np.clip(next_x, 0, self.environment.x_dim - 1),
-                            np.clip(next_y, 0, self.environment.y_dim - 1))
+        agent.x, agent.y = (
+            np.clip(next_x, 0, self.environment.x_dim - 1),
+            np.clip(next_y, 0, self.environment.y_dim - 1),
+        )
 
         # acc, turn = action[0], action[1]
         #
@@ -214,7 +218,7 @@ class EnvironmentController:
         # agent.x, agent.y = (np.clip(next_x, 0, self.environment.x_dim - 1),
         #                     np.clip(next_y, 0, self.environment.y_dim - 1))
 
-        #print(f"V {v}, TURN {turn}")
+        # print(f"V {v}, TURN {turn}")
         # max_incr = self.max_acc * self.t_step
         # v = np.sqrt(np.square(agent.vx) + np.square(agent.vy))
         # # Compute the new velocity magnitude from the decided acceleration
@@ -232,4 +236,3 @@ class EnvironmentController:
         #
         # agent.x = np.clip(next_x, 0, self.environment.x_dim - 1)
         # agent.y = np.clip(next_y, 0, self.environment.y_dim - 1)
-
