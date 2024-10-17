@@ -29,8 +29,8 @@ class EnvironmentController:
         env_controller_utils: EnvironmentControllerUtils,
     ):
         self.environment = environment
-        self.max_acc = 0.5
-        self.t_step = 2
+        self.max_acc = 2
+        self.t_step = 1
         self.agent_controllers = agent_controllers
         self.buffer_controller = buffer_controller
         self.policy_controllers = policy_controllers
@@ -47,7 +47,6 @@ class EnvironmentController:
             actions = self.__actions(prev_states)
             # Move all the agents at once and get their rewards only after
             next_states, rewards = self.__step(actions), self.__rewards()
-
             # Print and save coords and rewards
             agents_coords = [(ac.agent.x, ac.agent.y) for ac in self.agent_controllers]
             logging.info(agents_coords)
@@ -56,9 +55,7 @@ class EnvironmentController:
                 list(rewards.values()),  # np.average(list(rewards.values())),
                 [(ac.agent.x, ac.agent.y) for ac in self.agent_controllers],
             )
-
             # Record to buffer for batch learning
-            # self.__record_to_buffer((prev_states, actions, rewards, next_states))
             self.__record_to_buffer((prev_states, actions, rewards, next_states))
             prev_states = next_states
         self.__stop_policy_controllers()
@@ -164,13 +161,6 @@ class EnvironmentController:
             record_tuple=(prev_states_t, actions_t, rewards_t, next_states_t),
         )
 
-    #
-    #     agents = self.__agent_by_type()
-    #     __record_to_buffer_per_agent_type(
-    #         agents[AgentType.PREDATOR], AgentType.PREDATOR, tuple
-    #     )
-    #     __record_to_buffer_per_agent_type(agents[AgentType.PREY], AgentType.PREY, tuple)
-
     def __agent_by_type(self):
         return {
             agent_type: [
@@ -191,7 +181,7 @@ class EnvironmentController:
             (agent for agent in self.environment.agents if agent.id == agent_id), None
         )
 
-    def __step_agent(self, agent_id, action):
+    def __step_agent(self, agent_id: str, action: Tuple[float, float]):
         """
         Step an agent inside the environment given its action
         :param agent_id: id of the agent
@@ -199,25 +189,47 @@ class EnvironmentController:
         :return:
         """
         agent = self.__agent_by_id(agent_id)
-        acc, turn = action[0], action[1]
-        max_incr = self.max_acc * self.t_step
-        v = np.sqrt(np.square(agent.vx) + np.square(agent.vy))
-        # Compute the new velocity magnitude from the decided acceleration
-        new_v = v + acc * max_incr
-        # Compute the new direction
-        prev_dir = np.arctan2(agent.vx, agent.vy)
-        next_dir = prev_dir - turn
-        # Compute vx and vy from |v| and the direction
-        agent.vx = new_v * np.cos(next_dir)
-        agent.vy = new_v * np.sin(next_dir)
-        # Compute the next position of the agent, checking if it is inside the boundaries
-        next_x = agent.x + agent.vx * self.t_step
-        next_y = agent.y + agent.vy * self.t_step
-        if 0 <= next_x < self.environment.x_dim:
-            agent.x = next_x
-        else:
-            agent.x = agent.x - agent.vx * self.t_step
-        if 0 <= next_y < self.environment.y_dim:
-            agent.y = next_y
-        else:
-            agent.y = agent.y - agent.vy * self.t_step
+        v, turn = action[0], action[1]
+
+        agent.vx, agent.vy = np.abs(v) * np.cos(turn), np.abs(v) * np.sin(turn)
+
+        next_x, next_y = (agent.x + agent.vx * self.t_step,
+                          agent.y + agent.vy * self.t_step)
+
+        agent.x, agent.y = (np.clip(next_x, 0, self.environment.x_dim - 1),
+                            np.clip(next_y, 0, self.environment.y_dim - 1))
+
+        # acc, turn = action[0], action[1]
+        #
+        # acc = np.clip(acc, -self.max_acc, self.max_acc)
+        # acc_x, acc_y = acc * np.cos(turn), acc * np.sin(turn)
+        #
+        # v_x, v_y = (agent.vx + acc_x * self.t_step,
+        #             agent.vy + acc_y * self.t_step)
+        #
+        # agent.vx, agent.vy = np.clip(v_x, -10, 10), np.clip(v_y, -10, 10)
+        #
+        # next_x, next_y = (agent.x + v_x * self.t_step,
+        #                   agent.y + v_y * self.t_step)
+        # agent.x, agent.y = (np.clip(next_x, 0, self.environment.x_dim - 1),
+        #                     np.clip(next_y, 0, self.environment.y_dim - 1))
+
+        #print(f"V {v}, TURN {turn}")
+        # max_incr = self.max_acc * self.t_step
+        # v = np.sqrt(np.square(agent.vx) + np.square(agent.vy))
+        # # Compute the new velocity magnitude from the decided acceleration
+        # new_v = v + acc * max_incr
+        # new_v = min(new_v, 10)
+        # # Compute the new direction
+        # prev_dir = np.arctan2(agent.vy, agent.vx)
+        # next_dir = prev_dir - turn
+        # # Compute vx and vy from |v| and the direction
+        # agent.vx = new_v * np.cos(next_dir)
+        # agent.vy = new_v * np.sin(next_dir)
+        # # Compute the next position of the agent, checking if it is inside the boundaries
+        # next_x = agent.x + agent.vx * self.t_step
+        # next_y = agent.y + agent.vy * self.t_step
+        #
+        # agent.x = np.clip(next_x, 0, self.environment.x_dim - 1)
+        # agent.y = np.clip(next_y, 0, self.environment.y_dim - 1)
+

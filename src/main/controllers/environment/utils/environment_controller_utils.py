@@ -47,8 +47,8 @@ class EnvironmentControllerUtils:
             base_experiment_path, "src", "main", "resources", "experiment_data"
         )
         return (
-            os.path.join(common_path, f"rewards1_{rel_experiment_path}.csv"),
-            os.path.join(common_path, f"positions1_{rel_experiment_path}.csv"),
+            os.path.join(common_path, f"rewards_{rel_experiment_path}.csv"),
+            os.path.join(common_path, f"positions_{rel_experiment_path}.csv"),
         )
 
     def save_data(self, rewards, coordinates):

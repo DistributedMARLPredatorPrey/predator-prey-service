@@ -29,8 +29,8 @@ class PredatorControllerFactory:
                 id=f"predator_{i}",
                 x=random.uniform(0, env_config.x_dim),
                 y=random.uniform(0, env_config.y_dim),
-                vx=random.uniform(-1, 1),
-                vy=random.uniform(-1, 1),
+                vx=random.uniform(0, 10),
+                vy=random.uniform(0, 10),
             )
             predator_controllers.append(
                 PredatorController(

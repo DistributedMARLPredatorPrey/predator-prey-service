@@ -29,12 +29,11 @@ class AgentController:
         self.agent = agent
         self.policy_controller = policy_controller
 
-    def action(self, state, verbose=False):
+    def action(self, state):
         """
         Computes the next action based on the current state, by getting the current actor model
         from the parameter server.
         :param state: current state
-        :param verbose: default set to False
         :return: the next action to be taken
         """
         # the policy used for training just add noise to the action
@@ -48,15 +47,12 @@ class AgentController:
 
         # Adding noise to action
         sampled_action = sampled_action.numpy()
-        # sampled_action += noise
+        sampled_action += noise
 
-        # in verbose mode, we may print information about selected actions
-        if verbose and sampled_action[0] < 0:
-            print("decelerating")
-
-        # Finally, we ensure actions are within bounds
-        legal_action = np.clip(sampled_action, self.lower_bound, self.upper_bound)
-        return np.squeeze(legal_action)
+        v, turn = sampled_action
+        new_v, new_turn = (np.clip(v * 10, -10, 10),
+                           np.clip(turn * np.pi, -np.pi, np.pi))
+        return np.squeeze([new_v, new_turn])
 
     def state(self, agents: List[Agent]) -> State:
         r"""

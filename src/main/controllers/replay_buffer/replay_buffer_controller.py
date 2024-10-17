@@ -1,7 +1,5 @@
 from typing import Tuple
 
-from src.main.model.environment.agents.agent_type import AgentType
-
 
 class ReplayBufferController:
     def record(self, record_tuple: Tuple):

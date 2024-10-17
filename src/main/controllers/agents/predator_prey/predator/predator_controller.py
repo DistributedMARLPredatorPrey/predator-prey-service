@@ -1,14 +1,13 @@
-import logging
 from typing import List
 
 import numpy as np
 
-from src.main.model.environment.agents.agent import Agent
-from src.main.model.config.config import EnvironmentConfig
+from src.main.controllers.agents.agent_controller import AgentController
 from src.main.controllers.agents.policy.agent_policy_controller import (
     AgentPolicyController,
 )
-from src.main.controllers.agents.agent_controller import AgentController
+from src.main.model.config.config import EnvironmentConfig
+from src.main.model.environment.agents.agent import Agent
 from src.main.model.environment.agents.predator import Predator
 
 
@@ -35,8 +34,8 @@ class PredatorController(AgentController):
         """
         # return (
         #     np.power(np.e, -np.min(self.last_state.distances)) - np.power(np.e, -1)
-        # ) / (1 - np.power(np.e, -1)) * 1000 - 1000
-        return -np.min(self.last_state.distances) + 1
+        # ) / (1 - np.power(np.e, -1))
+        return -np.min(self.last_state.distances) * 1000
 
     def done(self, _: List[Agent]) -> bool:
         """

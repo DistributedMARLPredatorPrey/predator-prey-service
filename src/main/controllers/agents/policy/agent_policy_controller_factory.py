@@ -13,36 +13,35 @@ from src.main.controllers.agents.policy.agent_policy_controller import (
 
 
 class AgentPolicyControllerFactory:
-    @staticmethod
-    def prey_policy_controller_learning(init: bool) -> AgentPolicyController:
+
+    __base_path: str = os.path.join("src", "main", "resources")
+
+    def prey_policy_controller_learning(self, init: bool) -> AgentPolicyController:
         return PredatorPreyPolicyControllerLearning(
             init=init,
             broker_host=PredatorPreyConfig()
             .learner_service_configuration()
             .pubsub_broker,
-            actor_model_path=f"src/main/resources/prey_{os.environ.get('REL_PATH')}.keras",
+            actor_model_path=os.path.join(self.__base_path, f"prey_{os.environ.get('REL_PATH')}.keras"),
             routing_key="prey-actor-model",
         )
 
-    @staticmethod
-    def predator_policy_controller_learning(init: bool) -> AgentPolicyController:
+    def predator_policy_controller_learning(self, init: bool) -> AgentPolicyController:
         return PredatorPreyPolicyControllerLearning(
             init=init,
             broker_host=PredatorPreyConfig()
             .learner_service_configuration()
             .pubsub_broker,
-            actor_model_path=f"src/main/resources/predator_{os.environ.get('REL_PATH')}.keras",
+            actor_model_path=os.path.join(self.__base_path, f"predator_{os.environ.get('REL_PATH')}.keras"),
             routing_key="predator-actor-model",
         )
 
-    @staticmethod
-    def prey_policy_controller_simulation() -> AgentPolicyController:
+    def prey_policy_controller_simulation(self) -> AgentPolicyController:
         return PredatorPreyPolicyControllerSimulation(
-            actor_model_path=f"src/main/resources/prey_{os.environ.get('REL_PATH')}.keras",
+            actor_model_path=os.path.join(self.__base_path, f"prey_{os.environ.get('REL_PATH')}.keras"),
         )
 
-    @staticmethod
-    def predator_policy_controller_simulation() -> AgentPolicyController:
+    def predator_policy_controller_simulation(self) -> AgentPolicyController:
         return PredatorPreyPolicyControllerSimulation(
-            actor_model_path=f"src/main/resources/predator_{os.environ.get('REL_PATH')}.keras",
+            actor_model_path=os.path.join(self.__base_path, f"predator_{os.environ.get('REL_PATH')}.keras"),
         )

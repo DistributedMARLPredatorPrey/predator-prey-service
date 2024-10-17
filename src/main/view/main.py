@@ -1,18 +1,16 @@
 import logging
+import random
 
-import numpy as np
-
-from src.main.model.config.config import EnvironmentConfig, Mode
-from src.main.model.config.config_utils import PredatorPreyConfig
 from src.main.controllers.environment.environment_controller import (
     EnvironmentController,
 )
 from src.main.controllers.environment.environment_controller_factory import (
     EnvironmentControllerFactory,
 )
+from src.main.model.config.config import EnvironmentConfig, Mode
+from src.main.model.config.config_utils import PredatorPreyConfig
 
 logging.getLogger().setLevel(logging.INFO)
-import random
 
 
 def train():

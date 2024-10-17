@@ -35,9 +35,9 @@ class PreyController(AgentController):
         :return: the reward
         """
         # return (1 - np.power(np.e, -np.min(self.last_state.distances))) / (
-        #     1 - np.power(np.e, -1)
+        #     1 - np.power(np.e, -1))
         # ) * 1000 - 1000
-        return np.min(self.last_state.distances)
+        return np.min(self.last_state.distances) * 1000 - 1000
 
     def done(self, agents: List[Agent]) -> bool:
         """
@@ -59,6 +59,5 @@ class PreyController(AgentController):
                 y >= agent.y - self.r,
             )
             if s.check() == sat:
-                print("PREY DEAD")
                 return True
         return False
