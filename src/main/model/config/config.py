@@ -22,9 +22,6 @@ class EnvironmentConfig:
     num_predators: int
     num_preys: int
     num_states: int
-    num_actions: int
-    acc_lower_bound: float
-    acc_upper_bound: float
     r: float
     vd: float
     life: int

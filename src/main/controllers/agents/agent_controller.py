@@ -20,8 +20,6 @@ class AgentController:
     ):
         self.last_state = None
         self.num_states = env_config.num_states
-        self.lower_bound = env_config.acc_lower_bound
-        self.upper_bound = env_config.acc_upper_bound
         self.life = env_config.life
         self.r = env_config.r
         self.vd = env_config.vd
