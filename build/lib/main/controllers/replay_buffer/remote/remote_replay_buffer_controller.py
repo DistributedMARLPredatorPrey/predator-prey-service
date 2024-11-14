@@ -30,7 +30,8 @@ class RemoteReplayBufferController(ReplayBufferController):
                 [float(ns) for next_state in next_states for ns in next_state]
             ],
         }
+        json_data = json.dumps(record_json)
         requests.post(
             f"http://{self._host}:{self._port}/record_data/",
-            json=record_json,
+            json=json_data,
         )

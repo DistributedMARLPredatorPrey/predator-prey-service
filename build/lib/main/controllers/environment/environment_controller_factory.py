@@ -78,8 +78,8 @@ class EnvironmentControllerFactory:
             buffer_controller=None,
         )
 
-    @staticmethod
     def __create_predator_prey(
+        self,
         env_config: EnvironmentConfig,
         prey_policy_controller: AgentPolicyController,
         pred_policy_controller: AgentPolicyController,

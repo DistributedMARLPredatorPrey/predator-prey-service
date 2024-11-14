@@ -182,6 +182,11 @@ class AgentController:
             model = o.model()
 
             mx, my = model[x], model[y]
+            # if isinstance(mx, AlgebraicNumRef):
+            #     mx = mx.approx(10)
+            # if isinstance(my, AlgebraicNumRef):
+            #     my = my.approx(10)
+
             x_p, y_p = (
                 float(mx.numerator_as_long()) / float(mx.denominator_as_long()),
                 float(my.numerator_as_long()) / float(my.denominator_as_long()),

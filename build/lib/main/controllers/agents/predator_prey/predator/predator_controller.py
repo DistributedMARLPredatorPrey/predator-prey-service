@@ -32,7 +32,10 @@ class PredatorController(AgentController):
 
         :return:  the reward
         """
-        return -np.min(self.last_state) * 1000
+        # return (
+        #     np.power(np.e, -np.min(self.last_state.distances)) - np.power(np.e, -1)
+        # ) / (1 - np.power(np.e, -1))
+        return -np.min(self.last_state.distances) * 1000
 
     def done(self, _: List[Agent]) -> bool:
         """
