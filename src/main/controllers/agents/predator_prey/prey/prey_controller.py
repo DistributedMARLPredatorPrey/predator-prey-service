@@ -37,7 +37,7 @@ class PreyController(AgentController):
         # return (1 - np.power(np.e, -np.min(self.last_state.distances))) / (
         #     1 - np.power(np.e, -1))
         # ) * 1000 - 1000
-        return np.min(self.last_state.distances) * 1000 - 1000
+        return np.min(self.last_state) * 1000 - 1000
 
     def done(self, agents: List[Agent]) -> bool:
         """

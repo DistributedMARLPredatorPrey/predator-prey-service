@@ -5,11 +5,8 @@ from src.main.controllers.replay_buffer.replay_buffer_controller import (
 from src.main.controllers.agents.policy.agent_policy_controller import (
     AgentPolicyController,
 )
-from src.main.controllers.agents.predator_prey.predator.predator_controller_factory import (
-    PredatorControllerFactory,
-)
-from src.main.controllers.agents.predator_prey.prey.prey_controller_factory import (
-    PreyControllerFactory,
+from src.main.controllers.agents.predator_prey.agent_controller_factory import (
+    AgentControllerFactory,
 )
 from src.main.controllers.environment.environment_controller import (
     EnvironmentController,
@@ -81,17 +78,17 @@ class EnvironmentControllerFactory:
             buffer_controller=None,
         )
 
+    @staticmethod
     def __create_predator_prey(
-        self,
         env_config: EnvironmentConfig,
         prey_policy_controller: AgentPolicyController,
         pred_policy_controller: AgentPolicyController,
         buffer_controller: ReplayBufferController,
     ):
-        predator_controllers = PredatorControllerFactory.create_from_config(
+        predator_controllers = AgentControllerFactory.predator_controllers_from_config(
             env_config, pred_policy_controller
         )
-        prey_controllers = PreyControllerFactory.create_from_config(
+        prey_controllers = AgentControllerFactory.prey_controllers_from_config(
             env_config, prey_policy_controller
         )
         environment = Environment(

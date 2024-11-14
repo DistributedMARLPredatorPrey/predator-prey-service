@@ -1,7 +1,7 @@
 import logging
 from threading import Lock
 from threading import Thread
-import numpy as np
+
 import pika
 from tensorflow.keras.models import load_model
 

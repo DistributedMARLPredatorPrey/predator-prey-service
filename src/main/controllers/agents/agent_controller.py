@@ -1,15 +1,14 @@
 from typing import List
 
-import numpy as np
 import tensorflow as tf
-from z3 import Or, And, If, Optimize, AlgebraicNumRef, sat, Real, Solver, Not
+from z3 import Or, And, If, Optimize, sat, Real, Solver
 
-from src.main.model.config.config import EnvironmentConfig
+import numpy as np
 from src.main.controllers.agents.policy.agent_policy_controller import (
     AgentPolicyController,
 )
+from src.main.model.config.config import EnvironmentConfig
 from src.main.model.environment.agents.agent import Agent
-from src.main.model.environment.state import State
 
 
 class AgentController:
@@ -56,7 +55,7 @@ class AgentController:
         )
         return np.squeeze([new_v, new_turn])
 
-    def state(self, agents: List[Agent]) -> State:
+    def state(self, agents: List[Agent]):
         r"""
         Captures the state given the other agents inside the environment.
         A state is view of the surrounding area, with a given visual depth.
@@ -131,7 +130,7 @@ class AgentController:
                     solutions.append(distance)
                 distances.append(np.min(solutions))
 
-        self.last_state = State(distances)
+        self.last_state = distances
         return self.last_state
 
     def reward(self) -> float:
@@ -183,11 +182,6 @@ class AgentController:
             model = o.model()
 
             mx, my = model[x], model[y]
-            # if isinstance(mx, AlgebraicNumRef):
-            #     mx = mx.approx(10)
-            # if isinstance(my, AlgebraicNumRef):
-            #     my = my.approx(10)
-
             x_p, y_p = (
                 float(mx.numerator_as_long()) / float(mx.denominator_as_long()),
                 float(my.numerator_as_long()) / float(my.denominator_as_long()),
