@@ -6,3 +6,4 @@ src/__pycache__/
 venv/
 src/main/resources
 build/
+.eggs/
