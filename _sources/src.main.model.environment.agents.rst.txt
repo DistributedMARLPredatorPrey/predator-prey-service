@@ -1,14 +1,6 @@
 src.main.model.environment.agents package
 =========================================
 
-Subpackages
------------
-
-.. toctree::
-   :maxdepth: 4
-
-   src.main.model.environment.agents.actor_critic
-
 Submodules
 ----------
 

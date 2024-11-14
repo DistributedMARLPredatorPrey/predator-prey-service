@@ -12,14 +12,6 @@ src.main.controllers.agents.predator\_prey.predator.predator\_controller module
    :undoc-members:
    :show-inheritance:
 
-src.main.controllers.agents.predator\_prey.predator.predator\_controller\_factory module
-----------------------------------------------------------------------------------------
-
-.. automodule:: src.main.controllers.agents.predator_prey.predator.predator_controller_factory
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
 Module contents
 ---------------
 

@@ -10,6 +10,17 @@ Subpackages
    src.main.controllers.agents.predator_prey.predator
    src.main.controllers.agents.predator_prey.prey
 
+Submodules
+----------
+
+src.main.controllers.agents.predator\_prey.agent\_controller\_factory module
+----------------------------------------------------------------------------
+
+.. automodule:: src.main.controllers.agents.predator_prey.agent_controller_factory
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 Module contents
 ---------------
 

@@ -28,14 +28,6 @@ src.main.model.environment.state module
    :undoc-members:
    :show-inheritance:
 
-src.main.model.environment.step module
---------------------------------------
-
-.. automodule:: src.main.model.environment.step
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
 Module contents
 ---------------
 
