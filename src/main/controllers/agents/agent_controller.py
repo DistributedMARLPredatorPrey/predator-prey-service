@@ -56,7 +56,7 @@ class AgentController:
         )
         return np.squeeze([new_v, new_turn])
 
-    def state(self, agents: List[Agent]) -> State:
+    def state(self, agents: List[Agent]):
         r"""
         Captures the state given the other agents inside the environment.
         A state is view of the surrounding area, with a given visual depth.
@@ -131,7 +131,7 @@ class AgentController:
                     solutions.append(distance)
                 distances.append(np.min(solutions))
 
-        self.last_state = State(distances)
+        self.last_state = distances
         return self.last_state
 
     def reward(self) -> float:

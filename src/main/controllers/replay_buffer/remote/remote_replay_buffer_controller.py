@@ -26,7 +26,7 @@ class RemoteReplayBufferController(ReplayBufferController):
             "State": [[float(ps) for prev_state in prev_states for ps in prev_state]],
             "Reward": [[float(r) for r in rewards]],
             "Action": [[float(ps) for action in actions for ps in action]],
-            "Next state": [
+            "Next State": [
                 [float(ns) for next_state in next_states for ns in next_state]
             ],
         }
