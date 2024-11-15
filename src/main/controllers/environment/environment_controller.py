@@ -53,7 +53,7 @@ class EnvironmentController:
             logging.info(agents_coords)
             logging.info(f"Avg reward: {np.average(list(rewards.values()))}")
             self.__utils.save_data(
-                list(rewards.values()),  # np.average(list(rewards.values())),
+                list(rewards.values()),
                 [(ac.agent.x, ac.agent.y) for ac in self.__agent_controllers],
             )
             # Record to buffer for batch learning
@@ -69,11 +69,13 @@ class EnvironmentController:
         prev_states = self.__states()
         while not self.__is_done():
             actions = self.__actions(prev_states)
-            next_states = self.__step(actions)
+            next_states, rewards = self.__step(actions), self.__rewards()
             logging.info([(ac.agent.x, ac.agent.y) for ac in self.__agent_controllers])
+            logging.info(f"Avg reward: {np.average(list(rewards.values()))}")
             prev_states = next_states
             self.__utils.save_data(
-                [], [(ac.agent.x, ac.agent.y) for ac in self.__agent_controllers]
+                list(rewards.values()),
+                [(ac.agent.x, ac.agent.y) for ac in self.__agent_controllers],
             )
 
     def __states(self):

@@ -15,15 +15,20 @@ class PredatorPreyUtils:
         f()
 
     @staticmethod
-    def initialize_policy_receivers():
+    def initialize_policy_receivers(project_root_path: str):
         """
         Initialize policy receivers of both predator and prey.
         """
         partial_prey_policy_controller = partial(
-            AgentPolicyControllerFactory().prey_policy_controller_learning, init=True
+            AgentPolicyControllerFactory(
+                project_root_path=project_root_path
+            ).prey_policy_controller_learning,
+            init=True,
         )
         partial_pred_policy_controller = partial(
-            AgentPolicyControllerFactory().predator_policy_controller_learning,
+            AgentPolicyControllerFactory(
+                project_root_path=project_root_path
+            ).predator_policy_controller_learning,
             init=True,
         )
         with Pool(2) as p:

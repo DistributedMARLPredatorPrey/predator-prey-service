@@ -13,7 +13,13 @@ from src.main.controllers.agents.policy.agent_policy_controller import (
 
 
 class AgentPolicyControllerFactory:
-    __base_path: str = os.path.join("src", "main", "resources")
+    def __init__(self, project_root_path: str):
+        self.__prey_actor_model_path: str = os.path.join(
+            project_root_path, "src", "main", "resources", "prey.keras"
+        )
+        self.__predator_actor_model_path: str = os.path.join(
+            project_root_path, "src", "main", "resources", "predator.keras"
+        )
 
     def prey_policy_controller_learning(self, init: bool) -> AgentPolicyController:
         return PredatorPreyPolicyControllerLearning(
@@ -21,9 +27,7 @@ class AgentPolicyControllerFactory:
             broker_host=PredatorPreyConfig()
             .learner_service_configuration()
             .pubsub_broker,
-            actor_model_path=os.path.join(
-                self.__base_path, f"prey_{os.environ.get('REL_PATH')}.keras"
-            ),
+            actor_model_path=self.__prey_actor_model_path,
             routing_key="prey-actor-model",
         )
 
@@ -33,22 +37,16 @@ class AgentPolicyControllerFactory:
             broker_host=PredatorPreyConfig()
             .learner_service_configuration()
             .pubsub_broker,
-            actor_model_path=os.path.join(
-                self.__base_path, f"predator_{os.environ.get('REL_PATH')}.keras"
-            ),
+            actor_model_path=self.__predator_actor_model_path,
             routing_key="predator-actor-model",
         )
 
     def prey_policy_controller_simulation(self) -> AgentPolicyController:
         return PredatorPreyPolicyControllerSimulation(
-            actor_model_path=os.path.join(
-                self.__base_path, f"prey_{os.environ.get('REL_PATH')}.keras"
-            ),
+            actor_model_path=self.__prey_actor_model_path
         )
 
     def predator_policy_controller_simulation(self) -> AgentPolicyController:
         return PredatorPreyPolicyControllerSimulation(
-            actor_model_path=os.path.join(
-                self.__base_path, f"predator_{os.environ.get('REL_PATH')}.keras"
-            ),
+            actor_model_path=self.__predator_actor_model_path
         )

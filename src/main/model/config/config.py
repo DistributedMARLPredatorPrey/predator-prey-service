@@ -26,8 +26,7 @@ class EnvironmentConfig:
     vd: float
     life: int
     save_experiment_data: bool
-    base_experiment_path: str
-    rel_experiment_path: str
+    project_root_path: str
     mode: Mode
     random_seed: int
 

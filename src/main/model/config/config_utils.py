@@ -40,8 +40,7 @@ class PredatorPreyConfig:
             vd=env_conf["vd"],
             life=env_conf["life"],
             save_experiment_data=bool(env_conf["save_experiment_data"]),
-            base_experiment_path="/usr/app/",
-            rel_experiment_path=os.environ.get("REL_PATH"),
+            project_root_path=os.environ.get("PROJECT_ROOT_PATH"),
             mode=Mode.TRAINING
             if os.environ.get("MODE") == "train"
             else Mode.SIMULATION,

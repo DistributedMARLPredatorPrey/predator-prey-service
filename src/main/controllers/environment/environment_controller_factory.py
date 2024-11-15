@@ -44,13 +44,18 @@ class EnvironmentControllerFactory:
         )
         if init:
             utils = PredatorPreyUtils()
-            utils.initialize_policy_receivers()
+            utils.initialize_policy_receivers(
+                project_root_path=env_config.project_root_path
+            )
         buffer_controller = RemoteReplayBufferController(
             replay_buffer_config.replay_buffer_host,
             replay_buffer_config.replay_buffer_port,
         )
-        policy_controller_factory = AgentPolicyControllerFactory()
+        policy_controller_factory = AgentPolicyControllerFactory(
+            env_config.project_root_path
+        )
         return self.__create_predator_prey(
+            init=init,
             env_config=env_config,
             prey_policy_controller=policy_controller_factory.prey_policy_controller_learning(
                 init=False
@@ -62,16 +67,20 @@ class EnvironmentControllerFactory:
         )
 
     def create_predator_prey_simulation(
-        self, pred_prey_config: PredatorPreyConfig
+        self, init: bool, pred_prey_config: PredatorPreyConfig
     ) -> EnvironmentController:
         """
         Creates a random EnvironmentController in simulation mode, where the position of each agent
         inside the Environment is random.
+        :param init: Indicates if it's the first simulation run
         :param pred_prey_config: PredatorPreyConfig
         :return: EnvironmentController
         """
-        policy_controller_factory = AgentPolicyControllerFactory()
+        policy_controller_factory = AgentPolicyControllerFactory(
+            project_root_path=pred_prey_config.environment_configuration().project_root_path
+        )
         return self.__create_predator_prey(
+            init=init,
             env_config=pred_prey_config.environment_configuration(),
             prey_policy_controller=policy_controller_factory.prey_policy_controller_simulation(),
             pred_policy_controller=policy_controller_factory.predator_policy_controller_simulation(),
@@ -80,6 +89,7 @@ class EnvironmentControllerFactory:
 
     @staticmethod
     def __create_predator_prey(
+        init: bool,
         env_config: EnvironmentConfig,
         prey_policy_controller: AgentPolicyController,
         pred_policy_controller: AgentPolicyController,
@@ -105,7 +115,7 @@ class EnvironmentControllerFactory:
             buffer_controller=buffer_controller,
             policy_controllers=[prey_policy_controller, pred_policy_controller],
             env_controller_utils=EnvironmentControllerUtils(
-                env_config.base_experiment_path,
-                env_config.rel_experiment_path,
+                init=init,
+                project_root_path=env_config.project_root_path,
             ),
         )
