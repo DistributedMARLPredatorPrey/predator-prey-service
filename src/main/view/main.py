@@ -1,5 +1,5 @@
 import logging
-import random
+import numpy as np
 
 from src.main.controllers.environment.environment_controller import (
     EnvironmentController,
@@ -38,7 +38,7 @@ def simulate():
     init = True
     predator_prey_config = PredatorPreyConfig()
     # Set seed for reproducibility
-    random.seed(predator_prey_config.environment_configuration().random_seed)
+    np.random.seed(predator_prey_config.environment_configuration().random_seed)
     while True:
         logging.info("Starting Predator-Prey Simulation...")
         env_controller: EnvironmentController = (
