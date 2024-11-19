@@ -3,7 +3,7 @@ name: Predator Prey Service Release
 on:
   push:
     branches:
-      - release/*
+      - main
 
 permissions:
   contents: write
