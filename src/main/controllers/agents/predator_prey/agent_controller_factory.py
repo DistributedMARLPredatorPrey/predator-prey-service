@@ -1,5 +1,6 @@
-import random
 from typing import List
+
+import numpy as np
 
 from src.main.model.environment.agents.predator import Predator
 from src.main.controllers.agents.predator_prey.predator.predator_controller import (
@@ -31,10 +32,10 @@ class AgentControllerFactory:
         for i in range(env_config.num_predators):
             predator = Predator(
                 id=f"predator_{i}",
-                x=random.uniform(0, env_config.x_dim),
-                y=random.uniform(0, env_config.y_dim),
-                vx=random.uniform(0, 10),
-                vy=random.uniform(0, 10),
+                x=np.random.uniform(0, env_config.x_dim),
+                y=np.random.uniform(0, env_config.y_dim),
+                vx=np.random.uniform(0, 10),
+                vy=np.random.uniform(0, 10),
             )
             predator_controllers.append(
                 PredatorController(
@@ -60,10 +61,10 @@ class AgentControllerFactory:
         for i in range(env_config.num_preys):
             prey = Prey(
                 id=f"prey_{i}",
-                x=random.uniform(0, env_config.x_dim),
-                y=random.uniform(0, env_config.y_dim),
-                vx=random.uniform(0, 10),
-                vy=random.uniform(0, 10),
+                x=np.random.uniform(0, env_config.x_dim),
+                y=np.random.uniform(0, env_config.y_dim),
+                vx=np.random.uniform(0, 10),
+                vy=np.random.uniform(0, 10),
             )
             prey_controllers.append(
                 PreyController(
