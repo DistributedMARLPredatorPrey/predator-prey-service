@@ -35,16 +35,12 @@ class PredatorPreyConfig:
             y_dim=env_conf["y_dim"],
             num_predators=env_conf["num_predators"],
             num_preys=env_conf["num_preys"],
-            acc_lower_bound=env_conf["acc_lower_bound"],
-            acc_upper_bound=env_conf["acc_upper_bound"],
             num_states=env_conf["num_states"],
-            num_actions=env_conf["num_actions"],
             r=env_conf["r"],
             vd=env_conf["vd"],
             life=env_conf["life"],
             save_experiment_data=bool(env_conf["save_experiment_data"]),
-            base_experiment_path="/usr/app/",
-            rel_experiment_path=os.environ.get("REL_PATH"),
+            project_root_path=os.environ.get("PROJECT_ROOT_PATH"),
             mode=Mode.TRAINING
             if os.environ.get("MODE") == "train"
             else Mode.SIMULATION,

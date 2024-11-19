@@ -6,13 +6,11 @@
 Welcome to Predator Prey Service's documentation!
 =============================================
 
-**Predator Prey Service** is a Python application which simulates a Predator Prey environment.
+**Predator-Prey Service** is responsible for managing a Predator-Prey Multi-Agent RL Environment.
+It allows to start the environment in two modes: *Train* mode or *Simulation* mode.
 
-It could either be run in 'simulation' mode, where the environment is simulated using an existing policy,
-or in 'learning' mode, where the policy changes over time and gets synchronized from an external service.
-
-It provides a *simple* and *intuitive* API to get the environment current state, including the agents' position and,
-during the learning process, to update the agent's Actor network.
+- In the first mode (*Train*), it interacts with a distributed Replay Buffer to store agents' experiences and subscribes to policy updates coming from the Learner Service.
+- In *Simulation* mode, it uses the latest policy (saved from a previous training phase) to start a simulation. In this case, it accepts a seed as input to change the initial positions of the agents.
 
 .. toctree::
    :maxdepth: 2

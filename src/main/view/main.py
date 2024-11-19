@@ -1,18 +1,16 @@
 import logging
+import random
 
-import numpy as np
-
-from src.main.model.config.config import EnvironmentConfig, Mode
-from src.main.model.config.config_utils import PredatorPreyConfig
 from src.main.controllers.environment.environment_controller import (
     EnvironmentController,
 )
 from src.main.controllers.environment.environment_controller_factory import (
     EnvironmentControllerFactory,
 )
+from src.main.model.config.config import EnvironmentConfig, Mode
+from src.main.model.config.config_utils import PredatorPreyConfig
 
 logging.getLogger().setLevel(logging.INFO)
-import random
 
 
 def train():
@@ -37,6 +35,7 @@ def simulate():
     Run Predator Prey Service in Simulation mode
     :return:
     """
+    init = True
     predator_prey_config = PredatorPreyConfig()
     # Set seed for reproducibility
     random.seed(predator_prey_config.environment_configuration().random_seed)
@@ -44,10 +43,11 @@ def simulate():
         logging.info("Starting Predator-Prey Simulation...")
         env_controller: EnvironmentController = (
             EnvironmentControllerFactory().create_predator_prey_simulation(
-                pred_prey_config=predator_prey_config
+                init=init, pred_prey_config=predator_prey_config
             )
         )
         env_controller.simulate()
+        init = False
 
 
 if __name__ == "__main__":

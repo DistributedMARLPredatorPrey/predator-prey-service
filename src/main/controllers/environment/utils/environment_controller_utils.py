@@ -5,19 +5,24 @@ import pandas as pd
 
 
 class EnvironmentControllerUtils:
-    def __init__(self, base_experiment_path, rel_experiment_path):
+    def __init__(self, init: bool, project_root_path: str):
         self.__rewards_file, self.__coordinates_file = self.__experiment_files_path(
-            base_experiment_path, rel_experiment_path
+            project_root_path
         )
         self.__elapsed_times, self.__rewards, self.__coordinates = (
-            self.__load_existing()
+            self.__setup_experiment_files(init)
         )
         self.__t_start = time.time()
 
-    def __load_existing(self):
+    def __setup_experiment_files(self, init: bool):
         if os.path.exists(self.__rewards_file) and os.path.exists(
             self.__coordinates_file
         ):
+            if init:
+                os.remove(self.__rewards_file)
+                os.remove(self.__coordinates_file)
+                return [], [], []
+
             df_rewards = pd.read_csv(self.__rewards_file)
             df_coordinates = pd.read_csv(self.__coordinates_file)
             elapsed_times = [float(et) for et in df_coordinates["elapsed_time"]]
@@ -42,13 +47,11 @@ class EnvironmentControllerUtils:
         return [], [], []
 
     @staticmethod
-    def __experiment_files_path(base_experiment_path, rel_experiment_path):
-        common_path = os.path.join(
-            base_experiment_path, "src", "main", "resources", "experiment_data"
-        )
+    def __experiment_files_path(project_root_path):
+        common_path = os.path.join(project_root_path, "src", "main", "resources")
         return (
-            os.path.join(common_path, f"rewards1_{rel_experiment_path}.csv"),
-            os.path.join(common_path, f"positions1_{rel_experiment_path}.csv"),
+            os.path.join(common_path, f"rewards.csv"),
+            os.path.join(common_path, f"positions.csv"),
         )
 
     def save_data(self, rewards, coordinates):

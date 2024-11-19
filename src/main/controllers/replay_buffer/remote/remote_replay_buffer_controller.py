@@ -26,12 +26,11 @@ class RemoteReplayBufferController(ReplayBufferController):
             "State": [[float(ps) for prev_state in prev_states for ps in prev_state]],
             "Reward": [[float(r) for r in rewards]],
             "Action": [[float(ps) for action in actions for ps in action]],
-            "Next state": [
+            "Next State": [
                 [float(ns) for next_state in next_states for ns in next_state]
             ],
         }
-        json_data = json.dumps(record_json)
         requests.post(
             f"http://{self._host}:{self._port}/record_data/",
-            json=json_data,
+            json=record_json,
         )

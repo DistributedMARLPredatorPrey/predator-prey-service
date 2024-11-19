@@ -1,15 +1,14 @@
 from typing import List
 
-import numpy as np
 import tensorflow as tf
-from z3 import Or, And, If, Optimize, AlgebraicNumRef, sat, Real, Solver, Not
+from z3 import Or, And, If, Optimize, sat, Real, Solver
 
-from src.main.model.config.config import EnvironmentConfig
+import numpy as np
 from src.main.controllers.agents.policy.agent_policy_controller import (
     AgentPolicyController,
 )
+from src.main.model.config.config import EnvironmentConfig
 from src.main.model.environment.agents.agent import Agent
-from src.main.model.environment.state import State
 
 
 class AgentController:
@@ -21,20 +20,17 @@ class AgentController:
     ):
         self.last_state = None
         self.num_states = env_config.num_states
-        self.lower_bound = env_config.acc_lower_bound
-        self.upper_bound = env_config.acc_upper_bound
         self.life = env_config.life
         self.r = env_config.r
         self.vd = env_config.vd
         self.agent = agent
         self.policy_controller = policy_controller
 
-    def action(self, state, verbose=False):
+    def action(self, state):
         """
         Computes the next action based on the current state, by getting the current actor model
         from the parameter server.
         :param state: current state
-        :param verbose: default set to False
         :return: the next action to be taken
         """
         # the policy used for training just add noise to the action
@@ -48,17 +44,16 @@ class AgentController:
 
         # Adding noise to action
         sampled_action = sampled_action.numpy()
-        # sampled_action += noise
+        sampled_action += noise
 
-        # in verbose mode, we may print information about selected actions
-        if verbose and sampled_action[0] < 0:
-            print("decelerating")
+        v, turn = sampled_action
+        new_v, new_turn = (
+            np.clip(v * 10, -10, 10),
+            np.clip(turn * np.pi, -np.pi, np.pi),
+        )
+        return np.squeeze([new_v, new_turn])
 
-        # Finally, we ensure actions are within bounds
-        legal_action = np.clip(sampled_action, self.lower_bound, self.upper_bound)
-        return np.squeeze(legal_action)
-
-    def state(self, agents: List[Agent]) -> State:
+    def state(self, agents: List[Agent]):
         r"""
         Captures the state given the other agents inside the environment.
         A state is view of the surrounding area, with a given visual depth.
@@ -133,7 +128,7 @@ class AgentController:
                     solutions.append(distance)
                 distances.append(np.min(solutions))
 
-        self.last_state = State(distances)
+        self.last_state = distances
         return self.last_state
 
     def reward(self) -> float:
@@ -185,11 +180,6 @@ class AgentController:
             model = o.model()
 
             mx, my = model[x], model[y]
-            # if isinstance(mx, AlgebraicNumRef):
-            #     mx = mx.approx(10)
-            # if isinstance(my, AlgebraicNumRef):
-            #     my = my.approx(10)
-
             x_p, y_p = (
                 float(mx.numerator_as_long()) / float(mx.denominator_as_long()),
                 float(my.numerator_as_long()) / float(my.denominator_as_long()),

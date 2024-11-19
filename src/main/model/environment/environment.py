@@ -10,5 +10,3 @@ class Environment:
         self.x_dim = x_dim
         self.y_dim = y_dim
         self.agents = agents
-        self.num_states = 14
-        self.num_actions = 2

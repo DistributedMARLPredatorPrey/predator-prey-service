@@ -22,15 +22,11 @@ class EnvironmentConfig:
     num_predators: int
     num_preys: int
     num_states: int
-    num_actions: int
-    acc_lower_bound: float
-    acc_upper_bound: float
     r: float
     vd: float
     life: int
     save_experiment_data: bool
-    base_experiment_path: str
-    rel_experiment_path: str
+    project_root_path: str
     mode: Mode
     random_seed: int
 

@@ -3,7 +3,7 @@ name: Predator Prey Service Release
 on:
   push:
     branches:
-      - release/*
+      - main
 
 permissions:
   contents: write
@@ -24,7 +24,7 @@ jobs:
         uses: "marvinpinto/action-automatic-releases@latest"
         with:
           repo_token: "${{ secrets.GITHUB_TOKEN }}"
-          automatic_release_tag: "v0.2.3"
+          automatic_release_tag: "v1.0.0"
           prerelease: false
           files: |
             dist/*
