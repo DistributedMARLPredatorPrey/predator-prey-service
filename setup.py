@@ -5,7 +5,7 @@ with open("requirements.txt") as f:
 
 setup(
     name="predator-prey-service",
-    version="1.0.0",
+    version="1.0.1",
     description="Predator Prey Service",
     url="https://distributedmarlpredatorprey.github.io/predator-prey-service/",
     author="Luca Fabri",
